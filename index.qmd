@@ -1,0 +1,179 @@
+---
+title: "Data Science Courses"
+author: "Emi Tanaka"
+date: "`r Sys.Date()`"
+format: 
+  html: 
+    code-fold: false
+---
+
+
+```{r setup, include = FALSE}
+library(tidyverse)
+library(visNetwork)
+library(rvest)
+library(RSelenium)
+library(glue)
+library(tidytext)
+knitr::opts_chunk$set(echo = FALSE,
+                      cache = TRUE,
+                      cache.path = "cache/",
+                      fig.path = "images/")
+
+```
+
+
+## Monash
+
+### Units
+
+The directed graph below shows the units in the Master of Data Science as nodes with edges showing the subject that is a prerequisite for the unit. The node that the arrow is pointing to requires the unit that is linked.
+
+```{r monash}
+rD <- rsDriver(browser="firefox", port=4778L, verbose=F)
+remDr <- rD[["client"]]
+
+course_codes <- c("C6004", "C6009")
+baseurl <- "https://handbook.monash.edu"
+year <- 2022
+wait_time <- function() Sys.sleep(sample(3:5, 1))
+
+
+data <- tibble(Course = character(),
+               Course_code = character(),
+               Unit = character(),
+               Unit_code = character(),
+               Overview = character(),
+               Prohibition = list(),
+               Prerequisite = list(),
+               Corequisite = list())
+
+for(code in course_codes) {
+  remDr$navigate(glue("{baseurl}/2022/courses/{code}"))
+  wait_time()
+  course_html <- read_html(remDr$getPageSource()[[1]])
+  
+  tryCatch({
+    title <- course_html %>% 
+      html_element("h2") %>% 
+      html_text() %>% 
+      str_replace(paste0(code, " - "), "")
+  
+    #message(paste("Going through the course:", title))
+    
+    
+    
+    curriculum <- course_html %>% 
+      html_element("#curriculumStructure") %>% 
+      html_element(".css-to4w00-Box") %>% 
+      html_elements("a") %>% 
+      html_attr("href")
+  
+  
+    for(unit in curriculum) {
+      cunit <- str_replace(unit, paste0("/", year, "/units/"), "")
+      remDr$navigate(glue("{baseurl}{unit}"))
+      wait_time()
+      unit_html <- read_html(remDr$getPageSource()[[1]])
+      subject_text <- unit_html %>% html_element("h2") %>% html_text() 
+    
+      #message(paste("Going through the unit:", subject_text))
+    
+      reqs <- unit_html %>% 
+        html_element("#requisites") 
+      
+      if(length(reqs)) {
+        reqs <- reqs %>% 
+          html_element(".css-to4w00-Box") %>% 
+          html_children()
+      }
+      
+      reqs_list <- list()
+      for(areq in reqs) {
+        area <- areq %>% 
+          html_element("strong") %>% 
+          html_text()
+        reqs_list[[area]] <- areq %>% 
+          html_elements("a") %>% 
+          html_attr("href") %>% 
+          list()
+      }
+      
+      overviews <- unit_html %>% 
+        html_element("#Overview") %>% 
+        html_element(".OverviewInner") %>% 
+        html_elements("div") %>% 
+        .[!is.na(html_attr(., "aria-hidden")) & 
+            html_attr(., "aria-hidden")=="true"] %>% 
+        html_text()
+      
+      data <- data %>% 
+        bind_rows(tibble(!!!c(list(Course = title, 
+                                   Course_code = code, 
+                                   Unit_code = cunit,
+                                   Unit = subject_text,
+                                   Overview = overviews), 
+                              reqs_list)))
+    }
+
+    }, error = function(x) x)
+
+}
+
+```
+
+
+Note: zoom in to see the labels of the nodes and hover over the node to see the full name (available only for core units for now).
+
+
+
+```{r}
+nodes_incomplete <- data %>% 
+  filter(Course_code == "C6004") %>% 
+  mutate(Unit = str_replace(Unit, paste0(Unit_code, " - "), "")) %>% 
+  select(label = Unit_code, title = Unit) %>% 
+  select(label, title)
+
+
+cat(data$Course[1])
+
+edges_name <- data %>% 
+  unnest_longer(Prerequisite) %>% 
+  mutate(Prerequisite = str_replace(Prerequisite, "/2022/units/", "")) %>% 
+  select(to = Unit_code, from = Prerequisite) %>% 
+  filter(!is.na(from)) 
+
+missing_nodes <- setdiff(c(edges_name$from, edges_name$to), nodes_incomplete$label)
+
+nodes <- nodes_incomplete %>% 
+  add_row(label = missing_nodes) %>% 
+  mutate(id = 1:n())
+
+edges <- edges_name %>% 
+  mutate(from = match(from, nodes$label),
+         to = match(to, nodes$label))
+
+visNetwork(nodes, edges, width = "100%") %>% 
+  visEdges(arrows = "to")
+```
+### Text analysis
+
+Below is a bigram and trigram of the overview description for units in the Monash Master of Data Science. (It's not that insightful.)
+
+```{r, message = FALSE, warning = FALSE}
+ngram <- 3
+data %>% 
+  filter(Course_code == "C6004") %>%
+  unnest_tokens(word, Overview, token = "ngrams", n = ngram, n_min = 2) %>% 
+  separate(word, c("word1", "word2", "word3"), sep = " ") %>% 
+  filter(if_all(num_range("word", c(1,ngram)), 
+              ~!str_detect(., paste0(paste0("^", stop_words$word, "$"), collapse = "|")))) %>% 
+  select(starts_with("word")) %>% 
+  mutate(word = str_c(word1, word2, word3, sep = " ")) %>% 
+  count(word, sort = TRUE) %>% 
+  filter(n > 2) %>% 
+  knitr::kable() %>% 
+  kableExtra::kable_classic()
+```
+
+
