@@ -2,7 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
-
+cache/
 /.quarto/
 .Rdata
 .httr-oauth
