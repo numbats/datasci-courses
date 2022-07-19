@@ -1,0 +1,137 @@
+---
+title: "Master of Data Science - UoM"
+author: "Rachel Xinrui WANG"
+date: '2022-07-19'
+output: html_document
+---
+
+```{r setup, include = FALSE}
+library(tidyverse)
+library(rvest)
+library(RSelenium)
+library(glue)
+knitr::opts_chunk$set(echo = FALSE,
+                      cache = TRUE,
+                      cache.path = "cache/",
+                      fig.path = "images/")
+
+```
+
+
+```{r}
+# remDr$close()
+# system("taskkill /im java.exe /f", intern=FALSE, ignore.stdout=FALSE)
+rD <- rsDriver(browser="firefox", port=4778L, verbose=F)
+remDr <- rD[["client"]]
+
+baseurl <- "https://handbook.unimelb.edu.au"
+year <- 2022
+wait_time <- function() Sys.sleep(sample(3:5, 1))
+
+data <- tibble(Course = character(),
+               Course_code = character(),
+               Course_overview = character(),
+               Unit = character(),
+               Unit_code = character(),
+               Overview = character(),
+               Prerequisite = list(),
+               Corequisite = list(),
+               Prohibition = list())
+
+remDr$navigate("https://handbook.unimelb.edu.au/2022/courses/mc-datasc")
+course_html <- read_html(remDr$getPageSource()[[1]])
+  
+tryCatch({
+    title <- course_html %>% 
+      html_element("h1") %>% 
+      html_text()
+    
+    coverview <- course_html %>% 
+      html_element("#top") %>% 
+      html_element(".course__body") %>% 
+      html_element(".course__overview-wrapper") %>% 
+      html_elements("p") %>% 
+      html_text()
+  
+    remDr$navigate("https://handbook.unimelb.edu.au/2022/courses/mc-datasc/course-structure")
+    sub_list <- read_html(remDr$getPageSource()[[1]])
+    
+    curriculum <- sub_list %>% 
+      html_element("#top") %>% 
+      html_element(".mobile-wrap") %>% 
+      html_elements("table") %>% 
+      html_elements("a") %>% 
+      html_attr("href")
+  
+    for(unit in curriculum) {
+      remDr$navigate(glue("{baseurl}{unit}"))
+      wait_time()
+      unit_html <- read_html(remDr$getPageSource()[[1]])
+      
+      subject_text <- unit_html %>% 
+        html_element("h1") %>% 
+        html_text()
+      
+      cunit <- unit_html %>% 
+        html_element("h5") %>% 
+        html_text()
+      
+      overviews <- unit_html %>%
+        html_element("#top") %>% 
+        html_element(".course__overview-wrapper") %>% 
+        html_elements("p") %>% 
+        html_text()
+      # have to get rid of the last part of text
+      
+      requirements <- unit_html %>% 
+        html_element("#top") %>% 
+        html_element(".course__sidebar-navigation") %>% 
+        html_elements("a") %>% 
+        html_attr("href")
+        
+      remDr$navigate(glue("{baseurl}{requirements[2]}"))
+      wait_time()
+      req_html <- read_html(remDr$getPageSource()[[1]])
+      
+      
+      
+-------------------------------------------------------------------------------      
+      
+      reqs <- req_html %>% 
+        html_element("#requisites") 
+      
+      if(length(reqs)) {
+        reqs <- reqs %>% 
+          html_element(".css-to4w00-Box") %>% 
+          html_children()
+      }
+      
+      reqs_list <- list()
+      for(areq in reqs) {
+        area <- areq %>% 
+          html_element("strong") %>% 
+          html_text()
+        reqs_list[[area]] <- areq %>% 
+          html_elements("a") %>% 
+          html_attr("href") %>% 
+          list()
+      }
+      
+      
+      data <- data %>% 
+        bind_rows(tibble(!!!c(list(Course = title, 
+                                   Course_code = "MC-DATASC", 
+                                   Course_overview = coverview,
+                                   Unit_code = cunit,
+                                   Unit = subject_text,
+                                   Overview = overviews), 
+                              reqs_list)))
+    }
+
+    }
+    #, error = function(x) x
+    )
+
+
+
+```
