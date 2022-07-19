@@ -1,0 +1,125 @@
+---
+title: "Master of Data Science and Decisions - UNSW"
+author: "Rachel Xinrui WANG"
+date: '2022-07-19'
+output: html_document
+---
+
+```{r setup, include = FALSE}
+library(tidyverse)
+library(rvest)
+library(RSelenium)
+library(glue)
+knitr::opts_chunk$set(echo = FALSE,
+                      cache = TRUE,
+                      cache.path = "cache/",
+                      fig.path = "images/")
+
+```
+
+```{r}
+# html <- read_html("https://www.unsw.edu.au/study/postgraduate/master-of-data-science-and-decisions?studentType=Domestic")
+
+#html %>%
+#  html_text() %>% 
+#  cat()
+```
+
+
+```{r}
+# system("taskkill /im java.exe /f", intern=FALSE, ignore.stdout=FALSE)
+rD <- rsDriver(browser="firefox", port=4778L, verbose=F)
+remDr <- rD[["client"]]
+
+baseurl <- "https://www.handbook.unsw.edu.au"
+year <- 2022
+wait_time <- function() Sys.sleep(sample(3:5, 1))
+
+data <- tibble(Course = character(),
+               Course_code = character(),
+               Course_overview = character(),
+               Unit = character(),
+               Unit_code = character(),
+               Overview = character(),
+               Exclusion_courses = list())
+
+remDr$navigate("https://www.handbook.unsw.edu.au/postgraduate/programs/2022/8959")
+course_html <- read_html(remDr$getPageSource()[[1]])
+  
+tryCatch({
+    title <- course_html %>% 
+      html_element("h2") %>% 
+      html_text()
+    
+    coverview <- course_html %>% 
+      html_element("#Overview") %>% 
+      html_element(".css-1x8hb4i-Box-CardBody") %>% 
+      html_elements("div") %>% 
+      .[!is.na(html_attr(., "aria-hidden")) & 
+          html_attr(., "aria-hidden")=="true"] %>% 
+      html_text()
+  
+    curriculum <- course_html %>% 
+      html_element("#44d4966edbb9b010595850d8f496194a") %>% 
+      #html_element(".AccordionItem") %>% 
+      #html_element(".cmp-text") %>% 
+      html_elements("div") %>%
+      html_elements("a") %>% 
+      html_attr("href")
+  
+  
+    for(unit in curriculum) {
+      remDr$navigate(glue("{baseurl}{unit}"))
+      wait_time()
+      unit_html <- read_html(remDr$getPageSource()[[1]])
+      
+      subject_text <- unit_html %>% 
+        html_element("h2") %>% 
+        html_text()
+      
+      cunit <- unit_html %>% 
+        html_element("h5") %>% 
+        html_text()
+      
+      overviews <- unit_html %>% 
+        html_element("#Overview") %>% 
+        html_element(".css-1x8hb4i-Box-CardBody") %>% 
+        html_elements("div") %>% 
+        .[!is.na(html_attr(., "aria-hidden")) & 
+            html_attr(., "aria-hidden")=="true"] %>% 
+        html_text()
+      
+      reqs <- unit_html %>% 
+        html_element("#ExclusionCourses") 
+      
+      if(length(reqs)) {
+        reqs <- reqs %>% 
+          html_element(".css-to4w00-Box") %>% 
+          html_children()
+      }
+      
+      reqs_list <- list()
+      reqs_list[["Exclusion_courses"]] <- reqs %>% 
+          html_elements("a") %>% 
+          html_attr("href") %>% 
+          list()
+      
+      
+      data <- data %>% 
+        bind_rows(tibble(!!!c(list(Course = paste0("Master of ", title), 
+                                   Course_code = "8959", 
+                                   Course_overview = coverview,
+                                   Unit_code = cunit,
+                                   Unit = subject_text,
+                                   Overview = overviews), 
+                              reqs_list)))
+    }
+
+    }
+    #, error = function(x) x
+    )
+
+
+
+```
+
