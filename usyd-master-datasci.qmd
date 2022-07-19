@@ -1,0 +1,122 @@
+---
+title: "Master of Data Science - University of Sydney"
+author: "Tina Tsou"
+date: "`r Sys.Date()`"
+format: 
+  html: 
+    code-fold: false
+---
+
+
+```{r setup, include = FALSE}
+library(tidyverse)
+library(rvest)
+library(RSelenium)
+library(glue)
+knitr::opts_chunk$set(echo = FALSE,
+                      cache = TRUE,
+                      cache.path = "cache/",
+                      fig.path = "images/")
+
+```
+
+
+```{r sydney}
+rD <- rsDriver(browser="firefox", port=4779L, verbose=F)
+remDr <- rD[["client"]]
+
+base<- "https://www.sydney.edu.au/units/"
+wait_time <- function() Sys.sleep(sample(3:5, 1))
+
+
+data <- tibble(Course = character(),
+               Course_code = character(),
+               Unit = character(),
+               Unit_code = character(),
+               Overview = character(),
+               Assumed_knowledge = list(),
+               Prohibition = list(),
+               Prerequisite = list(),
+               Corequisite = list())
+
+
+remDr$navigate("https://www.sydney.edu.au/handbooks/engineering_PG/coursework/units_of_study/computer_science/data_science.shtml")
+wait_time()
+course_html <- read_html(remDr$getPageSource()[[1]])
+  
+  tryCatch({
+    title <- course_html %>% 
+      html_element("#w3") %>% 
+      html_element("#w4") %>% 
+      html_element("h1") %>% 
+      html_text()
+  
+    remDr$navigate("https://www.sydney.edu.au/handbooks/engineering_PG/coursework/units_of_study/computer_science/data_science_descriptions.shtml")
+    wait_time()
+    course_html <- read_html(remDr$getPageSource()[[1]])
+    
+    nodes <- c(17:20, 23:26, 29:38, 41:47)
+    curriculum <- data.frame()
+    for(node in nodes){
+      subject <- course_html %>% 
+        html_element("#w4") %>% 
+        html_element(glue("div:nth-child({node})"))%>% 
+        html_element(".uosListTitle") %>% 
+        html_element("strong") %>% 
+        html_text() %>% 
+        str_sub(. ,start = 1,end =8)
+       curriculum <-  rbind(curriculum, subject)
+    }
+  
+    
+    for(unit in curriculum) {
+      remDr$navigate(glue("{base}{unit}"))
+      wait_time()
+      unit_html <- read_html(remDr$getPageSource()[[1]])
+      cunit <- unit_html %>% 
+        html_element(".pageTitle") %>% 
+        html_text() %>% str_split(.,": ")
+      
+      overview <- unit_html %>% 
+        html_element(".b-summary") %>% 
+        html_element(" p:nth-child(1)") %>% 
+        html_text()
+      
+       ##pre -requisites
+      pre <- unit_html %>% 
+        html_element("#enrolmentRules") %>% 
+        html_element("table:nth-child(1)") %>% 
+        html_element("tbody:nth-child(1)") %>% 
+        html_element("tr:nth-child(1)") %>% 
+        html_element("td:nth-child(2)") %>% 
+        html_text()
+      
+      ##Corequisite
+      co <- unit_html %>% 
+        html_element("#enrolmentRules") %>% 
+        html_element("table:nth-child(1)") %>% 
+        html_element("tbody:nth-child(1)") %>% 
+        html_element("tr:nth-child(2)") %>% 
+        html_element("td:nth-child(2)") %>% 
+        html_text()
+      
+      ##prohibitions
+      pro <- unit_html %>% 
+        html_element("#enrolmentRules") %>% 
+        html_element("table:nth-child(1)") %>% 
+        html_element("tbody:nth-child(1)") %>% 
+        html_element("tr:nth-child(3)") %>% 
+        html_element("td:nth-child(2)") %>% 
+        html_text()
+    
+        ##learning outcomes
+
+      lc <- unit_html %>% 
+        html_element(".list-spaced") %>% 
+        html_text()
+        
+      #message(paste("Going through the unit:", subject_text))
+    }, error = function(x) x)
+}
+
+```
