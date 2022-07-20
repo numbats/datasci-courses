@@ -81,7 +81,8 @@ tryCatch({
         html_element(".course__overview-wrapper") %>% 
         html_elements("p") %>% 
         html_text()
-      # have to get rid of the last part of text
+      overviews <- overviews[1]
+    
       
       requirements <- unit_html %>% 
         html_element("#top") %>% 
