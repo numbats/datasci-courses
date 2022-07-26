@@ -1,8 +1,10 @@
 ---
-title: "Master of Data Science and Decisions - UNSW"
+title: "Master of Data Science - UoM"
 author: "Rachel Xinrui WANG"
-date: '2022-07-19'
-output: html_document
+date: "`r Sys.Date()`"
+format: 
+  html:
+    code-fold: false
 ---
 
 ```{r setup, include = FALSE}
@@ -17,21 +19,14 @@ knitr::opts_chunk$set(echo = FALSE,
 
 ```
 
-```{r}
-# html <- read_html("https://www.unsw.edu.au/study/postgraduate/master-of-data-science-and-decisions?studentType=Domestic")
-
-#html %>%
-#  html_text() %>% 
-#  cat()
-```
-
 
 ```{r}
+# remDr$close()
 # system("taskkill /im java.exe /f", intern=FALSE, ignore.stdout=FALSE)
 rD <- rsDriver(browser="firefox", port=4778L, verbose=F)
 remDr <- rD[["client"]]
 
-baseurl <- "https://www.handbook.unsw.edu.au"
+baseurl <- "https://handbook.unimelb.edu.au"
 year <- 2022
 wait_time <- function() Sys.sleep(sample(3:5, 1))
 
@@ -41,32 +36,34 @@ data <- tibble(Course = character(),
                Unit = character(),
                Unit_code = character(),
                Overview = character(),
-               Exclusion_courses = list())
+               Prerequisite = list(),
+               Corequisite = list(),
+               Prohibition = list())
 
-remDr$navigate("https://www.handbook.unsw.edu.au/postgraduate/programs/2022/8959")
+remDr$navigate("https://handbook.unimelb.edu.au/2022/courses/mc-datasc")
 course_html <- read_html(remDr$getPageSource()[[1]])
   
 tryCatch({
     title <- course_html %>% 
-      html_element("h2") %>% 
+      html_element("h1") %>% 
       html_text()
     
     coverview <- course_html %>% 
-      html_element("#Overview") %>% 
-      html_element(".css-1x8hb4i-Box-CardBody") %>% 
-      html_elements("div") %>% 
-      .[!is.na(html_attr(., "aria-hidden")) & 
-          html_attr(., "aria-hidden")=="true"] %>% 
+      html_element("#top") %>% 
+      html_element(".course__body") %>% 
+      html_element(".course__overview-wrapper") %>% 
+      html_elements("p") %>% 
       html_text()
   
-    curriculum <- course_html %>% 
-      html_element("#44d4966edbb9b010595850d8f496194a") %>% 
-      #html_element(".AccordionItem") %>% 
-      #html_element(".cmp-text") %>% 
-      html_elements("div") %>%
+    remDr$navigate("https://handbook.unimelb.edu.au/2022/courses/mc-datasc/course-structure")
+    sub_list <- read_html(remDr$getPageSource()[[1]])
+    
+    curriculum <- sub_list %>% 
+      html_element("#top") %>% 
+      html_element(".mobile-wrap") %>% 
+      html_elements("table") %>% 
       html_elements("a") %>% 
       html_attr("href")
-  
   
     for(unit in curriculum) {
       remDr$navigate(glue("{baseurl}{unit}"))
@@ -74,23 +71,37 @@ tryCatch({
       unit_html <- read_html(remDr$getPageSource()[[1]])
       
       subject_text <- unit_html %>% 
-        html_element("h2") %>% 
+        html_element("h1") %>% 
         html_text()
       
       cunit <- unit_html %>% 
         html_element("h5") %>% 
         html_text()
       
-      overviews <- unit_html %>% 
-        html_element("#Overview") %>% 
-        html_element(".css-1x8hb4i-Box-CardBody") %>% 
-        html_elements("div") %>% 
-        .[!is.na(html_attr(., "aria-hidden")) & 
-            html_attr(., "aria-hidden")=="true"] %>% 
+      overviews <- unit_html %>%
+        html_element("#top") %>% 
+        html_element(".course__overview-wrapper") %>% 
+        html_elements("p") %>% 
         html_text()
+      overviews <- overviews[1]
+    
       
-      reqs <- unit_html %>% 
-        html_element("#ExclusionCourses") 
+      requirements <- unit_html %>% 
+        html_element("#top") %>% 
+        html_element(".course__sidebar-navigation") %>% 
+        html_elements("a") %>% 
+        html_attr("href")
+        
+      remDr$navigate(glue("{baseurl}{requirements[2]}"))
+      wait_time()
+      req_html <- read_html(remDr$getPageSource()[[1]])
+      
+      
+      
+-------------------------------------------------------------------------------      
+      
+      reqs <- req_html %>% 
+        html_element("#requisites") 
       
       if(length(reqs)) {
         reqs <- reqs %>% 
@@ -99,15 +110,20 @@ tryCatch({
       }
       
       reqs_list <- list()
-      reqs_list[["Exclusion_courses"]] <- reqs %>% 
+      for(areq in reqs) {
+        area <- areq %>% 
+          html_element("strong") %>% 
+          html_text()
+        reqs_list[[area]] <- areq %>% 
           html_elements("a") %>% 
           html_attr("href") %>% 
           list()
+      }
       
       
       data <- data %>% 
-        bind_rows(tibble(!!!c(list(Course = paste0("Master of ", title), 
-                                   Course_code = "8959", 
+        bind_rows(tibble(!!!c(list(Course = title, 
+                                   Course_code = "MC-DATASC", 
                                    Course_overview = coverview,
                                    Unit_code = cunit,
                                    Unit = subject_text,
@@ -122,4 +138,3 @@ tryCatch({
 
 
 ```
-
