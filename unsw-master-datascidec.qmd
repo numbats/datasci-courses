@@ -43,16 +43,20 @@ data <- tibble(Course = character(),
                Unit = character(),
                Unit_code = character(),
                Overview = character(),
-               Exclusion_courses = list())
+               Prohibition = character(),
+               Prerequisite = character())
 
 remDr$navigate("https://www.handbook.unsw.edu.au/postgraduate/programs/2022/8959")
 course_html <- read_html(remDr$getPageSource()[[1]])
   
 tryCatch({
+    
+    # extract name of the course
     title <- course_html %>% 
       html_element("h2") %>% 
       html_text()
     
+    # extract course overview
     coverview <- course_html %>% 
       html_element("#Overview") %>% 
       html_element(".css-1x8hb4i-Box-CardBody") %>% 
@@ -60,7 +64,8 @@ tryCatch({
       .[!is.na(html_attr(., "aria-hidden")) & 
           html_attr(., "aria-hidden")=="true"] %>% 
       html_text()
-  
+    
+    # get all core and elective units for the course
     curriculum <- course_html %>% 
       html_element("#44d4966edbb9b010595850d8f496194a") %>% 
       #html_element(".AccordionItem") %>% 
@@ -69,20 +74,22 @@ tryCatch({
       html_elements("a") %>% 
       html_attr("href")
   
-  
     for(unit in curriculum) {
       remDr$navigate(glue("{baseurl}{unit}"))
       wait_time()
       unit_html <- read_html(remDr$getPageSource()[[1]])
       
+      # get unit name
       subject_text <- unit_html %>% 
         html_element("h2") %>% 
         html_text()
       
+      # get unit code
       cunit <- unit_html %>% 
         html_element("h5") %>% 
         html_text()
       
+      # unit overview
       overviews <- unit_html %>% 
         html_element("#Overview") %>% 
         html_element(".css-1x8hb4i-Box-CardBody") %>% 
@@ -91,20 +98,31 @@ tryCatch({
             html_attr(., "aria-hidden")=="true"] %>% 
         html_text()
       
+      # check if there's any pre-requisites and extract if yes
       reqs <- unit_html %>% 
-        html_element("#ExclusionCourses") 
+        html_element("#ConditionsforEnrolment")
       
-      if(length(reqs)) {
-        reqs <- reqs %>% 
-          html_element(".css-to4w00-Box") %>% 
-          html_children()
+      if(length(reqs) > 0) {
+        pre <- unit_html %>% 
+        html_element("#ConditionsforEnrolment") %>% 
+        html_elements(".css-1x8hb4i-Box-CardBody") %>% 
+        html_text() 
+      } else {
+        pre <- "None"
       }
       
-      reqs_list <- list()
-      reqs_list[["Exclusion_courses"]] <- reqs %>% 
-          html_elements("a") %>% 
-          html_attr("href") %>% 
-          list()
+      # check if there's any prohibations and extract if yes
+      probs <- unit_html %>% 
+        html_element("#ExclusionCourses")
+      
+      if(length(probs) > 0) {
+        pro <- unit_html %>% 
+        html_element("#ExclusionCourses") %>% 
+        html_elements(".unit-title") %>% 
+        html_text() 
+      } else {
+        pro <- "None"
+      }
       
       
       data <- data %>% 
@@ -113,14 +131,19 @@ tryCatch({
                                    Course_overview = coverview,
                                    Unit_code = cunit,
                                    Unit = subject_text,
-                                   Overview = overviews), 
-                              reqs_list)))
+                                   Overview = overviews,
+                                   Prerequisite = pre,
+                                   Prohibition = pro
+                                   )))) %>% 
+        mutate(Unit_type = ifelse(row_number()<= 4,
+                           "Specialisation",
+                           "Core"))
     }
 
     }
     #, error = function(x) x
     )
 
-
+#write.csv(data, file = "unsw_master_datascidec.csv")
 
 ```
