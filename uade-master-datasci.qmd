@@ -21,7 +21,7 @@ knitr::opts_chunk$set(echo = FALSE,
 ```
 
 
-```{r sydney}
+```{r adelaide}
 rD <- rsDriver(browser="firefox", port=4779L, verbose=F)
 remDr <- rD[["client"]]
 
@@ -33,7 +33,6 @@ data <- tibble(Course = character(),
                Unit = character(),
                Unit_code = character(),
                Overview = character(),
-             #  Assumed_knowledge = character(),
                Prohibition = character(),
                Prerequisite = character(),
                Corequisite = character(),

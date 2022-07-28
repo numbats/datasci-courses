@@ -25,7 +25,7 @@ knitr::opts_chunk$set(echo = FALSE,
 rD <- rsDriver(browser="firefox", port=4779L, verbose=F)
 remDr <- rD[["client"]]
 
-baseurl<- "https://programsandcourses.anu.edu.au/"
+baseurl<- "https://programsandcourses.anu.edu.au"
 wait_time <- function() Sys.sleep(sample(3:5, 1))
 
 data <- tibble(Course = character(),
@@ -33,12 +33,12 @@ data <- tibble(Course = character(),
                Unit = character(),
                Unit_code = character(),
                Overview = character(),
-               Prohibition = character(),
-               Prerequisite = character(),
-               Corequisite = character(),
-               LearningOutcome = character())
+               Requisite = character(),
+               LearningOutcome = list())
+```
 
 
+```{r anu}
 remDr$navigate("https://programsandcourses.anu.edu.au/program/madan#program-requirements")
 wait_time()
 course_html <- read_html(remDr$getPageSource()[[1]])
@@ -48,21 +48,19 @@ title <- course_html %>%
       html_text()
 
 # select cricos code for the time being
-# code <- course_html %>% 
-#       html_element("ul.degree-summary__codes-column:nth-child(1)") %>% 
-#       html_element("li:nth-child(3)") %>% 
-#       html_element("span:nth-child(2)") %>% 
-#       html_text()
+code <- course_html %>%
+      html_element("ul.degree-summary__codes-column:nth-child(1)") %>%
+      html_element("li:nth-child(3)") %>%
+      html_element("span:nth-child(2)") %>%
+      html_text()
 
 tryCatch({
-  
     curriculum <- course_html %>% 
       html_element("#study") %>% 
       html_element("div:nth-child(1)") %>% 
-      html_children() %>% 
+      html_elements("p") %>% 
       html_elements("a") %>% 
-      html_attr("href") %>% 
-      as.character()
+      html_attr("href") 
     
     for(unit in curriculum) {
       cunit <- str_sub(unit ,start = -8)
@@ -90,27 +88,24 @@ tryCatch({
 
       lc <- unit_html %>% 
         html_element("#overview") %>% 
-        html_text()
+        html_elements("li") %>% 
+        html_text() %>% 
+        list()
       
       data <- data %>% 
-        bind_rows(tibble(!!!list(Course = title, 
-                                   Course_code = "MDS", 
-                                   Unit = cunit[,2],
-                                   Unit_code = cunit[,1],
+        bind_rows(tibble(!!!list(Course = title,
+                                 Course_code = code,
+                                 Unit = subject_text,
+                                   Unit_code = cunit,
                                    Overview = overview,
-                              #     Assumed_knowledge = assumed,
-                                   Prohibition = pro,
-                                   Prerequisite = pre, 
-                                   Corequisite = co,
+                                   Requisite = requisite,
                                    LearningOutcome =lc)))
       }
       
-    data <- merge(data, 
-                  curriculum,
-                  by = "Unit_code")
     }, error = function(x) x)
-  
 
+# stop the rselenium server
+#rD[["server"]]$stop()
 
 
 ```
