@@ -36,18 +36,22 @@ data <- tibble(Course = character(),
                Unit = character(),
                Unit_code = character(),
                Overview = character(),
-               Prerequisite = list(),
-               Corequisite = list(),
-               Prohibition = list())
+               Prerequisite = character(),
+               Corequisite = character(),
+               Prohibition = character(),
+               LearningOutcome = character())
 
 remDr$navigate("https://handbook.unimelb.edu.au/2022/courses/mc-datasc")
 course_html <- read_html(remDr$getPageSource()[[1]])
   
 tryCatch({
+  
+    # course name
     title <- course_html %>% 
       html_element("h1") %>% 
       html_text()
     
+    # course overview
     coverview <- course_html %>% 
       html_element("#top") %>% 
       html_element(".course__body") %>% 
@@ -58,6 +62,7 @@ tryCatch({
     remDr$navigate("https://handbook.unimelb.edu.au/2022/courses/mc-datasc/course-structure")
     sub_list <- read_html(remDr$getPageSource()[[1]])
     
+    # extract all listed units
     curriculum <- sub_list %>% 
       html_element("#top") %>% 
       html_element(".mobile-wrap") %>% 
@@ -70,22 +75,31 @@ tryCatch({
       wait_time()
       unit_html <- read_html(remDr$getPageSource()[[1]])
       
+      # unit name
       subject_text <- unit_html %>% 
         html_element("h1") %>% 
         html_text()
       
+      # unit code
       cunit <- unit_html %>% 
         html_element("h5") %>% 
         html_text()
       
+      # unit overview
       overviews <- unit_html %>%
         html_element("#top") %>% 
         html_element(".course__overview-wrapper") %>% 
         html_elements("p") %>% 
         html_text()
       overviews <- overviews[1]
-    
       
+      # unit learning outcome
+      lo <- unit_html %>% 
+        html_element("#learning-outcomes") %>% 
+        html_element(".ticked-list") %>% 
+        html_text()
+    
+      # navigate to unit eligibility and requirements page
       requirements <- unit_html %>% 
         html_element("#top") %>% 
         html_element(".course__sidebar-navigation") %>% 
@@ -96,29 +110,44 @@ tryCatch({
       wait_time()
       req_html <- read_html(remDr$getPageSource()[[1]])
       
+      # pre-requisites
+      pre <- req_html %>% 
+         html_element("#prerequisites") %>% 
+         html_elements("td") %>% 
+         html_elements("a") %>% 
+         html_text()
       
+      # extract links of the prerequisites and save them in a list?
+      # prelinks <- req_html %>% 
+      #   html_element("#prerequisites") %>% 
+      #   html_elements("td") %>% 
+      #   html_elements("a") %>% 
+      #   html_attr("href")
+      # 
+      # for(subject in prelinks) {
+      # remDr$navigate(glue("{baseurl}{subject}"))
+      # wait_time()
+      # subject_html <- read_html(remDr$getPageSource()[[1]])
+      # 
+      # pre <- subject_html %>% 
+      #   html_element("h1") %>% 
+      #   html_text()
+      # }
       
--------------------------------------------------------------------------------      
+----------------------------------------------------------------------------      
+      # corequisites
+      co <- req_html %>% 
+        html_element("???")
+        
       
-      reqs <- req_html %>% 
-        html_element("#requisites") 
-      
-      if(length(reqs)) {
-        reqs <- reqs %>% 
-          html_element(".css-to4w00-Box") %>% 
-          html_children()
-      }
-      
-      reqs_list <- list()
-      for(areq in reqs) {
-        area <- areq %>% 
-          html_element("strong") %>% 
-          html_text()
-        reqs_list[[area]] <- areq %>% 
-          html_elements("a") %>% 
-          html_attr("href") %>% 
-          list()
-      }
+      # prohibitions
+      pro <- req_html %>% 
+        html_element(".page-inner") %>% 
+        html_element(".mobile-wrap") %>% 
+        html_elements(".zebra") %>% 
+        #html_element("td") %>% 
+        html_elements("a") %>% 
+        html_text()
       
       
       data <- data %>% 
@@ -127,8 +156,16 @@ tryCatch({
                                    Course_overview = coverview,
                                    Unit_code = cunit,
                                    Unit = subject_text,
-                                   Overview = overviews), 
-                              reqs_list)))
+                                   Overview = overviews,
+                                   Prerequisite = pre,
+                                   Corequisite = co,
+                                   Prohibition = pro,
+                                   LearningOutcome =lo
+                                   )))) %>% 
+        mutate(Unit_type = 
+                 case_when(row_number()<= 6 ~ "Background Conditions",
+                           row_number() > 6 & row_number() < 17 ~ "Core",
+                           row_number() > 16 ~ "Elective"))
     }
 
     }

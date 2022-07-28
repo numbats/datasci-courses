@@ -18,3 +18,118 @@ knitr::opts_chunk$set(echo = FALSE,
                       fig.path = "images/")
 
 ```
+
+```{r}
+# remDr$close()
+# system("taskkill /im java.exe /f", intern=FALSE, ignore.stdout=FALSE)
+rD <- rsDriver(browser="firefox", port=4778L, verbose=F)
+remDr <- rD[["client"]]
+
+baseurl <- "https://www.uwa.edu.au/study/courses/master-of-data-science"
+
+wait_time <- function() Sys.sleep(sample(3:5, 1))
+
+data <- tibble(Course = character(),
+               Course_code = character(),
+               Course_overview = character(),
+               Unit = character(),
+               #Unit_code = character(),
+               Overview = character(),
+               Prerequisite = character(),
+               Corequisite = character(),
+               Prohibition = character(),
+               LearningOutcome = character())
+
+remDr$navigate("https://www.uwa.edu.au/study/courses/master-of-data-science")
+course_html <- read_html(remDr$getPageSource()[[1]])
+  
+tryCatch({
+  
+    # course name
+    title <- course_html %>% 
+      html_element("h1") %>% 
+      html_text()
+    
+    # course code
+    code <- course_html %>% 
+      html_element("#course-details") %>% 
+      html_elements(".card-details-value") %>% 
+      html_element("li") %>% 
+      html_text()
+    
+    code <- code[17]
+    
+    # course overview
+    coverview <- course_html %>% 
+      html_element("#course-details") %>% 
+      html_element(".generic-modal-content") %>% 
+      html_elements("p") %>% 
+      html_text()
+  
+    
+    # extract all listed units
+    curriculum <- course_html %>% 
+      ???
+  
+    for(unit in curriculum) {
+      remDr$navigate("unit")
+      wait_time()
+      unit_html <- read_html(remDr$getPageSource()[[1]])
+      
+      # unit name and code
+      subject_text <- unit_html %>% 
+        html_element("h1") %>% 
+        html_text()
+      
+      # unit code
+      # cunit <- unit_html %>% 
+      #   html_element("h5") %>% 
+      #   html_text()
+      
+      # unit overview
+      unitsum <- unit_html %>%
+        html_element("#centrecontainer") %>% 
+        html_element(".folio-content") %>% 
+        html_elements("dd") %>% 
+        html_text()
+      
+      overviews <- unitsum[1]
+      
+      # unit learning outcome
+      lo <- unitsum[5]
+      
+      # pre-requisites
+      pre <- 
+      
+      # corequisites
+      co <- 
+        
+      # prohibitions
+      pro <- 
+      
+      
+      data <- data %>% 
+        bind_rows(tibble(!!!c(list(Course = title, 
+                                   Course_code = code, 
+                                   Course_overview = coverview,
+                                   #Unit_code = cunit,
+                                   Unit = subject_text,
+                                   Overview = overviews,
+                                   Prerequisite = pre,
+                                   Corequisite = co,
+                                   Prohibition = pro,
+                                   LearningOutcome =lo
+                                   )))) %>% 
+        mutate(Unit_type = 
+                 case_when(row_number()<= 4 ~ "Background Conditions",
+                           row_number() > 4 & row_number() < 13 ~ "Core",
+                           row_number() > 13 ~ "Elective"))
+    }
+
+    }
+    #, error = function(x) x
+    )
+
+
+
+```
