@@ -1,0 +1,172 @@
+---
+title: "Master of Data Science - University of Adelaide"
+author: "Tina Tsou"
+date: "`r Sys.Date()`"
+format: 
+  html: 
+    code-fold: false
+---
+
+
+```{r setup, include = FALSE}
+library(tidyverse)
+library(rvest)
+library(RSelenium)
+library(glue)
+knitr::opts_chunk$set(echo = FALSE,
+                      cache = TRUE,
+                      cache.path = "cache/",
+                      fig.path = "images/")
+
+```
+
+
+```{r sydney}
+rD <- rsDriver(browser="firefox", port=4779L, verbose=F)
+remDr <- rD[["client"]]
+
+base<- "https://www.sydney.edu.au/units/"
+wait_time <- function() Sys.sleep(sample(3:5, 1))
+
+data <- tibble(Course = character(),
+               Course_code = character(),
+               Unit = character(),
+               Unit_code = character(),
+               Overview = character(),
+             #  Assumed_knowledge = character(),
+               Prohibition = character(),
+               Prerequisite = character(),
+               Corequisite = character(),
+               LearningOutcome = character())
+
+
+remDr$navigate("https://www.sydney.edu.au/handbooks/engineering_PG/coursework/courses/data_science_rules.shtml")
+wait_time()
+course_html <- read_html(remDr$getPageSource()[[1]])
+
+title <- course_html %>% 
+      html_element(".tabledata_blue") %>% 
+      html_element("tbody") %>% 
+      html_element("tr:nth-child(3)") %>% 
+      html_element("td:nth-child(2)") %>% 
+      html_element("p") %>% 
+      html_text()
+
+code <- course_html %>% 
+      html_element(".tabledata_blue") %>% 
+      html_element("tbody") %>% 
+      html_element("tr:nth-child(3)") %>% 
+      html_element("td:nth-child(1)") %>% 
+      html_element("p") %>% 
+      html_text()
+
+tryCatch({
+    remDr$navigate("https://www.sydney.edu.au/handbooks/engineering_PG/coursework/units_of_study/computer_science/data_science_descriptions.shtml")
+    wait_time()
+    course_html <- read_html(remDr$getPageSource()[[1]])
+    
+    nodes <- c(17:20, 23:26, 29:38, 41:47)
+    
+    curriculum <- data.frame()
+    for(node in nodes){
+      subject <- course_html %>% 
+        html_element("#w4") %>% 
+        html_element(glue("div:nth-child({node})"))%>% 
+        html_element(".uosListTitle") %>% 
+        html_element("strong") %>% 
+        html_text() %>% 
+        str_sub(. ,start = 1,end =8)
+       curriculum <-  rbind(curriculum, subject)
+    }
+    
+    curriculum <- curriculum %>%
+      mutate(type = 
+               ifelse(row_number()>=9, 
+                      "Elective", 
+                      "Core")) %>% 
+      rename(Unit_code = `X.COMP5048.`)
+    
+    for(unit in curriculum[,1]) {
+      remDr$navigate(glue("{base}{unit}"))
+      wait_time()
+      unit_html <- read_html(remDr$getPageSource()[[1]])
+      
+      ## get the course name and course number of each course
+      cunit <- unit_html %>% 
+        html_element(".pageTitle") %>% 
+        html_text() %>% as.data.frame() %>% separate(.,
+                                                     col =`.`, 
+                                                     into = c("Course Number","Course Name"),
+                                                     sep =": ")
+
+      #message(paste("Going through the unit:", cunit[,2]))
+      
+      ## get the overview of the unit
+      overview <- unit_html %>% 
+        html_element(".b-summary") %>% 
+        html_element("p") %>% 
+        html_text()
+      
+       ## pre-requisites
+      pre <- unit_html %>% 
+        html_element("#enrolmentRules") %>% 
+        html_element("tr:nth-child(1)") %>% 
+        html_element("td") %>% 
+        html_text()
+      
+      ## corequisite
+      co <- unit_html %>% 
+        html_element("#enrolmentRules") %>% 
+        html_element("tr:nth-child(2)") %>% 
+        html_element("td") %>% 
+        html_text()
+      
+      ##prohibitions
+      pro <- unit_html %>% 
+        html_element("#enrolmentRules") %>% 
+        html_element("tr:nth-child(3)") %>% 
+        html_element("td") %>% 
+        html_text()
+    
+      #assumed knowledge
+      # if(unit_html %>% html_element("#enrolmentRules") %>% 
+      #   html_element("table:nth-child(1)") %>% 
+      #   html_element("tbody:nth-child(1)") %>% 
+      #   html_element("tr:nth-child(4)") = TRUE)
+      # assumed <- 
+      #    unit_html %>% 
+      #   html_element("#enrolmentRules") %>% 
+      #   html_element("table:nth-child(1)") %>% 
+      #   html_element("tbody:nth-child(1)") %>% 
+      #   html_element("tr:nth-child(4)") %>% 
+      #   html_element("td:nth-child(2)") %>% 
+      #   html_text()
+      
+        ##learning outcomes
+
+      lc <- unit_html %>% 
+        html_element(".list-spaced") %>% 
+        html_text()
+      
+      data <- data %>% 
+        bind_rows(tibble(!!!list(Course = title, 
+                                   Course_code = "MDS", 
+                                   Unit = cunit[,2],
+                                   Unit_code = cunit[,1],
+                                   Overview = overview,
+                              #     Assumed_knowledge = assumed,
+                                   Prohibition = pro,
+                                   Prerequisite = pre, 
+                                   Corequisite = co,
+                                   LearningOutcome =lc)))
+      }
+      
+    data <- merge(data, 
+                  curriculum,
+                  by = "Unit_code")
+    }, error = function(x) x)
+  
+
+
+
+```
