@@ -33,7 +33,6 @@ data <- tibble(Course = character(),
                Unit = character(),
                Unit_code = character(),
                Overview = character(),
-             #  Assumed_knowledge = character(),
                Prohibition = character(),
                Prerequisite = character(),
                Corequisite = character(),
@@ -127,21 +126,7 @@ tryCatch({
         html_element("tr:nth-child(3)") %>% 
         html_element("td") %>% 
         html_text()
-    
-      #assumed knowledge
-      # if(unit_html %>% html_element("#enrolmentRules") %>% 
-      #   html_element("table:nth-child(1)") %>% 
-      #   html_element("tbody:nth-child(1)") %>% 
-      #   html_element("tr:nth-child(4)") = TRUE)
-      # assumed <- 
-      #    unit_html %>% 
-      #   html_element("#enrolmentRules") %>% 
-      #   html_element("table:nth-child(1)") %>% 
-      #   html_element("tbody:nth-child(1)") %>% 
-      #   html_element("tr:nth-child(4)") %>% 
-      #   html_element("td:nth-child(2)") %>% 
-      #   html_text()
-      
+
         ##learning outcomes
 
       lc <- unit_html %>% 
@@ -154,7 +139,6 @@ tryCatch({
                                    Unit = cunit[,2],
                                    Unit_code = cunit[,1],
                                    Overview = overview,
-                              #     Assumed_knowledge = assumed,
                                    Prohibition = pro,
                                    Prerequisite = pre, 
                                    Corequisite = co,
@@ -165,8 +149,4 @@ tryCatch({
                   curriculum,
                   by = "Unit_code")
     }, error = function(x) x)
-  
-
-
-
 ```
