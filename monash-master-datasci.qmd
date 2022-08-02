@@ -1,5 +1,5 @@
 ---
-title: "Data Science Courses"
+title: " Monash Master of Data Science"
 author: "Emi Tanaka"
 date: "`r Sys.Date()`"
 format: 
@@ -30,54 +30,37 @@ knitr::opts_chunk$set(echo = FALSE,
 The directed graph below shows the units in the Master of Data Science as nodes with edges showing the subject that is a prerequisite for the unit. The node that the arrow is pointing to requires the unit that is linked.
 
 ```{r monash}
-rD <- rsDriver(browser="firefox", port=4778L, verbose=F)
+rD <- rsDriver(browser="firefox", port=4790L, verbose=F)
 remDr <- rD[["client"]]
 
-course_codes <- c("C6004", "C6009")
+# "C6009" is the Indonesian campus version
+code <- "C6004"
 baseurl <- "https://handbook.monash.edu"
 year <- 2022
 wait_time <- function() Sys.sleep(sample(3:5, 1))
 
+remDr$navigate(glue("{baseurl}/2022/courses/{code}"))
+course_html <- read_html(remDr$getPageSource()[[1]])
 
-data <- tibble(Course = character(),
-               Course_code = character(),
-               Unit = character(),
-               Unit_code = character(),
-               Overview = character(),
-               Prohibition = list(),
-               Prerequisite = list(),
-               Corequisite = list())
+title <- course_html %>% 
+  html_element("h2") %>% 
+  html_text() %>% 
+  str_replace(paste0(code, " - "), "")
 
-for(code in course_codes) {
-  remDr$navigate(glue("{baseurl}/2022/courses/{code}"))
-  wait_time()
-  course_html <- read_html(remDr$getPageSource()[[1]])
-  
-  tryCatch({
-    title <- course_html %>% 
-      html_element("h2") %>% 
-      html_text() %>% 
-      str_replace(paste0(code, " - "), "")
-  
-    #message(paste("Going through the course:", title))
-    
-    
-    
-    curriculum <- course_html %>% 
-      html_element("#curriculumStructure") %>% 
-      html_element(".css-to4w00-Box") %>% 
-      html_elements("a") %>% 
-      html_attr("href")
-  
-  
-    for(unit in curriculum) {
+curriculum <- course_html %>% 
+  html_element("#curriculumStructure") %>% 
+  html_element(".css-to4w00-Box") %>% 
+  html_elements("a") %>% 
+  html_attr("href")
+
+data <- map_dfr(curriculum, function(unit) {
       cunit <- str_replace(unit, paste0("/", year, "/units/"), "")
       remDr$navigate(glue("{baseurl}{unit}"))
       wait_time()
       unit_html <- read_html(remDr$getPageSource()[[1]])
-      subject_text <- unit_html %>% html_element("h2") %>% html_text() 
-    
-      #message(paste("Going through the unit:", subject_text))
+      subject_text <- unit_html %>% 
+        html_element("h2") %>% 
+        html_text() 
     
       reqs <- unit_html %>% 
         html_element("#requisites") 
@@ -103,23 +86,35 @@ for(code in course_codes) {
         html_element("#Overview") %>% 
         html_element(".OverviewInner") %>% 
         html_elements("div") %>% 
-        .[!is.na(html_attr(., "aria-hidden")) & 
-            html_attr(., "aria-hidden")=="true"] %>% 
-        html_text()
+        html_text() %>% 
+        pluck(2)
       
-      data <- data %>% 
-        bind_rows(tibble(!!!c(list(Course = title, 
-                                   Course_code = code, 
-                                   Unit_code = cunit,
-                                   Unit = subject_text,
-                                   Overview = overviews), 
-                              reqs_list)))
-    }
+      outcomes <- unit_html %>% 
+        html_elements("#Learningoutcomes .AccordionItem") %>%
+        html_text() %>% 
+        str_replace("^[0-9]+[.]", "") %>%
+        str_replace("keyboard_arrow_down$", "")
+      message(glue::glue("{cunit} done!"))
+      tibble(!!!c(list(Course = title, 
+                       Course_code = code, 
+                       Unit_code = cunit,
+                       Unit = subject_text,
+                       Overview = overviews,
+                       Outcomes = list(outcomes)), 
+                       reqs_list))
+})
 
-    }, error = function(x) x)
-
-}
-
+data %>% 
+  rowwise() %>% 
+  mutate(Outcomes = paste(Outcomes, collapse = "| "),
+         Prohibition = paste(Prohibition, collapse = ", "),
+         Prerequisite = paste(Prerequisite, collapse = ", "),
+         Corequisite = paste(Corequisite, collapse = ", ")) %>% 
+  mutate(across(c(Prohibition, Prerequisite, Corequisite), 
+               ~ifelse(is.na(.x), 
+                       "", 
+                       str_replace_all(.x, glue::glue("/{year}/units/"), "")))) %>% 
+  write_csv(file = "data/monash-master-datasci.csv")
 ```
 
 
