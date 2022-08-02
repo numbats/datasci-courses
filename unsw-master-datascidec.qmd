@@ -141,9 +141,12 @@ tryCatch({
     }
 
     }
-    #, error = function(x) x
+    , error = function(x) x
     )
 
-#write.csv(data, file = "unsw_master_datascidec.csv")
-
 ```
+
+```{r}
+write.csv(data, file = "data/unsw_master_datascidec.csv")
+```
+

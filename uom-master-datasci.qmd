@@ -43,7 +43,10 @@ data <- tibble(Course = character(),
 
 remDr$navigate("https://handbook.unimelb.edu.au/2022/courses/mc-datasc")
 course_html <- read_html(remDr$getPageSource()[[1]])
-  
+
+```
+
+```{r}
 tryCatch({
   
     # course name
@@ -91,7 +94,13 @@ tryCatch({
         html_element(".course__overview-wrapper") %>% 
         html_elements("p") %>% 
         html_text()
-      overviews <- overviews[1]
+      
+      if(str_trim(overviews[1], "right") %in% c("AIMS","AIM")){
+        overview <- overviews[2]
+      } else{
+        overview <- overviews[1]
+      }
+      
       
       # unit learning outcome
       lo <- unit_html %>% 
@@ -134,44 +143,65 @@ tryCatch({
       #   html_text()
       # }
       
-----------------------------------------------------------------------------      
       # corequisites
-      co <- req_html %>% 
-        html_element("???")
+      co <- "None"
         
       
-      # prohibitions
-      pro <- req_html %>% 
+      # prohibitions - select all then filter out units that are prerequisites
+      
+      if(length(pre) > 0){
+        pre_df <- pre %>% 
+        as.data.frame() %>% 
+        rename(unit = ".")
+      } else{
+        pre <- "None"
+        pre_df <- tibble(unit = character())
+      }
+      
+      pro_df <- req_html %>% 
         html_element(".page-inner") %>% 
         html_element(".mobile-wrap") %>% 
         html_elements(".zebra") %>% 
         #html_element("td") %>% 
         html_elements("a") %>% 
-        html_text()
+        html_text() %>% 
+        as.data.frame() %>% 
+        rename(unit = ".") %>% 
+        filter(!unit %in% pre_df$unit)
+      
+      if(dim(pro_df)[1] > 0){
+        pro <- as.vector(pro_df$unit)
+      } else{
+        pro <- "None"
+      }
+      
       
       
       data <- data %>% 
         bind_rows(tibble(!!!c(list(Course = title, 
                                    Course_code = "MC-DATASC", 
-                                   Course_overview = coverview,
+                                   Course_overview = paste0(coverview, collapse = " "),
                                    Unit_code = cunit,
                                    Unit = subject_text,
-                                   Overview = overviews,
-                                   Prerequisite = pre,
+                                   Overview = overview,
+                                   Prerequisite = paste0(pre, collapse = ", "),
                                    Corequisite = co,
-                                   Prohibition = pro,
+                                   Prohibition = paste0(pro, collapse = ", "),
                                    LearningOutcome =lo
                                    )))) %>% 
         mutate(Unit_type = 
-                 case_when(row_number()<= 6 ~ "Background Conditions",
+                 case_when(row_number()<= 6 ~ "Units by Background",
                            row_number() > 6 & row_number() < 17 ~ "Core",
                            row_number() > 16 ~ "Elective"))
     }
 
     }
-    #, error = function(x) x
+    , error = function(x) x
     )
 
-
-
 ```
+
+```{r}
+write.csv(data, file = "data/uom_master_datasci.csv")
+```
+
