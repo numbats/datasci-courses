@@ -12,6 +12,7 @@ format:
 library(tidyverse)
 library(rvest)
 library(RSelenium)
+library(seleniumPipes)
 library(glue)
 knitr::opts_chunk$set(echo = FALSE,
                       cache = TRUE,
@@ -90,17 +91,21 @@ tryCatch({
     for(unit in curriculum) {
       remDr$navigate(glue("http:{unit}"))
       wait_time()
-      webElem <- remDr$findElement(using = 'css selector',".content")
+      webElem<- remDr$findElement(
+        using = "css",
+                "html body div.keyline table tbody tr td div.content p table tbody tr td.odd a")
       webElem$clickElement()
+      wait_time()
       unit_html <- read_html(remDr$getPageSource()[[1]])
       
       ## get the course name and course number of each course
       cunit <- unit_html %>% 
-        html_element(".pageTitle") %>% 
+        html_element(".content") %>%
+        html_element("h1:nth-child(2)") %>% 
         html_text() %>% as.data.frame() %>% separate(.,
-                                                     col =`.`, 
-                                                     into = c("Course Number","Course Name"),
-                                                     sep =": ")
+                                                  col =`.`,
+                                                  into = c("Course Number","Course Name"),
+                                                     sep =" - ")
 
       #message(paste("Going through the unit:", cunit[,2]))
       
@@ -117,20 +122,7 @@ tryCatch({
         html_element("td") %>% 
         html_text()
       
-      ## corequisite
-      co <- unit_html %>% 
-        html_element("#enrolmentRules") %>% 
-        html_element("tr:nth-child(2)") %>% 
-        html_element("td") %>% 
-        html_text()
       
-      ##prohibitions
-      pro <- unit_html %>% 
-        html_element("#enrolmentRules") %>% 
-        html_element("tr:nth-child(3)") %>% 
-        html_element("td") %>% 
-        html_text()
-  
         ##learning outcomes
 
       lc <- unit_html %>% 
@@ -155,7 +147,5 @@ tryCatch({
                   by = "Unit_code")
     }, error = function(x) x)
   }
-
-
 
 ```
