@@ -42,7 +42,10 @@ data <- tibble(Course = character(),
 
 remDr$navigate("https://www.uwa.edu.au/study/courses/master-of-data-science")
 course_html <- read_html(remDr$getPageSource()[[1]])
-  
+
+```
+
+```{r}
 tryCatch({
   
     # course name
@@ -70,6 +73,12 @@ tryCatch({
     # extract all listed units
     curriculum <- course_html %>% 
       ???
+      # webElem<- remDr$findElement(
+      #   using = "css",
+      #           "html body div.keyline table tbody tr td div.content p table tbody tr td.odd a")
+      # webElem$clickElement()
+      # wait_time()
+      # unit_html <- read_html(remDr$getPageSource()[[1]])
   
     for(unit in curriculum) {
       remDr$navigate("unit")
@@ -111,7 +120,7 @@ tryCatch({
       data <- data %>% 
         bind_rows(tibble(!!!c(list(Course = title, 
                                    Course_code = code, 
-                                   Course_overview = coverview,
+                                   Course_overview = paste0(coverview, collapse = " "),
                                    #Unit_code = cunit,
                                    Unit = subject_text,
                                    Overview = overviews,
@@ -130,6 +139,8 @@ tryCatch({
     #, error = function(x) x
     )
 
+```
 
-
+```{r}
+write.csv(data, file = "data/uwa-master-datasci.csv")
 ```
