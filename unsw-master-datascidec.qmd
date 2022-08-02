@@ -48,7 +48,10 @@ data <- tibble(Course = character(),
 
 remDr$navigate("https://www.handbook.unsw.edu.au/postgraduate/programs/2022/8959")
 course_html <- read_html(remDr$getPageSource()[[1]])
-  
+
+```
+
+```{r}
 tryCatch({
     
     # extract name of the course
@@ -147,6 +150,6 @@ tryCatch({
 ```
 
 ```{r}
-write.csv(data, file = "data/unsw_master_datascidec.csv")
+write.csv(data, file = "data/unsw-master-datascidec.csv")
 ```
 
