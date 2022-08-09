@@ -102,7 +102,22 @@ tryCatch({
       
       overviews <- unitsum[1]
       
-      # unit learning outcome
+      # check if the the fourth element is 'Details for undergraduate courses'
+      if(nchar(unitsum[4]) > 200){
+        # unit learning outcome
+      lo <- unitsum[4]
+      
+      # pre-requisites
+      pre <- unitsum[8]
+      
+      # corequisites
+      co <- unitsum[9]
+        
+      # prohibitions
+      pro <- unitsum[10]
+      
+      } else {
+        # unit learning outcome
       lo <- unitsum[5]
       
       # pre-requisites
@@ -113,7 +128,7 @@ tryCatch({
         
       # prohibitions
       pro <- unitsum[11]
-      
+      }
       
       data <- data %>% 
         bind_rows(tibble(!!!c(list(Course = title, 
@@ -141,4 +156,5 @@ tryCatch({
 
 ```{r}
 write.csv(data, file = "data/uwa-master-datasci.csv")
+
 ```
