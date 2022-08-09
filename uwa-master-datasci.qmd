@@ -72,16 +72,14 @@ tryCatch({
     
     # extract all listed units
     curriculum <- course_html %>% 
-      ???
-      # webElem<- remDr$findElement(
-      #   using = "css",
-      #           "html body div.keyline table tbody tr td div.content p table tbody tr td.odd a")
-      # webElem$clickElement()
-      # wait_time()
-      # unit_html <- read_html(remDr$getPageSource()[[1]])
+      html_element("#page-content") %>% 
+      html_element(".course-tabs") %>% 
+      html_elements(".link-list") %>% 
+      html_elements("a") %>% 
+      html_attr("href")
   
     for(unit in curriculum) {
-      remDr$navigate("unit")
+      remDr$navigate(unit)
       wait_time()
       unit_html <- read_html(remDr$getPageSource()[[1]])
       
@@ -104,18 +102,33 @@ tryCatch({
       
       overviews <- unitsum[1]
       
-      # unit learning outcome
+      # check if the the fourth element is 'Details for undergraduate courses'
+      if(nchar(unitsum[4]) > 200){
+        # unit learning outcome
+      lo <- unitsum[4]
+      
+      # pre-requisites
+      pre <- unitsum[8]
+      
+      # corequisites
+      co <- unitsum[9]
+        
+      # prohibitions
+      pro <- unitsum[10]
+      
+      } else {
+        # unit learning outcome
       lo <- unitsum[5]
       
       # pre-requisites
-      pre <- 
+      pre <- unitsum[9]
       
       # corequisites
-      co <- 
+      co <- unitsum[10]
         
       # prohibitions
-      pro <- 
-      
+      pro <- unitsum[11]
+      }
       
       data <- data %>% 
         bind_rows(tibble(!!!c(list(Course = title, 
@@ -127,20 +140,21 @@ tryCatch({
                                    Prerequisite = pre,
                                    Corequisite = co,
                                    Prohibition = pro,
-                                   LearningOutcome =lo
+                                   LearningOutcome =paste0(lo, collapse = " ")
                                    )))) %>% 
         mutate(Unit_type = 
-                 case_when(row_number()<= 4 ~ "Background Conditions",
+                 case_when(row_number()<= 4 ~ "Conversion",
                            row_number() > 4 & row_number() < 13 ~ "Core",
                            row_number() > 13 ~ "Elective"))
     }
 
     }
-    #, error = function(x) x
+    , error = function(x) x
     )
 
 ```
 
 ```{r}
 write.csv(data, file = "data/uwa-master-datasci.csv")
+
 ```
