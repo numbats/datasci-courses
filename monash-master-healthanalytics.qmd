@@ -1,0 +1,116 @@
+---
+title: "Monash Master of Health Data Analytics"
+author: "Emi Tanaka"
+date: "`r Sys.Date()`"
+format: 
+  html: 
+    code-fold: false
+---
+
+
+```{r setup, include = FALSE}
+library(tidyverse)
+library(visNetwork)
+library(rvest)
+library(RSelenium)
+library(glue)
+library(tidytext)
+knitr::opts_chunk$set(echo = FALSE,
+                      cache = TRUE,
+                      cache.path = "cache/",
+                      fig.path = "images/")
+
+```
+
+
+```{r monash-hda}
+rD <- rsDriver(browser="firefox", port=4700L, verbose=F)
+remDr <- rD[["client"]]
+
+code <- "M6036"
+baseurl <- "https://handbook.monash.edu"
+year <- 2022
+wait_time <- function() Sys.sleep(sample(3:5, 1))
+
+remDr$navigate(glue("{baseurl}/{year}/courses/{code}?year={year}"))
+course_html <- read_html(remDr$getPageSource()[[1]])
+
+title <- course_html %>% 
+  html_element("h2") %>% 
+  html_text() %>% 
+  str_replace(paste0(code, " - "), "")
+
+curriculum <- course_html %>% 
+  html_element("#curriculumStructure") %>% 
+  html_element(".css-to4w00-Box") %>% 
+  html_elements("a") %>% 
+  html_attr("href")
+
+curriculum <- setdiff(curriculum, "/2022/units/New")
+curriculum <- case_when(curriculum=="/2022/units/MPH5040" ~ "/2021/units/MPH5040",
+                        TRUE ~ curriculum)
+
+data <- map_dfr(curriculum, function(unit) {
+      cunit <- str_replace(unit, paste0("/", year, "/units/"), "")
+      remDr$navigate(glue("{baseurl}{unit}"))
+      wait_time()
+      unit_html <- read_html(remDr$getPageSource()[[1]])
+      subject_text <- unit_html %>% 
+        html_element("h2") %>% 
+        html_text() 
+    
+      reqs <- unit_html %>% 
+        html_element("#requisites") 
+      
+      if(length(reqs)) {
+        reqs <- reqs %>% 
+          html_element(".css-to4w00-Box") %>% 
+          html_children()
+      }
+      
+      reqs_list <- list()
+      for(areq in reqs) {
+        area <- areq %>% 
+          html_element("strong") %>% 
+          html_text()
+        reqs_list[[area]] <- areq %>% 
+          html_elements("a") %>% 
+          html_attr("href") %>% 
+          list()
+      }
+      
+      overviews <- unit_html %>% 
+        html_element("#Overview") %>% 
+        html_element(".OverviewInner") %>% 
+        html_elements("div") %>% 
+        html_text() %>% 
+        pluck(2)
+      
+      outcomes <- unit_html %>% 
+        html_elements("#Learningoutcomes .AccordionItem") %>%
+        html_text() %>% 
+        str_replace("^[0-9]+[.]", "") %>%
+        str_replace("keyboard_arrow_down$", "")
+      message(glue::glue("{cunit} done!"))
+      tibble(!!!c(list(Course = title, 
+                       Course_code = code, 
+                       Unit_code = cunit,
+                       Unit = subject_text,
+                       Overview = overviews,
+                       Outcomes = list(outcomes)), 
+                       reqs_list))
+})
+
+data %>% 
+  rowwise() %>% 
+  mutate(Outcomes = paste(Outcomes, collapse = "| "),
+         Prohibition = paste(Prohibition, collapse = ", "),
+         Prerequisite = paste(Prerequisite, collapse = ", "),
+         Corequisite = paste(Corequisite, collapse = ", ")) %>% 
+  mutate(across(c(Prohibition, Prerequisite, Corequisite), 
+               ~ifelse(is.na(.x), 
+                       "", 
+                       str_replace_all(.x, glue::glue("/({year}|2021)/units/"), "")))) %>% 
+  write_csv(file = "data/monash-master-healthanalytics.csv")
+```
+
