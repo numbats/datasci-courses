@@ -36,9 +36,10 @@ data <- tibble(Course = character(),
                Unit = character(),
                Unit_code = character(),
                Overview = character(),
-               Prohibition = list(),
-               Prerequisite = list(),
-               Corequisite = list())
+               Outcome = character(),
+               Prohibition = character(),
+               Prerequisite = character(),
+               Corequisite = character())
 
 for(code in course_codes) {
   remDr$navigate(glue("{baseurl}{code}"))
@@ -56,7 +57,8 @@ tryCatch({
           html_element(" p:nth-child(2)") %>% 
           html_text()
     
-    corecourses <-course_html %>% 
+    if(code == "mdsci_mdatasci"){
+      corecourses <-course_html %>% 
       html_element("#tab-corecourses") %>% 
       html_element("fieldset:nth-child(3)") %>% 
       html_element("div:nth-child(2)") %>% 
@@ -65,8 +67,8 @@ tryCatch({
       html_children() %>% 
       html_element("a") %>% 
       html_attr("href") %>% as_tibble()
-    
-    project <- course_html %>% 
+      
+      project <- course_html %>% 
        html_element("#tab-mode") %>% 
       html_element("fieldset:nth-child(3)") %>% 
       html_element("div:nth-child(2)") %>% 
@@ -85,9 +87,19 @@ tryCatch({
       html_children() %>% 
       html_element("a") %>% 
       html_attr("href")%>% as_tibble()
-    
-    curriculum <- rbind(corecourses, electives) %>% rbind(project)
-    
+      curriculum <- rbind(corecourses, electives) %>% rbind(project)
+    }else{
+        curriculum <-course_html %>% 
+      html_element("#tab-corecourses") %>% 
+      html_element("fieldset:nth-child(3)") %>% 
+      html_element("div:nth-child(2)") %>% 
+      html_elements("table") %>% 
+      html_element("tbody") %>% 
+      html_children() %>% 
+      html_element("a") %>% 
+      html_attr("href")
+      }
+
     for(unit in curriculum) {
       remDr$navigate(glue("http:{unit}"))
       wait_time()
@@ -96,56 +108,93 @@ tryCatch({
                 "html body div.keyline table tbody tr td div.content p table tbody tr td.odd a")
       webElem$clickElement()
       wait_time()
+      webElem2<- remDr$findElement(
+        using = "xpath",
+                "/html/body/div[1]/table[4]/tbody/tr/td/div/a[2]")
+      webElem2$clickElement()
+      wait_time()
       unit_html <- read_html(remDr$getPageSource()[[1]])
       
       ## get the course name and course number of each course
-      cunit <- unit_html %>% 
-        html_element(".content") %>%
-        html_element("h1:nth-child(2)") %>% 
-        html_text() %>% as.data.frame() %>% separate(.,
-                                                  col =`.`,
-                                                  into = c("Course Number","Course Name"),
-                                                     sep =" - ")
+      unitinfo <- unit_html %>% 
+        html_element("li.accordion-item:nth-child(1)") %>% 
+        html_element("div:nth-child(2)") %>% 
+        html_element("div:nth-child(2)") %>% 
+        html_table()
+      
+      unitname <- unitinfo %>% 
+                    filter(X1 == 'Course') %>% 
+                    select(X2) %>% 
+                    as.character()
+      
+      unitcode <- unitinfo %>% 
+                    filter(X1 == 'Course Code') %>% 
+                    select(X2) %>% 
+                    as.character()
 
       #message(paste("Going through the unit:", cunit[,2]))
       
       ## get the overview of the unit
-      overview <- unit_html %>% 
-        html_element(".b-summary") %>% 
-        html_element("p") %>% 
-        html_text()
-      
-       ## pre-requisites
-      pre <- unit_html %>% 
-        html_element("#enrolmentRules") %>% 
-        html_element("tr:nth-child(1)") %>% 
-        html_element("td") %>% 
-        html_text()
+      overview <- unitinfo %>% 
+                    filter(X1 == 'Course Description') %>% 
+                    select(X2) %>% 
+                    as.character()
       
       
-        ##learning outcomes
+      ## prerequisite 
+       if('Prerequisites' %in% unitinfo$X1){
+                pre <- unitinfo %>% 
+                  filter(X1 == 'Prerequisites') %>% 
+                  select(X2) %>% 
+                  as.character()}else{pre <- NA}
+       
+       ## prohibition
+       if('Incompatible' %in% unitinfo$X1){
+                 pro <-  unitinfo %>% 
+                    filter(X1 == 'Incompatible') %>% 
+                    select(X2) %>% 
+                    as.character()}else{pro <- NA}
+       
+       if('Corequisite' %in% unitinfo$X1){
+                co <-unitinfo %>% 
+                  filter(X1 == 'Corequisite') %>% 
+                  select(X2) %>% 
+                  as.character()}else{co <-NA}
 
-      lc <- unit_html %>% 
-        html_element(".list-spaced") %>% 
-        html_text()
+        ##learning outcomes
+      lc <- possibly({
+        unit_html %>% 
+          html_element(".ui-accordion-content-active") %>% 
+          html_element("div:nth-child(2)")
+        }, otherwise = "error" )
+      
+      if(length(lc) > 0) {
+        lc <- unit_html %>% 
+          html_element(".ui-accordion-content-active") %>% 
+          html_element("div:nth-child(2)") %>% 
+          html_element("div:nth-child(1)") %>% 
+          html_text() %>% str_remove_all("\n        ") 
+      } else {
+        lc <- NA
+      }
       
       data <- data %>% 
         bind_rows(tibble(!!!list(Course = title, 
-                                   Course_code = "MDS", 
-                                   Unit = cunit[,2],
-                                   Unit_code = cunit[,1],
+                                   Course_code = code, 
+                                   Unit = unitname,
+                                   Unit_code = unitcode,
                                    Overview = overview,
-                              #     Assumed_knowledge = assumed,
-                                   Prohibition = pro,
-                                   Prerequisite = pre, 
-                                   Corequisite = co,
-                                   LearningOutcome =lc)))
+                                   Outcomes =lc,
+                                  Prohibition = pro,
+                                  Prerequisite= pre,
+                                 Corequisite = co))) %>% 
+        mutate(Prohibition = na_if(Prohibition, "character(0)"))
       }
       
-    data <- merge(data, 
-                  curriculum,
-                  by = "Unit_code")
     }, error = function(x) x)
   }
 
+
+# stop the rselenium server
+#rD[["server"]]$stop()
 ```
