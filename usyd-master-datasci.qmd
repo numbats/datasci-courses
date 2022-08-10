@@ -33,10 +33,10 @@ data <- tibble(Course = character(),
                Unit = character(),
                Unit_code = character(),
                Overview = character(),
+               Outcome = character(),
                Prohibition = character(),
                Prerequisite = character(),
-               Corequisite = character(),
-               LearningOutcome = character())
+               Corequisite = character())
 
 
 remDr$navigate("https://www.sydney.edu.au/handbooks/engineering_PG/coursework/courses/data_science_rules.shtml")
@@ -114,10 +114,10 @@ tryCatch({
         html_text()
       
       ## corequisite
-      co <- unit_html %>% 
-        html_element("#enrolmentRules") %>% 
-        html_element("tr:nth-child(2)") %>% 
-        html_element("td") %>% 
+      co <- unit_html %>%
+        html_element("#enrolmentRules") %>%
+        html_element("tr:nth-child(2)") %>%
+        html_element("td") %>%
         html_text()
       
       ##prohibitions
@@ -140,13 +140,14 @@ tryCatch({
                                    Unit_code = cunit[,1],
                                    Overview = overview,
                                    Prohibition = pro,
-                                   Prerequisite = pre, 
-                                   Corequisite = co,
-                                   LearningOutcome =lc)))
+                                   Prerequisite = pre,
+                                   Corequisites = co,
+                                   Outcome =lc)))
       }
-      
-    data <- merge(data, 
-                  curriculum,
-                  by = "Unit_code")
     }, error = function(x) x)
+```
+
+
+```{r}
+write.csv(data, file = "data/usyd-master-datasci.csv")
 ```

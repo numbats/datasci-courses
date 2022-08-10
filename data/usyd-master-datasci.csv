@@ -1,0 +1,336 @@
+"","Course","Course_code","Unit","Unit_code","Overview","Outcome","Prohibition","Prerequisite","Corequisite","Corequisites"
+"1","Master of Data Science","MDS","Visual Analytics","COMP5048","Visual Analytics aims to facilitate the data analytics process through Information Visualisation. Information Visualisation aims to make good pictures of abstract information, such as stock prices, family trees, and software design diagrams. Well designed pictures can convey this information rapidly and effectively. The challenge for Visual Analytics is to design and implement effective Visualisation methods that produce pictorial representation of complex data so that data analysts from various fields (bioinformatics, social network, software visualisation and network) can visually inspect complex data and carry out critical decision making. This unit will provide basic HCI concepts, visualisation techniques and fundamental algorithms to achieve good visualisation of abstract information. Further, it will also provide opportunities for academic research and developing new methods for Visual Analytic methods.","LO1. select appropriate visual variables, space utilisation methods, and levels of organisation of visual components, to depict complex data
+                                                
+                                                    LO2. select, apply, and modify visualisation methods suited to a given problem domain, in order to facilitate data analytic process through visual inspection
+                                                
+                                                    LO3. understand basic computational concepts, techniques, and algorithms to produce good visualisation of abstract data
+                                                
+                                                    LO4. understand the basic human-computer interaction principles, which influence the production of good/effective visualisation
+                                                ","None","None",NA,"None"
+"2","Master of Data Science","MDS","Principles of Data Science","COMP5310","The focus of this unit is on understanding and applying relevant concepts, techniques, algorithms, and tools for the analysis, management and visualisation of data- with the goal of enabling discovery of information and knowledge to guide effective decision making and to gain new insights from large data sets.  
+To this end, this unit of study provides a broad introduction to data management, analysis, modelling and visualisation using the Python programming language. Development of custom software using the powerful, general-purpose Python scripting language; Data collection, cleaning, pre-processing, and storage using various databases; Exploratory data analysis to understand and profile complex data sets; Mining unlabelled data to identify relationships, patterns, and trends; Machine learning from labelled data to predict into the future; Communicate findings to varied audiences, including effective data visualisations.  
+Core data science content will be taught in normal lecture + tutorial delivery mode. Python programming will be taught through an online learning platform in addition to the weekly face-to-face lecture/tutorials. The unit of study will include hands-on exercises covering the range of data science skills above.","LO1. select statistical techniques appropriate for evaluation of a predictive model that is based on data analysis, and justify this choice
+                                                
+                                                    LO2. select statistical techniques appropriate for summarisation and analysis of a data set, and justify this choice
+                                                
+                                                    LO3. apply concepts and terms from social science to describe and analyse the role of a data analysis task in its organisational context
+                                                
+                                                    LO4. understand the role of data science in decision-making
+                                                
+                                                    LO5. understand the technical issues that are present in the stages of a data analysis task and the properties of different technologies and tools that can be used to deal with the issues
+                                                
+                                                    LO6. process large data sets using appropriate technologies
+                                                
+                                                    LO7. carry out (in guided stages) the whole design and implementation cycle for creating a pipeline to analyse a large heterogenous dataset
+                                                
+                                                    LO8. seek details of how to use a method or tool in the data analytic process
+                                                
+                                                    LO9. communicate the results produced by an analysis pipeline, in oral and written form, including meaningful diagrams
+                                                
+                                                    LO10. communicate the process used to analyse a large data set, and justify the methods used.
+                                                ","INFO3406","None",NA,"None"
+"3","Master of Data Science","MDS","Machine Learning and Data Mining","COMP5318","Machine learning is the process of automatically building mathematical models that explain and generalise datasets. It integrates elements of statistics and algorithm development into the same discipline. Data mining is a discipline within knowledge discovery that seeks to facilitate the exploration and analysis of large quantities for data, by automatic and semiautomatic means. This subject provides a practical and technical introduction to machine learning and data mining.  
+Topics to be covered include problems of discovering patterns in the data, classification, regression, feature extraction and data visualisation. Also covered are analysis, comparison and usage of various types of machine learning techniques and statistical techniques.","LO1. understand the basic principles, strengths, weaknesses and applicability of machine learning algorithms for solving classification, regression, clustering and reinforcement learning tasks.
+                                                
+                                                    LO2. have obtained practical experience in designing, implementing and evaluating machine learning algorithms
+                                                
+                                                    LO3. have gained practical experience in using machine learning software and libraries
+                                                
+                                                    LO4. present and interpret data and information in verbal and written form
+                                                ","None","None",NA,"None"
+"4","Master of Data Science","MDS","Computational Statistical Methods","STAT5003","The objectives of this unit of study are to develop an understanding of modern computationally intensive methods for statistical learning, inference, exploratory data analysis and data mining. Advanced computational methods for statistical learning will be introduced, including clustering, density estimation, smoothing, predictive models, model selection, combinatorial optimisation methods, sampling methods, the Bootstrap and Monte Carlo approach. In addition, the unit will demonstrate how to apply the above techniques effectively for use on large data sets in practice.","LO1. Formulate domain/context specific questions and identify appropriate statistical analysis.
+                                                
+                                                    LO2. Formulate, evaluate and interpret appropriate statistical models to describe the relationships between multiple factors.
+                                                
+                                                    LO3. Perform statistical machine learning using a given classifier and create a cross-validation scheme to calculate the prediction accuracy.
+                                                
+                                                    LO4. Understand, perform and interpret various unsupervised machine learning methods
+                                                
+                                                    LO5. Construct and implement resampling techniques to understand the behaviour of statistical models.
+                                                
+                                                    LO6. Create a reproducible report to communicate outcomes using a programming language.
+                                                ","None","None",NA,"None"
+"5","Master of Data Science","MDS","Data Science Capstone Project","DATA5703","The Data Science Capstone project provides an opportunity for students to carry out a defined piece of independent research or design. These skills include the capacity to define a research or design question, show how it relates to existing knowledge and carry out the research or design in a systematic manner. Students will be expected to choose a research/development project that demonstrates their prior learning in the data science domain (MDS). The results will be presented in a final project presentation and report. It is not expected that the project outcomes from this unit will represent a significant contribution to new knowledge. The unit aims to provide students with the opportunity to carry out a defined piece of independent investigative research or design work in a setting and manner that fosters the development of data science skills in research or design.","LO1. utilise prior domain knowledge to define and develop a project relevant to a data science domain (MDS)
+                                                
+                                                    LO2. initiate, formulate and plan a semester-long DS project, incorporating risk mitigation strategies and following the plan methodically
+                                                
+                                                    LO3. analyse and synthesise information, draw appropriate conclusions and present those conclusions in context, with due consideration of methods and assumptions involved
+                                                
+                                                    LO4. demonstrate knowledge of recent DS literature and possess an ability to apply investigative research to their own project
+                                                
+                                                    LO5. document, report and present project work undertaken to engage an academic and/or professional audience
+                                                
+                                                    LO6. develop, substantiate and articulate professional positions on issues relevant to the chosen area of practice, critically reflect on and evaluate the outcomes and process of the project
+                                                ","DATA5707 or DATA5708 or DATA5709","A candidate for the MDS who has completed 24 credit points from Core or Elective units of study may take this unit",NA,"None"
+"6","Master of Data Science","MDS","Data Science Capstone A","DATA5707","The Data Science Capstone project provides an opportunity for students to carry out a defined piece of independent research or design. These skills include the capacity to define a research or design question, show how it relates to existing knowledge and carry out the research or design in a systematic manner. Students will be expected to choose a research/development project that demonstrates their prior learning in the data science domain. The results will be presented in a final project presentation and report. It is not expected that the project outcomes from this unit will represent a significant contribution to new knowledge. The unit aims to provide students with the opportunity to carry out a defined piece of independent investigative research or design work in a setting and manner that fosters the development of data science skills in research or design. Eligible students for the Data Science Capstone project will be required to complete both DATA5707 (6 CPS) and DATA5708 (6 CPS), totalling 12 CPS.","LO1. utilise prior domain knowledge to define and develop a project relevant to a data science domain (MDS)
+                                                
+                                                    LO2. initiate, formulate and plan a semester-long DS project, incorporating risk mitigation strategies and following the plan methodically
+                                                
+                                                    LO3. analyse and synthesise information, draw appropriate conclusions and present those conclusions in context, with due consideration of methods and assumptions involved
+                                                
+                                                    LO4. demonstrate knowledge of recent DS literature and possess an ability to apply investigative research to their own project
+                                                
+                                                    LO5. document, report and present project work undertaken to engage an academic and/or professional audience
+                                                
+                                                    LO6. develop, substantiate and articulate professional positions on issues relevant to the chosen area of practice, critically reflect on and evaluate the outcomes and process of the project
+                                                ","DATA5703 or DATA5709. Eligible students of the Data Science Capstone Project may choose either DATA5703 or (DATA5707 and DATA5708) or DATA5709","A part-time enrolled candidate for the MDS who has completed 24 credit points from Core or Elective units of study may take this unit",NA,"None"
+"7","Master of Data Science","MDS","Data Science Capstone B","DATA5708","The Data Science Capstone project provides an opportunity for students to carry out a defined piece of independent research or design. These skills include the capacity to define a research or design question, show how it relates to existing knowledge and carry out the research or design in a systematic manner. Students will be expected to choose a research/development project that demonstrates their prior learning in the data science domain. The results will be presented in a final project presentation and report. It is not expected that the project outcomes from this unit will represent a significant contribution to new knowledge. The unit aims to provide students with the opportunity to carry out a defined piece of independent investigative research or design work in a setting and manner that fosters the development of IT skills in research or design. Eligible students for the Data Science Capstone project will be required to complete both DATA5707 (6 CPS) and DATA5708 (6 CPS), totalling 12 CPS.","LO1. utilise prior domain knowledge to define and develop a project relevant to a data science domain (MDS)
+                                                
+                                                    LO2. initiate, formulate and plan a semester-long DS project, incorporating risk mitigation strategies and following the plan methodically
+                                                
+                                                    LO3. analyse and synthesise information, draw appropriate conclusions and present those conclusions in context, with due consideration of methods and assumptions involved
+                                                
+                                                    LO4. demonstrate knowledge of recent DS literature and possess an ability to apply investigative research to their own project
+                                                
+                                                    LO5. document, report and present project work undertaken to engage an academic and/or professional audience
+                                                
+                                                    LO6. develop, substantiate and articulate professional positions on issues relevant to the chosen area of practice, critically reflect on and evaluate the outcomes and process of the project
+                                                ","DATA5703 or DATA5709. Eligible students of the Data Science Capstone Project may choose either DATA5703 or (DATA5707 and DATA5708) or DATA5709","A part-time enrolled candidate for the MDS who has completed 24 credit points from Core or Elective units of study may take this unit",NA,"DATA5707"
+"8","Master of Data Science","MDS","Data Science Capstone Project - Individual","DATA5709","The Data Science Capstone project unit provides an opportunity for high-achieving students (WAM of 75+) to carry out an individual defined piece of work with academics of our school. The students will acquire skills including the capacity to define a project, show how it relates to existing work, and carry out the project in a systematic manner. Students will apply their gained knowledge of units of study in the data science domain (MDS). The results will be presented in a final project presentation and report. The unit aims to provide students with the opportunity to carry out an advanced project work in a setting and manner that fosters the development of data science skills in research or design.","LO1. utilise prior domain knowledge to define and develop a project relevant to a data science domain (MDS)
+                                                
+                                                    LO2. initiate, formulate and plan a semester-long DS project, incorporating risk mitigation strategies and following the plan methodically
+                                                
+                                                    LO3. analyse and synthesise information, draw appropriate conclusions and present those conclusions in context, with due consideration of methods and assumptions involved
+                                                
+                                                    LO4. demonstrate knowledge of recent DS literature and possess an ability to apply investigative research to their own project
+                                                
+                                                    LO5. document, report and present project work undertaken to engage an academic and/or professional audience
+                                                
+                                                    LO6. develop, substantiate and articulate professional positions on issues relevant to the chosen area of practice, critically reflect on and evaluate the outcomes and process of the project
+                                                ","DATA5703 or DATA5707 or DATA5708","A candidate for the MDS who has completed 24 credit points from Core or Elective units of study, and has a WAM of 75+ may take this unit",NA,"None"
+"9","Master of Data Science","MDS","Natural Language Processing","COMP5046","This unit introduces computational linguistics and the statistical techniques and algorithms used to automatically process natural languages (such as English or Chinese). It will review the core statistics and information theory, and the basic linguistics, required to understand statistical natural language processing (NLP). Statistical NLP is used in a wide range of applications, including information retrieval and extraction; question answering; machine translation; and classifying and clustering of documents. This unit will explore the key challenges of natural language to computational modelling, and the state of the art approaches to the key NLP sub-tasks, including tokenisation, morphological analysis, word sense representation, part-of-speech tagging, named entity recognition and other information extraction, text categorisation, phrase structure parsing and dependency parsing. You will implement many of these sub-tasks in labs and assignments. The unit will also investigate the annotation process that is central to creating training data for statistical NLP systems. You will annotate data as part of completing a real-world NLP task. 
+","LO1. apply basic linguistic knowledge to identifying the structure of language
+                                                
+                                                    LO2. have developed formal models to express natural language phenomenon
+                                                
+                                                    LO3. have developed machine learning and deep learning for solving natural language tasks
+                                                
+                                                    LO4. evaluate the performance of natural language processing systems
+                                                
+                                                    LO5. implement and debug large NLP systems in a clean and structured manner
+                                                
+                                                    LO6. apply machine learning/deep learning methods and information theory principles to modelling language.
+                                                ","None","None",NA,"None"
+"10","Master of Data Science","MDS","Advanced Machine Learning","COMP5328","Machine learning models explain and generalise data. This course introduces some fundamental machine learning concepts, learning problems and algorithms to provide understanding and simple answers to many questions arising from data explanation and generalisation. For example, why do different machine learning models work? How to further improve them? How to adapt them to different purposes?","LO1. Present the design and evaluation of a machine learning algorithm, describing the design processes and evaluation
+                                                
+                                                    LO2. Understand the variance and bias trade-off in machine learning algorithms
+                                                
+                                                    LO3. Understand and analyse some machine learning algorithms and have some knowledge to further improve them
+                                                
+                                                    LO4. Understand and analyse some machine learning problems and have some knowledge to adapt the existing machine learning models to different purposes
+                                                
+                                                    LO5. Implement machine learning algorithms from peer-reviewed papers
+                                                
+                                                    LO6. Understand the nature of the statistical foundations of designing or adapting learning algorithms
+                                                
+                                                    LO7. At the completion of this unit, you should be able to demonstrate knowledge of the introduced machine learning models and the relative strengths and weaknesses of each and their most appropriate uses
+                                                
+                                                    LO8. At the completion of this unit, you should be able to demonstrate knowledge of methods to analyse machine learning algorithms, such as hypothesis complexities and generalisation bounds.
+                                                ","None","None",NA,"COMP5318 OR COMP3308 OR COMP3608"
+"11","Master of Data Science","MDS","Deep Learning","COMP5329","This course provides an introduction to deep machine learning, which is rapidly emerging as one of the most successful and widely applicable set of techniques across a range of applications. Students taking this course will be exposed to cutting-edge research in machine learning, starting from theories, models, and algorithms, to implementation and recent progress of deep learning. Specific topics include: classical architectures of deep neural network, optimization techniques for training deep neural networks, theoretical understanding of deep learning, and diverse applications of deep learning in computer vision.","LO1. demonstrate knowledge of the broad range of deep learning applications, such as image classification, object detection, image segmentation and face recognition
+                                                
+                                                    LO2. use deep learning software to create deep learning prototypes
+                                                
+                                                    LO3. evaluate deep learning algorithms
+                                                
+                                                    LO4. demonstrate knowledge of the main methods of deep neural network design and evaluation and the relative strengths and weaknesses of each, and their most appropriate uses
+                                                
+                                                    LO5. model application problems as deep learning problems
+                                                
+                                                    LO6. apply and tailor known deep learning algorithms for solving new challenging problems
+                                                
+                                                    LO7. present the design and evaluation of a deep learning prototype, defining the requirements, describing the design processes and evaluation.
+                                                ","None","None",NA,"None"
+"12","Master of Data Science","MDS","Advanced Data Models","COMP5338","This unit of study gives a comprehensive overview of post-relational data models and of latest developments in data storage technology.  
+Particular emphasis is put on spatial, temporal, and NoSQL data storage. This unit extensively covers the advanced features of SQL:2003, as well as a few dominant NoSQL storage technologies. Besides in lectures, the advanced topics will be also studied with prescribed readings of database research publications.","LO1. At the completion of this unit, you should  understand various NoSQL data model including document store, key-value data model, spatial model, time series data models and more
+                                                
+                                                    LO2. At the completion of this unit, you should be able to write simple CRUD queries and implement aggregation in MongoDB and Neo4j.
+                                                
+                                                    LO3. At the completion of this unit, you should understand the index mechanisms in various database systems.
+                                                
+                                                    LO4. At the completion of this unit, you should be able to analyse and tune the query performance for MongoDB and Neo4j.
+                                                
+                                                    LO5. At the completion of this unit, you should understand key issues such as partition, replication and fault tolerance in distributed database systems.
+                                                
+                                                    LO6. At the completion of this unit, you should understand physical storage and their impacts on query performance
+                                                ","None","None",NA,"None"
+"13","Master of Data Science","MDS","Cloud Computing","COMP5349","This unit covers topics of active and cutting-edge research within IT in the area of 'Cloud Computing'.  
+Cloud Computing is an emerging paradigm of utilising large-scale computing services over the Internet that will affect individual and organization's computing needs from small to large. Over the last decade, many cloud computing platforms have been set up by companies like Google, Yahoo!, Amazon, Microsoft, Salesforce, Ebay and Facebook. Some of the platforms are open to public via various pricing models. They operate at different levels and enable business to harness different computing power from the cloud.  
+In this course, we will describe the important enabling technologies of cloud computing, explore the state-of-the art platforms and the existing services, and examine the challenges and opportunities of adopting cloud computing. The unit will be organized as a series of presentations and discussions of seminal and timely research papers and articles. Students are expected to read all papers, to lead discussions on some of the papers and to complete a hands-on cloud-programming project.","LO1. describe and analyze the execution plan of various big data workloads
+                                                
+                                                    LO2. describe the fundamental techniques in cloud computing such as data center infrastructures, virtualization and container technology, partitioning, replication and fault tolerance
+                                                
+                                                    LO3. describe and compare key principles and implementation details of cloud services like infrastructure, platform, storage and software services
+                                                
+                                                    LO4. describe resource scheduling at various levels, e.g. VM, container and programming
+                                                
+                                                    LO5. explain various algorithms for distributed data consistency such as 2PC and Paxos
+                                                
+                                                    LO6. design and implement big data analytic workload using various frameworks
+                                                
+                                                    LO7. apply functional programming paradigm to design big data analytic workload
+                                                
+                                                    LO8. analyze the execution performance of big data analytic workload based on hardware configuration and parameter setting
+                                                
+                                                    LO9. evaluate the performance of various algorithms on a specific analytic workload.
+                                                ","None","None",NA,"None"
+"14","Master of Data Science","MDS","Multimedia Retrieval","COMP5425","The explosive growth of multimedia data, including text, audio, images and video has imposed unprecedented challenges for search engines to meet various information needs of users. This unit provides students with the necessary and updated knowledge of this field in the context of big data, from the information retrieval basics of a search engine, to many advanced techniques towards next generation search engines, such as content based image and video retrieval, large scale visual information retrieval, and social media.","LO1. perform functional analysis for specific application domain and specific users
+                                                
+                                                    LO2. conduct literature review in the field related to a given task
+                                                
+                                                    LO3. perform function design of a retrieval system
+                                                
+                                                    LO4. design technical solutions to solve a media retrieval problem with learned knowledge and techniques
+                                                
+                                                    LO5. explain the framework and key components of a general retrieval systems
+                                                
+                                                    LO6. reflect on the state of the art in multimedia retrieval
+                                                
+                                                    LO7. evaluate the advantages and shortcomings of a specific retrieval technique and solution
+                                                
+                                                    LO8. practice popular algorithms related to retrieval techniques, such as feature extraction and similarity measurement.
+                                                ","None","None",NA,"None"
+"15","Master of Data Science","MDS","Data Analytics and Business Intelligence","INFO5060","The frontier for using data to make decisions has shifted dramatically. High performing enterprises are now building their competitive strategies around data-driven insights that in turn generate impressive business results. This course provides an overview of Business Intelligence (BI) concepts, technologies and practices, and then focuses on the application of BI through a team based project simulation that will allow students to have practical experience in building a BI solution based on a real world case study.","LO1. Design and implement a business intelligence dashboard solution
+                                                
+                                                    LO2. Demonstrate thorough understanding of the conceptual foundations and technological underpinnings of data analytics and components of business intelligence architecture
+                                                
+                                                    LO3. Use library databases and search online material
+                                                
+                                                    LO4. Provide professional decision-making in developing a business intelligence solution. Exercise sound critical judgement in undertaking a real world Business Intelligence development case study.
+                                                
+                                                    LO5. Contribute to team work through the team assignments and presentations.
+                                                
+                                                    LO6. Present in-depth on a `customer` on a Business Intelligence Solution. Extensive consideration of theoretical and methodological issues regarding the solution proposed. Interpret and discuss issues and situations around the solution with due consideration of broad theoretical/practical context.
+                                                ","None","None",NA,"None"
+"16","Master of Data Science","MDS","Information Security Management","INFO5301","This unit of study gives a broad view of the management aspects of information security. We emphasise corporate governance for information security, organisational structures within which information security is managed, risk assessment, and control structures. Planning for security, and regulatory issues, are also addressed.","LO1. Communicate on information security issues to both managers and technical staff
+                                                
+                                                    LO2. List and outline major concerns and issues of managing information security
+                                                
+                                                    LO3. Define, describe and discuss management and governance aspects of information security
+                                                
+                                                    LO4. Describe risk management methodology and control structures as applied to the management of information security
+                                                
+                                                    LO5. Describe and characterise the attributes of information security management practices.
+                                                ","None","None",NA,"None"
+"17","Master of Data Science","MDS","Statistical Learning and Data Mining","QBUS6810","It is now common for businesses to have access to very rich information data sets, often generated automatically as a by-product of the main institutional activity of a firm or business unit. Data Mining deals with inferring and validating patterns, structures and relationships in data, as a tool to support decisions in the business environment.  This unit offers an insight into the main statistical methodologies for the visualization and the analysis of business and market data. It provides the tools necessary to extract information required for specific tasks such as credit scoring, prediction and classification, market segmentation and product positioning. Emphasis is given to business applications of data mining using modern software tools.","LO1. know the statistical theory required for business data mining and data analysis
+                                                
+                                                    LO2. identify which statistical tool is most relevant for specific business analytic tasks
+                                                
+                                                    LO3. identify the advantages and limitations of each method
+                                                
+                                                    LO4. extract information from large volumes of data readily available from the business environment
+                                                
+                                                    LO5. obtain and interpret a meaningful analytical result using a software package such as Python
+                                                
+                                                    LO6. work productively in a team
+                                                
+                                                    LO7. present and write about findings effectively.
+                                                ","None","(ECMT5001 or QBUS5001 or STAT5003) and (BUSS6002 or COMP5310 or COMP5318)",NA,"None"
+"18","Master of Data Science","MDS","Predictive Analytics","QBUS6840","To be effective in a competitive business environment, a business analyst needs to be able to use predictive analytics to translate information into decisions and to convert information about past performance into reliable forecasts. An effective analyst also should be able to identify the analytical tools and data structures to anticipate market trends. In this unit, students gain skills required to succeed in today's highly analytical and data-driven economy. The unit introduces the basics of data management, business forecasting, decision trees, logistic regression, and predictive modelling. The unit features corporate case studies and hands-on exercises to demonstrate the concepts presented.","LO1. Select and use the appropriate technique to analyse the structure of time series data
+                                                
+                                                    LO2. Analyse real business data considering the characteristics of time-series data.
+                                                
+                                                    LO3. Demonstrate proficiency in the use of statistical software, e.g. Python, for the implementation of predictive models
+                                                
+                                                    LO4. Select and use an appropriate technique to predict the future behaviour of business variables of interest, including the prediction of discrete outcomes.
+                                                
+                                                    LO5. Work productively and collaboratively in a team
+                                                ","None","(QBUS5001 or ECMT5001 or STAT5003) and (BUSS6002 or COMP5310 or COMP5318)",NA,"None"
+"19","Master of Data Science","MDS","Introduction to Complex Systems","CSYS5010","Globalisation, rapid technological advances, the development of integrated and distributed systems, cross-disciplinary technical collaboration, and the emergence of ""evolved"" (as opposed to designed) systems are some of the reasons why many systems have begun to be described as complex systems in recent times. Complex technological, biological, socio-economic and socio-ecological systems (power grids, communication and transport systems, food webs, megaprojects, and interdependent civil infrastructure) are composed of large numbers of diverse interacting parts and exhibit self-organisation and/or emergent behaviour. This unit will introduce the basic concepts of ""complex systems theory"", and focus on methods for the quantitative analysis and modelling of collective emergent phenomena, using diverse computational approaches such as agent-based modelling and simulation, cellular automata, bio-inspired algorithms, and game theory. Students will gain theoretical knowledge of complex adaptive systems, coupled with practical skills in computational simulation and forecasting using a range of modern toolkits.","LO1. understand and analyse the dynamics of complex systems using intermediate critical analysis skills
+                                                
+                                                    LO2. analyse and evaluate models of complex systems using scientific programming and the 'Modelling Loop'
+                                                
+                                                    LO3. Create, using a scientific modelling language such as NetLogo, multi-agent models of complex systems
+                                                
+                                                    LO4. understand the nature, structure, function and evolution of complex systems and emergent behaviour in multiple different fields
+                                                
+                                                    LO5. select and apply different approaches to analysing complex systems in different domains (e.g. game theory, dynamical systems, genetic algorithms)
+                                                
+                                                    LO6. design and evaluate large systems that satisfy structural and functional criteria within given domains and contexts integrating complex systems approaches.
+                                                ","None","None",NA,"None"
+"20","Master of Data Science","MDS","Data Analysis in the Social Sciences","DATA5207","Data science is a new, rapidly expanding field. There is an unprecedented demand from technology companies, financial services, government and not-for-profits for graduates who can effectively analyse data. This subject will help students gain a critical understanding of the strengths and weaknesses of quantitative research, and acquire practical skills using different methods and tools to answer relevant social science questions.  
+This subject will offer a nuanced combination of real-world applications to data science methodology, bringing an awareness of how to solve actual social problems to the Master of Data Science. We cover topics including elections, criminology, economics and the media. You will clean, process, model and make meaningful visualisations using data from these fields, and test hypotheses to draw inferences about the social world.  
+Techniques covered range from descriptive statistics and linear and logistic regression, the analysis of data from randomised experiments, model selection for prediction and classification tasks, to the analysis of unstructured text as data, multilevel and geospatial modelling, all using the open source program R. In doing this, not only will we build on the skills you have already mastered through this degree, but explore different ways to use them once you graduate.","LO1. demonstrate familiarity with the various ethical issues and professional standards around the gathering of data
+                                                
+                                                    LO2. demonstrate proficiency in the delivery of a small-scale project, and the management of the project from initial conception to delivery to evaluation
+                                                
+                                                    LO3. present data and reports of a high standard
+                                                
+                                                    LO4. autonomously collect, collate, assess and compare data from multiple sources, such as the Australian Bureau of Statistics and the Australian Data Archive. You will be able to discern the quality of data to a minute level, and be able to draw a broad range of insights from data of various degrees of statistical significance
+                                                
+                                                    LO5. apply established data analytical methodology in a sophisticated manner and have a medium degree of proficiency in methodological procedures to approach complex problems specifically related to the social sciences
+                                                
+                                                    LO6. utilise industry-leading concepts and frameworks in your pedagogy and direct formidable amounts of data for protracted, complex insights into areas such as polling data and demography
+                                                
+                                                    LO7. apply a theoretical understanding of statistical methods to practical problems around data gathering methodology, statistical significance and sample sizing, and autonomously create basic design frameworks for statistical modelling problems.
+                                                ","None","None",NA,"None"
+"21","Master of Data Science","MDS","Evaluating Learning Tech. Innovation","EDPC5012","This unit is intended to help students acquire the knowledge and skills needed to evaluate ICT-enhanced learning innovations.  It provides an introduction to the theory and practice of evaluations, drawing principles and methods from best practice in program evaluation and the areas of ICT-enhanced learning.  Attention is paid to a holistic approach to evaluation, stressing the need to plan, design and implement evaluation in context.  It is suitable for those with an interest in formal education, corporate training and professional development.","LO1. demonstrate an understanding of the general principles and practices of educational evaluation
+                                                
+                                                    LO2. understand the affordances and limitations of emerging digital evaluation methods
+                                                
+                                                    LO3. understand different evaluation approaches and techniques
+                                                
+                                                    LO4. articulate the benefits of taking holistic and responsive approaches to the evaluation of innovations
+                                                
+                                                    LO5. choose appropriately evaluation methods and techniques given the specific requirements of the particular task and context
+                                                
+                                                    LO6. apply principles and methods of educational evaluation to the evaluation of digital learning systems and resources
+                                                
+                                                    LO7. construct and pilot an evaluation instrument for evaluating a digital learning resource
+                                                
+                                                    LO8. construct an integrated evaluation framework for a specific evaluation task you need to tackle
+                                                ","None","None",NA,"None"
+"22","Master of Data Science","MDS","Learning Technology Research Frontiers","EDPC5025","This unit is designed for students interested in the newest research developments in the area of learning technology, and those who want to gain a deeper understanding of research methods and techniques, appropriate to the fields of the learning sciences and technologies. It is ideal for those students who want to explore the newest topics of their interest and simultaneously learn about research design in a collaborative peer-supported learning environment.  Students will learn to assess critically emergingdomains of learning technology innovation, understand different kinds of research methods and choose appropriate research methods for carrying out empirical studies.  Students will participate in debates, research projects.  The unit is student-led and involves proactive individual and collaborative exploration of topics.","LO1. discuss recent theoretical developments in the field of learning technologies and ICT-enhanced learning and teaching
+                                                
+                                                    LO2. conduct and write research literature review in the area of learning technologies
+                                                
+                                                    LO3. critically analyse and assess the merits and limitations of different kinds of research in the field of learning technologies
+                                                
+                                                    LO4. demonstrate an understanding of the main methodological research developments in the field of learning technologies
+                                                
+                                                    LO5. demonstrate an understanding of the learning technology research cycle
+                                                
+                                                    LO6. demonstrate a deep knowledge and abilities to make an informed judgement about the potential of emerging learning technology's domains.
+                                                
+                                                    LO7. demonstrate capacities to engage in and facilitate professional discussions about learning technology innovations
+                                                ","None","None",NA,"None"
+"23","Master of Data Science","MDS","Applied Healthcare Data Science","HTIN5005","The current health data revolution promises transformative advancements in healthcare services and delivery. However, the data generated are vast and complex. Extracting actionable understanding requires cross-disciplinary engagement between data science with healthcare. This unit explores the computational technologies involved in integrating and making sense of the breath of health data, and their use in better understanding the patient. Students will understand the data challenges presented by the various assays in which patients are quantified, spanning genetic testing to organ imaging. Students will explore how computational and machine learning models can span health data to derive integrated understanding of the links and patterns across them. They will employ such models in performing diagnosis and forecasting disease progression and intervention outcomes, thus enabling personalised medicine and supporting clinical decision making. This unit will develop students' understanding of current healthcare challenges, how these can be framed as data science questions, and how they can engage and apply their knowledge in cross-disciplinary ventures to improve healthcare.","LO1. Demonstrate knowledge of the broad range of computational problems in healthcare.
+                                                
+                                                    LO2. Use machine learning tools to address the needs in healthcare data science.
+                                                
+                                                    LO3. Evaluate the performance of machine learning tools in computational healthcare problems.
+                                                
+                                                    LO4. Apply and tailor known machine learning tools for solving new challenging healthcare problems.
+                                                
+                                                    LO5. Present the design and evaluation of a machine learning prototype for healthcare data science problems, defining the requirements and describing the design processes and evaluation.
+                                                
+                                                    LO6. Communicate and collaborate effectively across technological and healthcare/medicine disciplinary boundaries.
+                                                ","None","None",NA,"None"
+"24","Master of Data Science","MDS","Applied GIS and Spatial Data Analytics","ITLS6107","The world is increasingly filled with systems, devices and sensors collecting large amounts of data on a continual basis. Most of these data are associated with locations that represent everything from the movement of individuals travelling between activities to the flow of goods or transactions along a supply chain and from the location of companies to those of their current and future customers. Taking this spatial context into account transforms analyses, problem-solving and provides a powerful method of visualising the world. This is the essence of Geographic Information Systems (GIS) and this unit. This unit starts by introducing students to the 'building blocks' of GIS systems, including data structures, relational databases, spatial queries and analysis. The focus then moves on to sources of spatial data including Global Positioning System (GPS), operational systems such as smartcard ticketing and transaction data along with web-based sources highlighting both the potential and challenges associated with integrating each data source within a GIS environment. The unit is hands-on involving learning how to use the latest GIS software to analyse several problems of interest using real 'big data' sources and to communicate the results in a powerful and effective way. These include identifying potential demand for new services or infrastructure, creating a delivery and scheduling plan for a delivery firm or examining the behaviour of travellers or consumers over time and locations. This unit is aimed at students interested in the spatial impact of decision-making and on the potential for using large spatial datasets for in-depth multi-faceted analytics.","LO1. explain the underlying theory behind GIS and the challenges in its use
+                                                
+                                                    LO2. identify the features of GIS and when to apply them
+                                                
+                                                    LO3. formulate strategies for solving business problems, assess each strategy and recommend and defend a single solution
+                                                
+                                                    LO4. demonstrate the effective communication of geographic information, to business stakeholders using GIS
+                                                
+                                                    LO5. describe the processes necessary for the collection, processing and analysis of geographic data
+                                                
+                                                    LO6. apply the appropriate features of GIS tools to analyse geographic characteristics for the purpose of achieving business objectives.
+                                                ","TPTM6180","None",NA,"None"
+"25","Master of Data Science","MDS","Environmental Footprints and IO Analysis","PHYS5033","This unit of study will provide students with practical skills for carrying out environmental footprinting calculations: for individuals, companies, organisations or nations. In particular, this unit will provide a comprehensive introduction to input-output analysis for identifying impacts embodied in regional, national and global supply chains. This unit focuses on contemporary environmental applications such as emissions, energy-use, water, land, loss of animal and plant species; and also social applications such as employment, poverty and child labour. The unit first explores national and global economic and environmental accounting systems and their relationships to organisational accounting. Second, it presents cutting-edge techniques enabling the global analysis of environmental and social impacts of international trade. Third, it offers hands-on practical activities for mastering the input-output techniques conceived by Nobel Prize Laureate Wassily Leontief, and provides a step-by-step recipe for undertaking boundary-free environmental and social footprinting for sectors and organisations. Students will walk away from this unit equipped with useful skills needed to calculate footprints, and prepare sustainability reports for any organisation, city, region, or nation, using organisational data, economic input-output tables and environmental accounts. Students will also benefit from enrolling in PHYS5034 for a sound understanding of the role of input-output analysis within the field of Life-Cycle Assessment.","LO1. appreciate the national accounts and their role in society
+                                                
+                                                    LO2. brush-up your linear algebra and matrix operations skills
+                                                
+                                                    LO3. understand the fundamentals of input-output theory and environmental extensions
+                                                
+                                                    LO4. understand the workings of economic demand-pull model
+                                                
+                                                    LO5. understand the applications of input-output analysis to environmental issues
+                                                
+                                                    LO6. deepen your knowledge of multi-region input-output models, applications of footprinting and MATLAB for sustainability assessments
+                                                
+                                                    LO7. apply input-output analysis to applications from a range of disciplines
+                                                
+                                                    LO8. apply input-output analysis to business settings.
+                                                ","None","None",NA,"None"
