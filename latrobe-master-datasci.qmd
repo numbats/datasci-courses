@@ -19,6 +19,35 @@ knitr::opts_chunk$set(echo = FALSE,
 
 ```
 
+```{r}
+# remDr$close()
+# system("taskkill /im java.exe /f", intern=FALSE, ignore.stdout=FALSE)
+rD <- rsDriver(browser="firefox", port=4778L, verbose=F)
+remDr <- rD[["client"]]
+
+baseurl <- "https://handbook.latrobe.edu.au/"
+
+wait_time <- function() Sys.sleep(sample(3:5, 1))
+
+data <- tibble(Course = character(),
+               Course_code = character(),
+               Course_overview = character(),
+               Unit = character(),
+               #Unit_code = character(),
+               Overview = character(),
+               Prerequisite = character(),
+               Corequisite = character(),
+               Prohibition = character(),
+               LearningOutcome = character())
+
+remDr$navigate("https://handbook.latrobe.edu.au/courses/2022/SMDS")
+course_html <- read_html(remDr$getPageSource()[[1]])
+
+```
+
+```{r}
+
+```
 
 
 
