@@ -35,9 +35,10 @@ data <- tibble(Course = character(),
                Unit = character(),
                Unit_code = character(),
                Overview = character(),
-               Prerequisite = character(),
+               RequesiteRules = character(),
+               #Prerequisite = character(),
                #Corequisite = character(),
-               Prohibition = character(),
+               #Prohibition = character(),
                LearningOutcome = character())
 
 remDr$navigate("https://handbook.latrobe.edu.au/courses/2022/SMDS")
@@ -110,34 +111,46 @@ tryCatch({
         html_text() %>% 
         str_remove(".remove")
       
-      # check if there's any prohibations and extract if yes
-      pros <- unit_html %>% 
+      
+      
+      # check if there's any requisite, extract if yes, otherwise take the requisite rules
+      reqs <- unit_html %>% 
         html_element("#requisites")
       
-      if(length(pros) > 0) {
-        pro <- pros %>% 
-          html_elements(".unit-title") %>% 
-          html_text() 
-      } else {
-        pro <- "None"
-      }
-      
-      # check if there's any requisite rules and extract if yes
-      reqs <- unit_html %>% 
-        html_element("#Requisiterules")
+      reqs_list <- list()
+      pre <- "None"
       
       if(length(reqs) > 0) {
-        pre <- unit_html %>% 
-          html_element("#Requisiterules") %>% 
-          html_element(".css-1l0t84s-Box-CardBody") %>% 
-          html_text() %>% 
-          str_remove("\n") %>% 
-          str_remove("\n") %>%
-          str_remove("\n ")
-      } else {
-        pre <- "None"
+        reqs <- reqs %>% 
+          html_element(".css-to4w00-Box") %>% 
+          html_children()
+         
+      } else{
+        reqrules <- unit_html %>% 
+          html_element("#Requisiterules")
+        
+         if(length(reqrules) > 0) {
+            pre <- unit_html %>% 
+              html_element("#Requisiterules") %>% 
+              html_element(".css-1l0t84s-Box-CardBody") %>% 
+              html_text() %>% 
+              str_remove("\n") %>% 
+              str_remove("\n") %>%
+              str_remove("\n ")
+      } 
+        
       }
       
+      for(areq in reqs) {
+        area <- areq %>% 
+          html_element("strong") %>% 
+          html_text()
+        
+        reqs_list[[area]] <- areq %>% 
+          html_elements(".unit-title") %>% 
+          html_text() %>% 
+          paste0(collapse = ", ")
+      }
       
       data <- data %>% 
         bind_rows(tibble(!!!c(list(Course = title, 
@@ -146,11 +159,10 @@ tryCatch({
                                    Unit_code = cunit,
                                    Unit = subject_text,
                                    Overview = overview,
-                                   Prerequisite = pre,
-                                   #Corequisite = co,
-                                   Prohibition = pro,
-                                   LearningOutcome =paste0(lo, collapse = " ")
-                                   )))) %>% 
+                                   LearningOutcome = paste0(lo, collapse = " "),
+                                   RequesiteRules = pre
+                                   ),
+                              reqs_list))) %>% 
         mutate(Unit_type = 
                  case_when(row_number()<= 7 ~ "Core",
                            row_number() > 7 & row_number() < 17 ~ "Core choice pathway",
@@ -166,6 +178,7 @@ tryCatch({
 
 
 ```{r}
+# 51 out of 53 units scraped
 write.csv(data, file = "data/latrobe-master-datasci.csv")
 
 ```
