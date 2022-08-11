@@ -19,3 +19,70 @@ knitr::opts_chunk$set(echo = FALSE,
 
 ```
 
+```{r}
+# remDr$close()
+# system("taskkill /im java.exe /f", intern=FALSE, ignore.stdout=FALSE)
+rD <- rsDriver(browser="firefox", port=4778L, verbose=F)
+remDr <- rD[["client"]]
+
+wait_time <- function() Sys.sleep(sample(2:3, 1))
+
+data <- tibble(Course = character(),
+               Course_code = character(),
+               Course_overview = character(),
+               Unit = character(),
+               Unit_code = character(),
+               Overview = character(),
+               #Prerequisite = character(),
+               #Corequisite = character(),
+               #Prohibition = character(),
+               LearningOutcome = character())
+
+remDr$navigate("https://www.swinburne.edu.au/study/course/Master-of-Data-Science-MA-DATASC/local")
+course_html <- read_html(remDr$getPageSource()[[1]])
+
+```
+
+
+```{r}
+tryCatch({
+  
+  # extract name of the course
+    title <- course_html %>% 
+      html_element("h1") %>% 
+      html_text()
+    
+  # extract course code
+    code <- course_html %>% 
+      html_element(".course-meta") %>% 
+      html_element(".course-code") %>% 
+      html_text()
+    
+  # extract course overview
+    coverview <- course_html %>% 
+      html_element("#main-content-area") %>% 
+      html_element(".with-margins") %>% 
+      #html_elements("p") %>%
+      html_text() %>% 
+      str_remove("\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n\t\
+                 t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t
+                 \t\t\t\t\t\t\t\t\t\t") %>% 
+      str_remove("\n                              ")
+  
+    # extract all listed units
+    curriculum <- course_html %>% 
+      html_element("#course-detail") %>% 
+      html_element(".row") %>% 
+      html_elements("a") %>% 
+      html_attr("href")
+  
+  
+}, error = function(x) x
+)
+```
+
+
+```{r}
+write.csv(data, file = "data/swb-master-datasci.csv")
+
+```
