@@ -133,10 +133,8 @@ tryCatch({
             pre <- unit_html %>% 
               html_element("#Requisiterules") %>% 
               html_element(".css-1l0t84s-Box-CardBody") %>% 
-              html_text() %>% 
-              str_remove("\n") %>% 
-              str_remove("\n") %>%
-              str_remove("\n ")
+              html_text() %>%
+              trimws()
       } 
         
       }

@@ -64,10 +64,7 @@ tryCatch({
       html_element(".with-margins") %>% 
       #html_elements("p") %>%
       html_text() %>% 
-      str_remove("\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n\t\
-                 t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t
-                 \t\t\t\t\t\t\t\t\t\t") %>% 
-      str_remove("\n                              ")
+      trimws()
   
     # extract all listed units
     curriculum <- course_html %>% 
@@ -76,6 +73,42 @@ tryCatch({
       html_elements("a") %>% 
       html_attr("href")
   
+    for(unit in curriculum) {
+      remDr$navigate(unit)
+      wait_time()
+      unit_html <- read_html(remDr$getPageSource()[[1]])
+      
+      # unit name
+      subject_text <- unit_html %>% 
+        html_element("h1") %>% 
+        html_text()
+      
+      # unit code
+      cunit <- unit_html %>% 
+        html_element(".course-meta") %>% 
+        html_element(".course-code") %>% 
+        html_text() %>% 
+        trimws()
+      
+      
+      
+      
+      
+      
+      data <- data %>% 
+        bind_rows(tibble(!!!c(list(Course = title, 
+                                   Course_code = code, 
+                                   Course_overview = coverview,
+                                   Unit_code = cunit,
+                                   Unit = subject_text,
+                                   Overview = overview,
+                                   LearningOutcome = paste0(lo, collapse = " ")
+                                   ),
+                              reqs_list))) %>% 
+        mutate(Unit_type = 
+                 case_when(row_number()<= 12 ~ "Core",
+                           row_number() > 12 ~ "Elective"))
+    }
   
 }, error = function(x) x
 )
