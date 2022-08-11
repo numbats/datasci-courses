@@ -25,18 +25,18 @@ knitr::opts_chunk$set(echo = FALSE,
 rD <- rsDriver(browser="firefox", port=4778L, verbose=F)
 remDr <- rD[["client"]]
 
-baseurl <- "https://handbook.latrobe.edu.au/"
+baseurl <- "https://handbook.latrobe.edu.au"
 
-wait_time <- function() Sys.sleep(sample(3:5, 1))
+wait_time <- function() Sys.sleep(sample(2:3, 1))
 
 data <- tibble(Course = character(),
                Course_code = character(),
                Course_overview = character(),
                Unit = character(),
-               #Unit_code = character(),
+               Unit_code = character(),
                Overview = character(),
                Prerequisite = character(),
-               Corequisite = character(),
+               #Corequisite = character(),
                Prohibition = character(),
                LearningOutcome = character())
 
@@ -45,11 +45,124 @@ course_html <- read_html(remDr$getPageSource()[[1]])
 
 ```
 
+
 ```{r}
+tryCatch({
+    
+    # extract name of the course
+    title <- course_html %>% 
+      html_element("h2") %>% 
+      html_text()
+    
+    # extract course code
+    code <- course_html %>% 
+      html_element("h5") %>% 
+      html_text()
+    
+    # extract course overview
+    coverview <- course_html %>% 
+      html_element("#Overview") %>% 
+      html_element(".css-1x8hb4i-Box-CardBody") %>% 
+      html_elements("div") %>% 
+      .[!is.na(html_attr(., "aria-hidden")) & 
+          html_attr(., "aria-hidden")=="true"] %>% 
+      html_text()
+    
+    # get all core and elective units for the course
+    links <- course_html %>% 
+      html_element("#curriculumStructure") %>% 
+      html_element(".css-to4w00-Box") %>% 
+      html_elements("a") %>% 
+      html_attr("href") %>% 
+      as_tibble() %>% 
+      filter(nchar(value) < 25)
+    
+    curriculum <- as.vector(links$value)
+  
+    for(unit in curriculum) {
+      remDr$navigate(glue("{baseurl}{unit}"))
+      wait_time()
+      unit_html <- read_html(remDr$getPageSource()[[1]])
+      
+      # get unit name
+      subject_text <- unit_html %>% 
+        html_element("h2") %>% 
+        html_text()
+      
+      # get unit code
+      cunit <- unit_html %>% 
+        html_element("h5") %>% 
+        html_text()
+      
+      # unit overview
+      overview <- unit_html %>% 
+        html_element("#Overview") %>% 
+        html_element(".css-1x8hb4i-Box-CardBody") %>% 
+        html_elements("div") %>% 
+        .[!is.na(html_attr(., "aria-hidden")) & 
+          html_attr(., "aria-hidden")=="true"] %>% 
+        html_text()
+      
+      # unit learning outcome
+      lo <- unit_html %>% 
+        html_element("#Subjectintendedlearningoutcomes") %>% 
+        html_elements(".AccordionItem") %>% 
+        html_text() %>% 
+        str_remove(".remove")
+      
+      # check if there's any prohibations and extract if yes
+      pros <- unit_html %>% 
+        html_element("#requisites")
+      
+      if(length(pros) > 0) {
+        pro <- pros %>% 
+          html_elements(".unit-title") %>% 
+          html_text() 
+      } else {
+        pro <- "None"
+      }
+      
+      # check if there's any requisite rules and extract if yes
+      reqs <- unit_html %>% 
+        html_element("#Requisiterules")
+      
+      if(length(reqs) > 0) {
+        pre <- unit_html %>% 
+          html_element("#Requisiterules") %>% 
+          html_element(".css-1l0t84s-Box-CardBody") %>% 
+          html_text() %>% 
+          str_remove("\n") %>% 
+          str_remove("\n") %>%
+          str_remove("\n ")
+      } else {
+        pre <- "None"
+      }
+      
+      
+      data <- data %>% 
+        bind_rows(tibble(!!!c(list(Course = title, 
+                                   Course_code = code, 
+                                   Course_overview = coverview,
+                                   Unit_code = cunit,
+                                   Unit = subject_text,
+                                   Overview = overview,
+                                   Prerequisite = pre,
+                                   #Corequisite = co,
+                                   Prohibition = pro,
+                                   LearningOutcome =paste0(lo, collapse = " ")
+                                   )))) %>% 
+        mutate(Unit_type = 
+                 case_when(row_number()<= 7 ~ "Core",
+                           row_number() > 7 & row_number() < 17 ~ "Core choice pathway",
+                           row_number() >= 17 & row_number() < 19 ~ "Elective",
+                           row_number() > 19 ~ "Specialisation"))
+    }
+
+    }
+    , error = function(x) x
+    )
 
 ```
-
-
 
 
 ```{r}
