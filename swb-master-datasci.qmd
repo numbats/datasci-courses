@@ -111,9 +111,12 @@ tryCatch({
         html_element(".main-content") %>% 
         html_elements(".course-info")
       
-      reqs <- req[length(req)] %>% 
-        html_text() %>% 
-        trimws()
+      if(length(req) > 3){
+        reqs <- req[length(req)] %>% 
+          html_text() %>% 
+          trimws()
+      
+      }
       
       data <- data %>% 
         bind_rows(tibble(!!!c(list(Course = title, 
@@ -122,7 +125,7 @@ tryCatch({
                                    Unit_code = cunit,
                                    Unit = subject_text,
                                    Overview = overview,
-                                   LearningOutcome = paste0(lo, collapse = ". "),
+                                   LearningOutcome = lo,
                                    Requirements = reqs)))) %>% 
         mutate(Unit_type = 
                  case_when(row_number()<= 12 ~ "Core",
@@ -135,5 +138,4 @@ tryCatch({
 
 ```{r}
 write.csv(data, file = "data/swb-master-datasci.csv")
-
 ```
