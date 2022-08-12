@@ -36,7 +36,8 @@ data <- tibble(Course = character(),
                #Prerequisite = character(),
                #Corequisite = character(),
                #Prohibition = character(),
-               LearningOutcome = character())
+               LearningOutcome = character(),
+               Requirements = character())
 
 remDr$navigate("https://www.swinburne.edu.au/study/course/Master-of-Data-Science-MA-DATASC/local")
 course_html <- read_html(remDr$getPageSource()[[1]])
@@ -90,23 +91,20 @@ tryCatch({
         html_text() %>% 
         trimws()
       
-      # unit overview
-      overview <- unit_html %>% 
+      # unit overview and learning outcome
+      unitinfo <- unit_html %>% 
         html_element(".main-content") %>% 
         html_element(".section-highlight") %>%
         html_elements(".with-margins") %>%
         html_text() %>% 
-        trimws()
+        trimws() %>% 
+        strsplit("Unit Learning Outcomes")
       
+      # unit overview
+      overview <- unitinfo[[1]][1]
       
       # unit learning outcome
-      outcome <- unit_html %>% 
-        html_element(".main-content") %>% 
-        html_elements(".section-highlight") %>% 
-        html_elements("td") %>%
-        html_text()
-      
-      lo <- outcome[-seq(1, length(outcome),2)]
+      lo <- unitinfo[[1]][length(unitinfo[[1]])]
       
       # check if there's any requisite, extract if yes
       req <- unit_html %>% 
@@ -114,20 +112,8 @@ tryCatch({
         html_elements(".course-info")
       
       reqs <- req[length(req)] %>% 
-        html_children()
-      
-      reqs_list <- list()
-      
-      for(areq in reqs) {
-        area <- areq %>% 
-          html_element("strong") %>% 
-          html_text()
-        
-        reqs_list[[area]] <- areq %>% 
-          html_elements("a") %>% 
-          html_text() %>% 
-          paste0(collapse = ", ")
-      }
+        html_text() %>% 
+        trimws()
       
       data <- data %>% 
         bind_rows(tibble(!!!c(list(Course = title, 
@@ -135,10 +121,9 @@ tryCatch({
                                    Course_overview = coverview,
                                    Unit_code = cunit,
                                    Unit = subject_text,
-                                   Overview = overview[3],
-                                   LearningOutcome = paste0(lo, collapse = ". ")
-                                   ),
-                              reqs_list))) %>% 
+                                   Overview = overview,
+                                   LearningOutcome = paste0(lo, collapse = ". "),
+                                   Requirements = reqs)))) %>% 
         mutate(Unit_type = 
                  case_when(row_number()<= 12 ~ "Core",
                            row_number() > 12 ~ "Elective"))
@@ -147,7 +132,6 @@ tryCatch({
 }, error = function(x) x
 )
 ```
-
 
 ```{r}
 write.csv(data, file = "data/swb-master-datasci.csv")
