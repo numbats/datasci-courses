@@ -90,10 +90,44 @@ tryCatch({
         html_text() %>% 
         trimws()
       
+      # unit overview
+      overview <- unit_html %>% 
+        html_element(".main-content") %>% 
+        html_element(".section-highlight") %>%
+        html_elements(".with-margins") %>%
+        html_text() %>% 
+        trimws()
       
       
+      # unit learning outcome
+      outcome <- unit_html %>% 
+        html_element(".main-content") %>% 
+        html_elements(".section-highlight") %>% 
+        html_elements("td") %>%
+        html_text()
       
+      lo <- outcome[-seq(1, length(outcome),2)]
       
+      # check if there's any requisite, extract if yes
+      req <- unit_html %>% 
+        html_element(".main-content") %>% 
+        html_elements(".course-info")
+      
+      reqs <- req[length(req)] %>% 
+        html_children()
+      
+      reqs_list <- list()
+      
+      for(areq in reqs) {
+        area <- areq %>% 
+          html_element("strong") %>% 
+          html_text()
+        
+        reqs_list[[area]] <- areq %>% 
+          html_elements("a") %>% 
+          html_text() %>% 
+          paste0(collapse = ", ")
+      }
       
       data <- data %>% 
         bind_rows(tibble(!!!c(list(Course = title, 
@@ -101,8 +135,8 @@ tryCatch({
                                    Course_overview = coverview,
                                    Unit_code = cunit,
                                    Unit = subject_text,
-                                   Overview = overview,
-                                   LearningOutcome = paste0(lo, collapse = " ")
+                                   Overview = overview[3],
+                                   LearningOutcome = paste0(lo, collapse = ". ")
                                    ),
                               reqs_list))) %>% 
         mutate(Unit_type = 
