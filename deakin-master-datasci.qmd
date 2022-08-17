@@ -1,0 +1,20 @@
+---
+title: "Master of Data Science - Deakin University"
+author: "Rachel Xinrui WANG"
+date: "`r Sys.Date()`"
+format: 
+  html:
+    code-fold: false
+---
+
+```{r setup, include = FALSE}
+library(tidyverse)
+library(rvest)
+library(RSelenium)
+library(glue)
+knitr::opts_chunk$set(echo = FALSE,
+                      cache = TRUE,
+                      cache.path = "cache/",
+                      fig.path = "images/")
+
+```
