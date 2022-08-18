@@ -31,10 +31,10 @@ year <- 2022
 wait_time <- function() Sys.sleep(sample(3:5, 1))
 
 data <- tibble(Course = character(),
-               Course_code = character(),
+               #Course_code = character(),
                Course_overview = character(),
                Unit = character(),
-               Unit_code = character(),
+               #Unit_code = character(),
                Overview = character(),
                Prerequisite = character(),
                Corequisite = character(),
@@ -84,9 +84,9 @@ tryCatch({
         html_text()
       
       # unit code
-      cunit <- unit_html %>% 
-        html_element("h5") %>% 
-        html_text()
+      # cunit <- unit_html %>% 
+      #   html_element("h5") %>% 
+      #   html_text()
       
       # unit overview
       overviews <- unit_html %>%
@@ -179,9 +179,9 @@ tryCatch({
       
       data <- data %>% 
         bind_rows(tibble(!!!c(list(Course = title, 
-                                   Course_code = "MC-DATASC", 
+                                   #Course_code = "MC-DATASC", 
                                    Course_overview = paste0(coverview, collapse = " "),
-                                   Unit_code = cunit,
+                                   #Unit_code = cunit,
                                    Unit = subject_text,
                                    Overview = overview,
                                    Prerequisite = paste0(pre, collapse = ", "),
@@ -202,6 +202,21 @@ tryCatch({
 ```
 
 ```{r}
-write.csv(data, file = "data/uom-master-datasci.csv")
+data_cleaned <- data %>% 
+  mutate(Unit_Code = str_extract(data$Unit, "\\(.+\\)"),
+         Course_Code = str_extract(data$Course, "\\(.+\\)"))
+  
+
+data_cleaned$Unit_Code <- gsub("[()]", "", data_cleaned$Unit_Code)
+
+data_cleaned$Course_Code <- gsub("[()]", "", data_cleaned$Course_Code)
+
+data_cleaned$Course <- gsub("\\s*\\([^\\)]+\\)", "", data_cleaned$Course)
+
+data_cleaned$Unit <- gsub("\\s*\\([^\\)]+\\)", "", data_cleaned$Unit)
+```
+
+```{r}
+write.csv(data_cleaned, file = "data/uom-master-datasci.csv")
 ```
 
