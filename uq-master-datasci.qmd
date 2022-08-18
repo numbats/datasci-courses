@@ -1,0 +1,107 @@
+---
+title: "University of Queensland Master of Data Science"
+author: "Emi Tanaka"
+date: "`r Sys.Date()`"
+format: 
+  html: 
+    code-fold: false
+---
+
+
+```{r setup, include = FALSE}
+library(tidyverse)
+library(rvest)
+library(RSelenium)
+library(glue)
+library(tidytext)
+knitr::opts_chunk$set(echo = FALSE,
+                      cache = TRUE,
+                      cache.path = "cache/",
+                      fig.path = "images/")
+
+```
+
+
+```{r}
+rD <- rsDriver(browser="firefox", port=4793L, verbose=F)
+remDr <- rD[["client"]]
+baseurl <- "https://my.uq.edu.au"
+url <- "https://my.uq.edu.au/programs-courses/requirements/program/5660/2021"
+remDr$navigate(url)
+course_html <- read_html(remDr$getPageSource()[[1]])
+
+get_units_part <- function(part) {
+  course_html %>% 
+  html_element(paste0("#part-", part)) %>% 
+  html_elements("a") %>% 
+  html_attr("href")
+}
+
+
+
+extract_info <- function(.x) {
+  course_url <- paste0(baseurl, .x)
+  
+  remDr$navigate(course_url)
+  course_profile_html <- read_html(remDr$getPageSource()[[1]])
+  unit_url <- course_profile_html %>% 
+    html_element("#course-offering-1-profile") %>% 
+    html_element("a") %>% 
+    html_attr("href")
+  
+  remDr$navigate(unit_url)
+  unit_profile_html <- read_html(remDr$getPageSource()[[1]])
+  title <- unit_profile_html %>% 
+    html_element(".page__title") %>% 
+    html_text()
+  unit_info <- str_split(title, " - ")[[1]]
+  
+  overview <- unit_profile_html %>% 
+    html_text() %>% 
+    str_extract("Course Description: .+") %>% 
+    str_replace("Course Description: ", "")
+  
+  prereq <- unit_profile_html %>% 
+    html_text() %>% 
+    str_extract("Pre-Requisites: .+") %>% 
+    str_extract_all("[A-Z]{4}[0-9]{4}") %>% 
+    pluck(1)
+  
+  aims_url <- unit_profile_html %>% 
+    html_element(".toc-node") %>% 
+    html_elements("li") %>% 
+    pluck(2) %>% 
+    html_element("a") %>% 
+    html_attr("href")
+  
+  remDr$navigate(aims_url)
+  aims_html <- read_html(remDr$getPageSource()[[1]])
+  objs <- aims_html %>% 
+    html_element(".objectives-list") %>% 
+    html_elements("span") %>% 
+    html_text()
+  
+  message(glue::glue("{unit_info[1]} done!"))
+  tibble(Unit = unit_info[2],
+         Unit_code = unit_info[1],
+         Overview = overview,
+         Outcomes = list(objs),
+         Prerequisite = list(prereq))
+}
+
+units_core <- get_units_part("A")
+units_capstone <- get_units_part("B")
+units_foundation <- get_units_part("C")
+units_elective_discipline <- get_units_part("D")
+units_elective_breadth <- get_units_part("E")
+
+data <- map_dfr(c(units_core, units_capstone, units_foundation, units_elective_discipline, units_elective_breadth), extract_info)
+
+data %>% 
+  rowwise() %>% 
+  mutate(Outcomes = paste(Outcomes, collapse = "| "),
+         Prerequisite = paste(Prerequisite, collapse = ", ")) %>% 
+  write_csv(file = "data/uq-master-datasci.csv")
+
+```
+
