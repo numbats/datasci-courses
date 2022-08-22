@@ -49,9 +49,12 @@ title <- course_html %>%
 
 # select cricos code for the time being
 code <- course_html %>%
-      html_element("ul.degree-summary__codes-column:nth-child(1)") %>%
-      html_element("li:nth-child(3)") %>%
-      html_element("span:nth-child(2)") %>%
+      html_element("div.degree-summary.hide-mobile.w-doublenarrow") %>%
+      html_element("div.degree-summary-inner") %>%
+      html_element("div") %>%
+      html_element("ul:nth-child(1)") %>% 
+      html_element("li:nth-child(4)") %>% 
+      html_element("a") %>% 
       html_text()
 
 tryCatch({
@@ -103,7 +106,10 @@ tryCatch({
       }
       
     }, error = function(x) x)
+         
 
+data %>% 
+  write_csv(file = "data/anu-master-appdatasci.csv")
 # stop the rselenium server
 #rD[["server"]]$stop()
 

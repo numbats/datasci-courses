@@ -21,12 +21,13 @@ knitr::opts_chunk$set(echo = FALSE,
 
 ```
 
-
 ```{r adelaide}
 rD <- rsDriver(browser="firefox", port=4779L, verbose=F)
 remDr <- rD[["client"]]
+```
 
 
+```{r adelaide}
 course_codes <- c("mdsci_mdatasci", "mdsa_mdscapol")
 baseurl<- "https://calendar.adelaide.edu.au/aprcw/2022/"
 wait_time <- function() Sys.sleep(sample(3:5, 1))
@@ -36,7 +37,7 @@ data <- tibble(Course = character(),
                Unit = character(),
                Unit_code = character(),
                Overview = character(),
-               Outcome = character(),
+               LearningOutcome = character(),
                Prohibition = character(),
                Prerequisite = character(),
                Corequisite = character())
@@ -52,7 +53,7 @@ tryCatch({
         html_text() %>% 
         str_trim()
 
-    code <- course_html %>% 
+    course_code <- course_html %>% 
           html_element("div.span4:nth-child(1)") %>% 
           html_element(" p:nth-child(2)") %>% 
           html_text()
@@ -87,7 +88,10 @@ tryCatch({
       html_children() %>% 
       html_element("a") %>% 
       html_attr("href")%>% as_tibble()
-      curriculum <- rbind(corecourses, electives) %>% rbind(project)
+    
+      curriculum <- rbind(corecourses, electives) %>% rbind(project) %>% 
+        remove_missing()
+      
     }else{
         curriculum <-course_html %>% 
       html_element("#tab-corecourses") %>% 
@@ -97,11 +101,13 @@ tryCatch({
       html_element("tbody") %>% 
       html_children() %>% 
       html_element("a") %>% 
-      html_attr("href")
+      html_attr("href") %>% 
+          as_tibble()
       }
 
-    for(unit in curriculum) {
-      remDr$navigate(glue("http:{unit}"))
+    for(i in 1:nrow(curriculum)) {
+      unit <- curriculum[i,]
+      remDr$navigate(glue("https:{unit}"))
       wait_time()
       webElem<- remDr$findElement(
         using = "css",
@@ -154,47 +160,75 @@ tryCatch({
                     filter(X1 == 'Incompatible') %>% 
                     select(X2) %>% 
                     as.character()}else{pro <- NA}
-       
+       ## Corequisite
        if('Corequisite' %in% unitinfo$X1){
                 co <-unitinfo %>% 
                   filter(X1 == 'Corequisite') %>% 
                   select(X2) %>% 
                   as.character()}else{co <-NA}
 
+      webElem3<- remDr$findElement( using = "xpath",
+                                    "//*[@id='2-learning-outcomes']")
+      webElem3$clickElement()
+      wait_time()
+      unit_html <-  read_html(remDr$getPageSource()[[1]])
         ##learning outcomes
-      lc <- possibly({
-        unit_html %>% 
+       if(unitcode=="COMP SCI 7318" | unitcode == "COMP SCI 7318"){
+         test <- list()
+       }else{test <- unit_html %>% 
           html_element(".ui-accordion-content-active") %>% 
-          html_element("div:nth-child(2)")
-        }, otherwise = "error" )
+          html_element("div:nth-child(2)")}
       
-      if(length(lc) > 0) {
-        lc <- unit_html %>% 
+      if(length(test) > 0) {
+        if(unitcode =="COMMGMT 7023OL"){
+          lc <- unit_html %>% 
+          html_element("#page-content") %>% 
+          html_element("div.detail-data") %>% 
+          html_element("div.ui-accordion-wrapper") %>% 
+          html_element("li:nth-child(2)") %>% 
+          html_element("div") %>% 
+          html_element("div") %>% 
+          html_element("table:nth-child(2)") %>% 
+          html_element("tbody") %>% 
+          html_children() %>% 
+          html_element("td:nth-child(2)") %>% 
+          html_text() %>%  str_remove_all("\n") %>% 
+          paste(collapse = " ")
+        }else if (unitcode == "COMP SCI 7318"){
+          lc <- unit_html %>% 
+            html_element("li.accordion-item:nth-child(2)") %>% 
+            html_element("div:nth-child(2)") %>%
+            html_element("div:nth-child(2)") %>% 
+            html_element("div:nth-child(1)") %>% 
+           html_text()%>%
+           str_remove_all("\n        ") 
+        }else{
+          lc <- unit_html %>% 
           html_element(".ui-accordion-content-active") %>% 
           html_element("div:nth-child(2)") %>% 
           html_element("div:nth-child(1)") %>% 
           html_text() %>% str_remove_all("\n        ") 
-      } else {
+        }
+      }else {
         lc <- NA
       }
       
       data <- data %>% 
         bind_rows(tibble(!!!list(Course = title, 
-                                   Course_code = code, 
+                                   Course_code = course_code, 
                                    Unit = unitname,
                                    Unit_code = unitcode,
                                    Overview = overview,
-                                   Outcomes =lc,
+                                   LearningOutcome =lc,
                                   Prohibition = pro,
                                   Prerequisite= pre,
-                                 Corequisite = co))) %>% 
-        mutate(Prohibition = na_if(Prohibition, "character(0)"))
+                                 Corequisite = co))) 
       }
       
-    }, error = function(x) x)
+    },error = function(x) x)
   }
 
-
+#write.csv(data, file = "data/uade-master-datasci.csv")
 # stop the rselenium server
 #rD[["server"]]$stop()
 ```
