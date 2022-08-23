@@ -38,7 +38,7 @@ data <- tibble(Course = character(),
                Prerequisite = character(),
                Corequisite = character(),
                Prohibition = character(),
-               LearningOutcome = character())
+               Outcomes = character())
 
 remDr$navigate("https://www.uwa.edu.au/study/courses/master-of-data-science")
 course_html <- read_html(remDr$getPageSource()[[1]])
@@ -140,7 +140,7 @@ tryCatch({
                                    Prerequisite = pre,
                                    Corequisite = co,
                                    Prohibition = pro,
-                                   LearningOutcome =paste0(lo, collapse = " ")
+                                   Outcomes =paste0(lo, collapse = " ")
                                    )))) %>% 
         mutate(Unit_type = 
                  case_when(row_number()<= 4 ~ "Conversion",
@@ -156,5 +156,4 @@ tryCatch({
 
 ```{r}
 write.csv(data, file = "data/uwa-master-datasci.csv")
-
 ```
