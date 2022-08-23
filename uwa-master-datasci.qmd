@@ -155,5 +155,11 @@ tryCatch({
 ```
 
 ```{r}
-write.csv(data, file = "data/uwa-master-datasci.csv")
+data_unit <- data%>% mutate(
+  Unit_code = sub("[^(]+\\(([^)]+)\\).*", "\\1", Unit))
+```
+
+
+```{r}
+write.csv(data_unit, file = "data/uwa-master-datasci.csv")
 ```
