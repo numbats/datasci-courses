@@ -1,0 +1,59 @@
+---
+title: "Exploratory Text Analysis of G8 Schools' Unit Overviews (Master Degrees)"
+author: "Tina Tsou"
+date: "`r Sys.Date()`"
+format: 
+  html: 
+    code-fold: false
+---
+
+
+```{r setup, include = FALSE}
+library(tidyverse)
+library(glue)
+library(tidytext)
+knitr::opts_chunk$set(echo = FALSE,
+                      cache = TRUE,
+                      cache.path = "cache/",
+                      fig.path = "images/")
+
+```
+
+```{r datasets}
+choose <- function(x, name){
+  read.csv(x) %>% 
+    mutate(School = name) %>% 
+    select(c("School","Course","Course_code", "Unit", "Unit_code", "Overview"))
+}
+
+monash1 <- choose("data/monash-master-businessanalytics.csv", "monash")
+monash2 <- choose("data/monash-master-datasci.csv", "monash")
+monash3 <- choose("data/monash-master-healthanalytics.csv", "monash")
+melu <- choose("data/uom-master-datasci.csv", "uofmel")
+usyd <- choose("data/usyd-master-datasci.csv", "usyd")
+uq <- choose("data/uq-master-datasci.csv","uq")
+uade <- choose("data/uade-master-datasci.csv","uade")
+anu <- choose("data/anu-master-appdatasci.csv", "anu") %>% 
+  mutate(Course_code = as.character(Course_code))
+unsw <- choose("data/unsw-master-datascidec.csv", "unsw")%>% 
+  mutate(Course_code = as.character(Course_code))
+uwa <- choose("data/uwa-master-datasci.csv","uwa") %>% 
+  mutate(Course_code = as.character(Course_code))
+
+
+#merge all data frames together
+total <- bind_rows(monash1, monash2, monash3, melu, usyd, uq, uade, anu, unsw, uwa)
+
+```
+
+
+```{r overview data}
+unnested <- total %>%
+  unnest_tokens(word, Overview) %>% 
+  anti_join(stop_words,by = "word") 
+unnested %>% 
+  subset(!grepl("[0-9]", word)) %>% #remove words with numbers
+  count(word, sort = TRUE) 
+  
+```
+
