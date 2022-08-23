@@ -174,7 +174,7 @@ tryCatch({
       unit_html <-  read_html(remDr$getPageSource()[[1]])
         ##learning outcomes
        if(unitcode=="COMP SCI 7318" | unitcode == "COMP SCI 7318"){
-         test <- list()
+         test <- 1
        }else{test <- unit_html %>% 
           html_element(".ui-accordion-content-active") %>% 
           html_element("div:nth-child(2)")}
