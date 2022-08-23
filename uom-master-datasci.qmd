@@ -39,7 +39,7 @@ data <- tibble(Course = character(),
                Prerequisite = character(),
                Corequisite = character(),
                Prohibition = character(),
-               LearningOutcome = character())
+               Outcomes = character())
 
 remDr$navigate("https://handbook.unimelb.edu.au/2022/courses/mc-datasc")
 course_html <- read_html(remDr$getPageSource()[[1]])
@@ -187,7 +187,7 @@ tryCatch({
                                    Prerequisite = paste0(pre, collapse = ", "),
                                    Corequisite = co,
                                    Prohibition = paste0(pro, collapse = ", "),
-                                   LearningOutcome =lo
+                                   Outcomes =lo
                                    )))) %>% 
         mutate(Unit_type = 
                  case_when(row_number()<= 6 ~ "Units by Background",
