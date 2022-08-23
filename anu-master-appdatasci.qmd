@@ -109,10 +109,13 @@ tryCatch({
       
     }, error = function(x) x)
          
-# data %>% 
-#  mutate(Outcomes = string)
+data1 <- data %>% rowwise() %>% 
+  mutate(Outcomes =paste(Outcomes, collapse =" "))
+```
 
-#data %>% 
+
+```{output}
+data1 %>% 
   write_csv(file = "data/anu-master-appdatasci.csv")
 # stop the rselenium server
 #rD[["server"]]$stop()
