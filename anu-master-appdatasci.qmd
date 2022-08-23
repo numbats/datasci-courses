@@ -114,7 +114,7 @@ data1 <- data %>% rowwise() %>%
 ```
 
 
-```{output}
+```{r output}
 data1 %>% 
   write_csv(file = "data/anu-master-appdatasci.csv")
 # stop the rselenium server
