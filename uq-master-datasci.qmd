@@ -100,7 +100,9 @@ data <- map_dfr(c(units_core, units_capstone, units_foundation, units_elective_d
 data %>% 
   rowwise() %>% 
   mutate(Outcomes = paste(Outcomes, collapse = "| "),
-         Prerequisite = paste(Prerequisite, collapse = ", ")) %>% 
+         Prerequisite = paste(Prerequisite, collapse = ", "),
+         Course = "Master of Data Science",
+         Course_code = "MDataSc") %>% 
   write_csv(file = "data/uq-master-datasci.csv")
 
 ```
