@@ -34,7 +34,7 @@ data <- tibble(Course = character(),
                Unit_code = character(),
                Overview = character(),
                Requisite = character(),
-               LearningOutcome = list())
+               Outcomes = list())
 ```
 
 
@@ -47,7 +47,7 @@ title <- course_html %>%
       html_element(".intro__degree-title__component") %>% 
       html_text()
 
-# select cricos code for the time being
+#UAC CODE
 code <- course_html %>%
       html_element("div.degree-summary.hide-mobile.w-doublenarrow") %>%
       html_element("div.degree-summary-inner") %>%
@@ -55,16 +55,18 @@ code <- course_html %>%
       html_element("ul:nth-child(1)") %>% 
       html_element("li:nth-child(4)") %>% 
       html_element("a") %>% 
-      html_text()
+      html_text() %>% 
+      str_remove("\\s*\\([^\\)]+\\)")
 
-tryCatch({
-    curriculum <- course_html %>% 
+curriculum <- course_html %>% 
       html_element("#study") %>% 
       html_element("div:nth-child(1)") %>% 
       html_elements("p") %>% 
       html_elements("a") %>% 
-      html_attr("href") 
-    
+      html_attr("href") %>%
+      str_replace_all("/2023", "/2022")
+
+tryCatch({
     for(unit in curriculum) {
       cunit <- str_sub(unit ,start = -8)
       remDr$navigate(glue("{baseurl}{unit}"))
@@ -102,13 +104,15 @@ tryCatch({
                                    Unit_code = cunit,
                                    Overview = overview,
                                    Requisite = requisite,
-                                   LearningOutcome =lc)))
+                                   Outcomes =lc)))
       }
       
     }, error = function(x) x)
          
+# data %>% 
+#  mutate(Outcomes = string)
 
-data %>% 
+#data %>% 
   write_csv(file = "data/anu-master-appdatasci.csv")
 # stop the rselenium server
 #rD[["server"]]$stop()
