@@ -203,13 +203,13 @@ tryCatch({
 
 ```{r}
 data_cleaned <- data %>% 
-  mutate(Unit_Code = str_extract(data$Unit, "\\(.+\\)"),
-         Course_Code = str_extract(data$Course, "\\(.+\\)"))
+  mutate(Unit_code = str_extract(data$Unit, "\\(.+\\)"),
+         Course_code = str_extract(data$Course, "\\(.+\\)"))
   
 
-data_cleaned$Unit_Code <- gsub("[()]", "", data_cleaned$Unit_Code)
+data_cleaned$Unit_code <- gsub("[()]", "", data_cleaned$Unit_code)
 
-data_cleaned$Course_Code <- gsub("[()]", "", data_cleaned$Course_Code)
+data_cleaned$Course_code <- gsub("[()]", "", data_cleaned$Course_code)
 
 data_cleaned$Course <- gsub("\\s*\\([^\\)]+\\)", "", data_cleaned$Course)
 
