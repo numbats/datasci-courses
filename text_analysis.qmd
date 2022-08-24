@@ -12,6 +12,7 @@ format:
 library(tidyverse)
 library(glue)
 library(tidytext)
+library(pluralize)
 knitr::opts_chunk$set(echo = FALSE,
                       cache = TRUE,
                       cache.path = "cache/",
@@ -42,18 +43,32 @@ uwa <- choose("data/uwa-master-datasci.csv","uwa") %>%
 
 
 #merge all data frames together
-total <- bind_rows(monash1, monash2, monash3, melu, usyd, uq, uade, anu, unsw, uwa)
+total <- bind_rows(monash1, melu, usyd, uq, uade, anu, unsw, uwa)
 
 ```
 
 
 ```{r overview data}
 unnested <- total %>%
+  group_by(School) %>% 
   unnest_tokens(word, Overview) %>% 
-  anti_join(stop_words,by = "word") 
-unnested %>% 
+  anti_join(stop_words,by = "word") %>% 
+  mutate(word = singularize(word)) %>% 
+  mutate(word= ifelse(word == "datum","data", word))
+
+school_words<- unnested %>% 
   subset(!grepl("[0-9]", word)) %>% #remove words with numbers
   count(word, sort = TRUE) 
   
+```
+
+```{r}
+school_words %>% 
+  filter(n >20) %>% 
+#  mutate(word = fct_reorder(word, n))%>% 
+  ggplot(aes(x=n,
+             y = reorder(word, n)))+
+  geom_col()+
+  theme_minimal()
 ```
 
