@@ -155,11 +155,12 @@ tryCatch({
 ```
 
 ```{r}
-data_unit <- data%>% mutate(
-  Unit_code = sub("[^(]+\\(([^)]+)\\).*", "\\1", Unit))
+data_cleaned <- data %>% 
+  mutate(Unit_code = sub("[^(]+\\(([^)]+)\\).*", "\\1", Unit))
+
+data_cleaned$Unit <- gsub("\\s*\\([^\\)]+\\)", "", data_cleaned$Unit)
 ```
 
-
 ```{r}
-write.csv(data_unit, file = "data/uwa-master-datasci.csv")
+write.csv(data_cleaned, file = "data/uwa-master-datasci.csv")
 ```
