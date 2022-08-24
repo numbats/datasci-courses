@@ -9,7 +9,7 @@ format:
 
 ```{r setup, include = FALSE}
 library(tidyverse)
-library(glue)
+library(tidytext)
 knitr::opts_chunk$set(echo = FALSE,
                       cache = TRUE,
                       cache.path = "cache/",
@@ -37,24 +37,41 @@ choose <- function(x, name){
 ```
 
 ```{r}
-monash1 <- choose("data/monash-master-businessanalytics.csv", "monash")
-monash2 <- choose("data/monash-master-datasci.csv", "monash")
-monash3 <- choose("data/monash-master-healthanalytics.csv", "monash")
-melu <- choose("data/uom-master-datasci.csv", "uofmel")
+monash_ba <- choose("data/monash-master-businessanalytics.csv", "monash_ba")
+monash_ds <- choose("data/monash-master-datasci.csv", "monash_ds")
+monash_ha <- choose("data/monash-master-healthanalytics.csv", "monash_ha")
+uom <- choose("data/uom-master-datasci.csv", "unimelb")
 usyd <- choose("data/usyd-master-datasci.csv", "usyd")
 uq <- choose("data/uq-master-datasci.csv","uq")
 uade <- choose("data/uade-master-datasci.csv","uade")
 anu <- choose("data/anu-master-appdatasci.csv", "anu") %>% 
   mutate(Course_code = as.character(Course_code))
-unsw <- choose("data/unsw-master-datascidec.csv", "unsw")%>% 
-  mutate(Course_code = as.character(Course_code))
+# unsw <- choose("data/unsw-master-datascidec.csv", "unsw")%>% 
+#   mutate(Course_code = as.character(Course_code))
 uwa <- choose("data/uwa-master-datasci.csv","uwa") %>% 
   mutate(Course_code = as.character(Course_code))
 
 
 #merge all data frames together
-total <- bind_rows(monash1, monash2, monash3, melu, usyd, uq, uade, anu, unsw, uwa)
+total <- bind_rows(monash_ba, monash_ds, monash_ha, uom, usyd, uq, uade, anu, uwa)
 ```
 
+```{r}
+text <- total %>% 
+  group_by(School) %>% 
+  unnest_tokens(word, Outcomes) %>% 
+  anti_join(stop_words) %>% 
+  subset(!grepl("[0-9]", word)) %>% 
+  count(word, sort = TRUE)
+```
+
+```{r}
+text %>% 
+  filter(n > 20) %>% 
+  #mutate(word = reorder(word, n)) %>% 
+  ggplot(aes(n, word)) +
+  geom_col() +
+  labs(y = NULL)
+```
 
 
