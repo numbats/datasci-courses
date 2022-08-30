@@ -58,6 +58,8 @@ uwa <- choose("data/uwa-master-datasci.csv","uwa") %>%
 total <- bind_rows(monash, uom, usyd, uq, uade, anu, uwa)
 ```
 
+# 2 words analysis
+
 ```{r}
 text <- total %>% 
   unnest_tokens(bigram, Outcomes, token = "ngrams", n = 2) %>% 
@@ -67,7 +69,7 @@ text <- total %>%
   filter(!(word1 %in% stop_words$word | word2 %in% stop_words$word)) %>% 
   subset(!grepl("[0-9]", word1)) %>% 
   subset(!grepl("[0-9]", word2)) %>% 
-  mutate(word = paste(word1, word2, sep = " ")) %>% 
+  mutate(word = as_factor(paste(word1, word2, sep = " "))) %>% 
   group_by(School) %>% 
   count(word, sort = TRUE) %>% 
   ungroup()
@@ -75,8 +77,11 @@ text <- total %>%
 
 ```{r}
 text %>% 
+  #ungroup() %>% 
   filter(n > 4) %>% 
-  ggplot(aes(n, fct_reorder(word, n))) +
+  mutate(word = fct_reorder(word, n)) %>% 
+  ungroup() %>% 
+  ggplot(aes(n, reorder(word,n))) +
   geom_col() +
   labs(y = NULL)
 ```
@@ -90,4 +95,37 @@ text %>%
   facet_wrap(~School, scales = "free_y")
 ```
 
+# 3 words analysis
 
+```{r}
+text3 <- total %>% 
+  unnest_tokens(bigram, Outcomes, token = "ngrams", n = 3) %>% 
+  separate(bigram, 
+           into = c("word1", "word2", "word3"),
+           sep = " ") %>% 
+  filter(!(word1 %in% stop_words$word | word2 %in% stop_words$word | word3 %in% stop_words$word)) %>% 
+  subset(!grepl("[0-9]", word1)) %>% 
+  subset(!grepl("[0-9]", word2)) %>% 
+  subset(!grepl("[0-9]", word3)) %>%
+  mutate(word = as_factor(paste(word1, word2, word3, sep = " "))) %>% 
+  group_by(School) %>% 
+  count(word, sort = TRUE) %>% 
+  ungroup()
+```
+
+```{r}
+text3 %>% 
+  filter(n > 3) %>% 
+  ggplot(aes(n, fct_reorder(word, n))) +
+  geom_col() +
+  labs(y = NULL)
+```
+
+```{r}
+text3 %>% 
+  filter(n > 3) %>% 
+  ggplot(aes(n, fct_reorder(word, n))) +
+  geom_col() +
+  labs(y = NULL) +
+  facet_wrap(~School, scales = "free_y")
+```
