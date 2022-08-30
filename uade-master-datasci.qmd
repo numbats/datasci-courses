@@ -90,7 +90,7 @@ tryCatch({
       html_attr("href")%>% as_tibble()
     
       curriculum <- rbind(corecourses, electives) %>% rbind(project) %>% 
-        remove_missing()
+        remove_missing() %>% unique()
       
     }else{
         curriculum <-course_html %>% 
@@ -102,7 +102,7 @@ tryCatch({
       html_children() %>% 
       html_element("a") %>% 
       html_attr("href") %>% 
-          as_tibble()
+          as_tibble() %>% unique()
       }
 
     for(i in 1:nrow(curriculum)) {
