@@ -12,6 +12,8 @@ library(tidyverse)
 library(tidytext)
 knitr::opts_chunk$set(echo = FALSE,
                       cache = TRUE,
+                      warning = FALSE,
+                      message = FALSE,
                       cache.path = "cache/",
                       fig.path = "images/")
 
@@ -37,9 +39,9 @@ choose <- function(x, name){
 ```
 
 ```{r}
-monash_ba <- choose("data/monash-master-businessanalytics.csv", "monash_ba")
-monash_ds <- choose("data/monash-master-datasci.csv", "monash_ds")
-monash_ha <- choose("data/monash-master-healthanalytics.csv", "monash_ha")
+#monash_ba <- choose("data/monash-master-businessanalytics.csv", "monash_ba")
+monash <- choose("data/monash-master-datasci.csv", "monash_ds")
+#monash_ha <- choose("data/monash-master-healthanalytics.csv", "monash_ha")
 uom <- choose("data/uom-master-datasci.csv", "unimelb")
 usyd <- choose("data/usyd-master-datasci.csv", "usyd")
 uq <- choose("data/uq-master-datasci.csv","uq")
@@ -53,25 +55,39 @@ uwa <- choose("data/uwa-master-datasci.csv","uwa") %>%
 
 
 #merge all data frames together
-total <- bind_rows(monash_ba, monash_ds, monash_ha, uom, usyd, uq, uade, anu, uwa)
+total <- bind_rows(monash, uom, usyd, uq, uade, anu, uwa)
 ```
 
 ```{r}
 text <- total %>% 
+  unnest_tokens(bigram, Outcomes, token = "ngrams", n = 2) %>% 
+  separate(bigram, 
+           into = c("word1", "word2"),
+           sep = " ") %>% 
+  filter(!(word1 %in% stop_words$word | word2 %in% stop_words$word)) %>% 
+  subset(!grepl("[0-9]", word1)) %>% 
+  subset(!grepl("[0-9]", word2)) %>% 
+  mutate(word = paste(word1, word2, sep = " ")) %>% 
   group_by(School) %>% 
-  unnest_tokens(word, Outcomes) %>% 
-  anti_join(stop_words) %>% 
-  subset(!grepl("[0-9]", word)) %>% 
-  count(word, sort = TRUE)
+  count(word, sort = TRUE) %>% 
+  ungroup()
 ```
 
 ```{r}
 text %>% 
-  filter(n > 20) %>% 
-  #mutate(word = reorder(word, n)) %>% 
-  ggplot(aes(n, word)) +
+  filter(n > 4) %>% 
+  ggplot(aes(n, fct_reorder(word, n))) +
   geom_col() +
   labs(y = NULL)
+```
+
+```{r}
+text %>% 
+  filter(n > 4) %>% 
+  ggplot(aes(n, fct_reorder(word, n))) +
+  geom_col() +
+  labs(y = NULL) +
+  facet_wrap(~School, scales = "free_y")
 ```
 
 
