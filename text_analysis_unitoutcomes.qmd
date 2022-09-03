@@ -132,3 +132,15 @@ text3 %>%
   labs(y = NULL) +
   facet_wrap(~School, scales = "free_y")
 ```
+
+
+
+## Components analysis
+
+```{r}
+total_code <- total %>% 
+  mutate(group = str_extract(Unit_code, "[A-Za-z]+")) %>% 
+  group_by(School) %>% 
+  count(group, sort = T)
+```
+
