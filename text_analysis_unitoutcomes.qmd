@@ -69,7 +69,8 @@ text <- total %>%
   filter(!(word1 %in% stop_words$word | word2 %in% stop_words$word)) %>% 
   subset(!grepl("[0-9]", word1)) %>% 
   subset(!grepl("[0-9]", word2)) %>% 
-  mutate(word = as_factor(paste(word1, word2, sep = " "))) %>% 
+  mutate(word = as_factor(paste(word1, word2, sep = " "))) %>%
+  distinct(School, Unit, word) %>% 
   group_by(School) %>% 
   count(word, sort = TRUE) %>% 
   ungroup()
@@ -79,10 +80,10 @@ text <- total %>%
 text %>% 
   #ungroup() %>% 
   filter(n > 4) %>% 
-  mutate(word = fct_reorder(word, n)) %>% 
+  mutate(word = fct_reorder(word, n, sum)) %>% 
   ungroup() %>% 
-  ggplot(aes(n, reorder(word,n))) +
-  geom_col() +
+  ggplot(aes(n, word)) +
+  geom_col(colour = "white") +
   labs(y = NULL)
 ```
 
@@ -107,7 +108,8 @@ text3 <- total %>%
   subset(!grepl("[0-9]", word1)) %>% 
   subset(!grepl("[0-9]", word2)) %>% 
   subset(!grepl("[0-9]", word3)) %>%
-  mutate(word = as_factor(paste(word1, word2, word3, sep = " "))) %>% 
+  mutate(word = as_factor(paste(word1, word2, word3, sep = " "))) %>%
+  distinct(School, Unit, word) %>% 
   group_by(School) %>% 
   count(word, sort = TRUE) %>% 
   ungroup()
@@ -116,16 +118,29 @@ text3 <- total %>%
 ```{r}
 text3 %>% 
   filter(n > 3) %>% 
-  ggplot(aes(n, fct_reorder(word, n))) +
-  geom_col() +
+  mutate(word = fct_reorder(word, n, sum)) %>% 
+  ggplot(aes(n, word)) +
+  geom_col(colour = "white") +
   labs(y = NULL)
 ```
 
 ```{r}
 text3 %>% 
-  filter(n > 3) %>% 
+  filter(n > 2) %>% 
   ggplot(aes(n, fct_reorder(word, n))) +
   geom_col() +
   labs(y = NULL) +
   facet_wrap(~School, scales = "free_y")
 ```
+
+
+
+## Components analysis
+
+```{r}
+total_code <- total %>% 
+  mutate(group = str_extract(Unit_code, "[A-Za-z]+")) %>% 
+  group_by(School) %>% 
+  count(group, sort = T)
+```
+
