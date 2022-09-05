@@ -1,0 +1,135 @@
+---
+title: "Analysis Summary - Go8"
+author: "Rachel & Tina"
+date: "`r Sys.Date()`"
+format: 
+  html:
+    code-fold: false
+---
+
+```{r setup, include = FALSE}
+library(tidyverse)
+library(glue)
+library(tidytext)
+library(pluralize)
+knitr::opts_chunk$set(echo = FALSE,
+                      cache = TRUE,
+                      cache.path = "cache/",
+                      fig.path = "images/",
+                      message = FALSE,
+                      warning = FALSE)
+```
+
+```{r}
+choose <- function(x, name){
+  df <- read_csv(x) %>% 
+    mutate(School = name)
+  
+  if ("Outcomes" %in% colnames(df)){
+    df <- df %>% 
+    select(c("School","Course","Course_code", "Unit", "Unit_code", "Outcomes", "Overview"))
+  } else {
+    df <- df %>% 
+    select(c("School","Course","Course_code", "Unit", "Unit_code", "Overview"))
+  }
+  df
+}
+```
+
+```{r}
+monash <- choose("data/monash-master-datasci.csv", "monash")
+uom <- choose("data/uom-master-datasci.csv", "unimelb")
+usyd <- choose("data/usyd-master-datasci.csv", "usyd")
+uq <- choose("data/uq-master-datasci.csv","uq")
+uade <- choose("data/uade-master-datasci.csv","uade")
+anu <- choose("data/anu-master-appdatasci.csv", "anu") %>% 
+  mutate(Course_code = as.character(Course_code))
+unsw <- choose("data/unsw-master-datascidec.csv", "unsw")%>% 
+   mutate(Course_code = as.character(Course_code))
+uwa <- choose("data/uwa-master-datasci.csv","uwa") %>% 
+  mutate(Course_code = as.character(Course_code))
+
+#merge all data frames together
+total <- bind_rows(monash, uom, usyd, uq, uade, anu, uwa)
+```
+
+## Text Analysis - Unit Overview
+
+```{r overview data}
+overview <- total %>%
+  unnest_tokens(bigram, Overview, token = "ngrams", n = 2) %>% 
+  separate(bigram,
+           into = c("word1", "word2"),
+           sep = " ") %>% 
+  mutate(word1 = singularize(word1),
+         word2 = singularize(word2)) %>% 
+  mutate(word1 = ifelse(word1 == "datum","data", word1),
+         word2 = ifelse(word2 == "datum","data", word2))
+  
+bigram_ov <- overview %>% 
+  filter(!word1 %in% stop_words$word & !word2 %in% stop_words$word) %>%  
+  filter(!word1 %in% c("content","topic", "unit", "subject", "final", "capstone", "involve", "project", "master", "practical", "programming") & 
+         !word2 %in% c("student", "skill", "set", "piece", "concept", "capstone", "delivery", "domain", "manner", "due", "range", "unit", "master")) %>% 
+  subset(!grepl("[0-9]", word1)) %>% 
+  subset(!grepl("[0-9]", word2)) %>% 
+  mutate(word = as_factor(paste(word1, word2, sep = " "))) %>%
+  distinct(School, Unit, word) %>% 
+  group_by(School) %>% 
+  count(word, sort = TRUE) %>% 
+  ungroup() %>% 
+  mutate(category = case_when(str_detect(word, "data") ~ "Data",
+                              str_detect(word, "regression") ~ "Math",
+                              str_detect(word, "software") ~ "IT",
+                              str_detect(word, "information") ~"IT",
+                              str_detect(word, "neural") ~ "AI",
+                              str_detect(word, "artificial") ~ "AI",
+                              str_detect(word, "machine") ~ "AI",
+                              str_detect(word, "debugging") ~ "IT")) %>% 
+  mutate(category = if_else(is.na(category), "Other", category))
+  
+```
+
+```{r}
+bigram_ov %>% 
+  filter(n > 3) %>% 
+  mutate(word = fct_reorder(word, n, sum))%>% 
+  ggplot(aes(x=n,
+             y = word,
+             fill = category))+
+  geom_col()+
+  scale_fill_brewer(palette = "Dark2") +
+  theme_minimal()+
+  labs(y = "",
+       fill = "Category",
+       title = "Bigram - unit overview (n > 3)")
+```
+
+```{r}
+bigram_ov %>% 
+  filter(n > 3) %>% 
+  mutate(word = fct_reorder(word, n, sum))%>% 
+  ggplot(aes(x=n,
+             y = word,
+             fill = category))+
+  geom_col()+
+  theme_minimal()+
+  scale_fill_brewer(palette = "Dark2") +
+  theme(legend.position = "bottom") +
+  facet_wrap(~School, scales = "free_y") +
+  labs(y = "",
+       fill = "Category",
+       title = "Bigram - unit overview by univeristy (n > 3)")
+```
+
+## Text Analysis - Unit Learning Outcome
+
+## Component Analysis - Computational vs Statistical/Mathematical
+
+
+## To be Considered
+
+- Core and elective units are not separated
+
+- Programming languages used
+
+- Missing information
