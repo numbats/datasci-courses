@@ -50,7 +50,7 @@ uwa <- choose("data/uwa-master-datasci.csv","uwa") %>%
   mutate(Course_code = as.character(Course_code))
 
 #merge all data frames together
-total <- bind_rows(monash, uom, usyd, uq, uade, anu, uwa)
+total <- bind_rows(monash, uom, usyd, uq, uade, anu, uwa, unsw)
 ```
 
 ## Text Analysis - Unit Overview
@@ -100,6 +100,7 @@ bigram_ov %>%
   scale_fill_brewer(palette = "Dark2") +
   theme_minimal()+
   labs(y = "",
+       x = "",
        fill = "Category",
        title = "Bigram - unit overview (n > 3)")
 ```
@@ -117,13 +118,85 @@ bigram_ov %>%
   theme(legend.position = "bottom") +
   facet_wrap(~School, scales = "free_y") +
   labs(y = "",
+       x = "",
        fill = "Category",
        title = "Bigram - unit overview by univeristy (n > 3)")
 ```
 
 ## Text Analysis - Unit Learning Outcome
 
+```{r}
+outcome <- total %>%
+  filter(!School == "unsw") %>% 
+  unnest_tokens(bigram, Outcomes, token = "ngrams", n = 2) %>% 
+  separate(bigram, 
+           into = c("word1", "word2"),
+           sep = " ") %>% 
+  na.omit() %>% 
+  mutate(word1 = singularize(word1),
+         word2 = singularize(word2)) %>% 
+  mutate(word1 = ifelse(word1 == "datum","data", word1),
+         word2 = ifelse(word2 == "datum","data", word2))
+  
+bigram_oc <- outcome %>% 
+  filter(!word1 %in% stop_words$word & !word2 %in% stop_words$word) %>%  
+  filter(!word1 %in% c("student", "due", "basic") & 
+         !word2 %in% c("student", "set", "completion", "knowledge", "setting", "understand", "effectively")) %>% 
+  subset(!grepl("[0-9]", word1)) %>% 
+  subset(!grepl("[0-9]", word2)) %>% 
+  mutate(word = as_factor(paste(word1, word2, sep = " "))) %>%
+  distinct(School, Unit, word) %>% 
+  group_by(School) %>% 
+  count(word, sort = TRUE) %>% 
+  ungroup() %>% 
+  mutate(category = case_when(str_detect(word, "data") ~ "Data",
+                              str_detect(word, "statistical") ~ "Math",
+                              str_detect(word, "neural") ~ "AI",
+                              str_detect(word, "artificial") ~ "AI",
+                              str_detect(word, "machine") ~ "AI",
+                              str_detect(word, "research") ~"Research")) %>% 
+   mutate(category = if_else(is.na(category), "Other", category))
+  
+```
+
+```{r}
+bigram_oc%>% 
+  filter(n > 4) %>% 
+  mutate(word = fct_reorder(word, n, sum))%>% 
+  ggplot(aes(x=n,
+             y = word,
+             fill = category
+             ))+
+  geom_col()+
+  scale_fill_brewer(palette = "Dark2") +
+  theme_minimal()+
+  labs(y = "",
+       x = "",
+       fill = "Category",
+       title = "Bigram - unit outcome (n > 4)")
+```
+
+```{r}
+bigram_oc%>% 
+  filter(n > 4) %>% 
+  mutate(word = fct_reorder(word, n, sum))%>% 
+  ggplot(aes(x=n,
+             y = word,
+             fill = category))+
+  geom_col()+
+  scale_fill_brewer(palette = "Dark2") +
+  theme_minimal()+
+  theme(legend.position = "bottom") +
+  facet_wrap(~School, scales = "free_y") +
+  scale_x_continuous(breaks = c(0,3,6,9,12))+
+  labs(y = "",
+       x ="",
+       fill = "Category",
+       title = "Bigram - unit outcome by university (n > 4)")
+```
+
 ## Component Analysis - Computational vs Statistical/Mathematical
+
 
 
 ## To be Considered
