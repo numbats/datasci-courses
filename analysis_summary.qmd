@@ -57,7 +57,7 @@ total <- bind_rows(monash, uom, usyd, uq, uade, anu, uwa, unsw)
 
 ```{r category}
 ai <- c("neural", "artificial", "machine")
-it <- c("debugging", "software", "information")
+it <- c("debugging", "software", "information", "data")
 ```
 
 ```{r overview data}
@@ -172,11 +172,9 @@ bigram_oc <- outcome %>%
   group_by(School) %>% 
   count(word, sort = TRUE) %>% 
   ungroup() %>% 
-  mutate(category = case_when(str_detect(word, "data") ~ "IT",
+  mutate(category = case_when(group %in% it ~ "IT",
                               str_detect(word, "statistical") ~ "Math",
-                              str_detect(word, "neural") ~ "AI",
-                              str_detect(word, "artificial") ~ "AI",
-                              str_detect(word, "machine") ~ "AI",
+                              group %in% ai ~ "AI",
                               str_detect(word, "research") ~"Research")) %>% 
    mutate(category = if_else(is.na(category), "Other", category))
   
@@ -209,7 +207,7 @@ bigram_oc%>%
 bigram_oc%>% 
   filter(n > 4) %>% 
   mutate(word = fct_reorder(word, n, sum))%>% 
-  ggplot(aes(x=n,
+  ggplot(aes(x = n,
              y = word,
              fill = category))+
   geom_col()+
