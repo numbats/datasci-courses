@@ -27,54 +27,54 @@ knitr::opts_chunk$set(echo = FALSE,
 rD <- rsDriver(browser="firefox", port=4790L, verbose=F)
 remDr <- rD[["client"]]
 
-
-code <- "C6004"
-baseurl <- "https://handbook.monash.edu"
-year <- 2022
 wait_time <- function() Sys.sleep(sample(3:5, 1))
 
-remDr$navigate(glue("{baseurl}/2022/courses/{code}"))
+remDr$navigate("https://www.rmit.edu.au/study-with-us/levels-of-study/postgraduate-study/masters-by-coursework/master-of-data-science-mc267/mc267auscy")
 course_html <- read_html(remDr$getPageSource()[[1]])
 
 title <- course_html %>% 
-  html_element("h2") %>% 
-  html_text() %>% 
-  str_replace(paste0(code, " - "), "")
+  html_element("h1") %>% 
+  html_text()
 
-curriculum <- course_html %>% 
-  html_element("#curriculumStructure") %>% 
-  html_element(".css-to4w00-Box") %>% 
+curric <- course_html %>% 
+  html_elements(xpath = "//div[@class='requirementRequirementHTML table-responsive']") %>%
+  html_elements(xpath = "//table[@class = 'courseTable scrollable-table']") %>% 
+  html_elements(xpath = "//tr[@class = 'courseLine']") %>% 
   html_elements("a") %>% 
   html_attr("href")
 
+curric2 <- course_html %>% 
+  html_elements(xpath = "//div[@class='requirementRequirementHTML table-responsive']") %>%
+  html_elements(xpath = "//table[@class = 'courseTable scrollable-table']") %>% 
+  html_elements(xpath = "//tr[@class = 'lastCourseLine']") %>% 
+  html_elements("a") %>% 
+  html_attr("href")
+
+curriculum<- append(curric, curric2)
+
 data <- map_dfr(curriculum, function(unit) {
-      cunit <- str_replace(unit, paste0("/", year, "/units/"), "")
-      remDr$navigate(glue("{baseurl}{unit}"))
+      remDr$navigate(unit)
       wait_time()
       unit_html <- read_html(remDr$getPageSource()[[1]])
+      cunit <- unit_html %>% 
+        html_element("#contentpadding") %>% 
+        html_element("table") %>% 
+        html_element("tr:nth-child(2)") %>% 
+        html_element("p") %>% 
+        html_text()
+      
       subject_text <- unit_html %>% 
-        html_element("h2") %>% 
-        html_text() 
+        html_element(".contentArea ") %>% 
+        html_element("p:nth-child(2)") %>% 
+        html_text() %>% 
+        str_remove(".*\\: ")
     
-      reqs <- unit_html %>% 
-        html_element("#requisites") 
-      
-      if(length(reqs)) {
-        reqs <- reqs %>% 
-          html_element(".css-to4w00-Box") %>% 
-          html_children()
-      }
-      
-      reqs_list <- list()
-      for(areq in reqs) {
-        area <- areq %>% 
-          html_element("strong") %>% 
-          html_text()
-        reqs_list[[area]] <- areq %>% 
-          html_elements("a") %>% 
-          html_attr("href") %>% 
-          list()
-      }
+      # reqs <- unit_html %>% 
+      #   html_element("#contentpadding") %>% 
+      #   html_element("div.contentArea") %>% 
+      #   html_element("p") %>% 
+      #   html_text()
+      #requisite hard to extract
       
       overviews <- unit_html %>% 
         html_element("#Overview") %>% 
