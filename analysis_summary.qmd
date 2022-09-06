@@ -1,0 +1,297 @@
+---
+title: "Analysis Summary - Go8"
+author: "Rachel & Tina"
+date: "`r Sys.Date()`"
+format: 
+  html:
+    code-fold: false
+---
+
+```{r setup, include = FALSE}
+library(tidyverse)
+library(glue)
+library(tidytext)
+library(pluralize)
+knitr::opts_chunk$set(echo = FALSE,
+                      cache = TRUE,
+                      cache.path = "cache/",
+                      fig.path = "images/",
+                      message = FALSE,
+                      warning = FALSE)
+```
+
+```{r}
+choose <- function(x, name){
+  df <- read_csv(x) %>% 
+    mutate(School = name)
+  
+  if ("Outcomes" %in% colnames(df)){
+    df <- df %>% 
+    select(c("School","Course","Course_code", "Unit", "Unit_code", "Outcomes", "Overview"))
+  } else {
+    df <- df %>% 
+    select(c("School","Course","Course_code", "Unit", "Unit_code", "Overview"))
+  }
+  df
+}
+```
+
+```{r}
+monash <- choose("data/monash-master-datasci.csv", "monash")
+uom <- choose("data/uom-master-datasci.csv", "unimelb")
+usyd <- choose("data/usyd-master-datasci.csv", "usyd")
+uq <- choose("data/uq-master-datasci.csv","uq")
+uade <- choose("data/uade-master-datasci.csv","uade")
+anu <- choose("data/anu-master-appdatasci.csv", "anu") %>% 
+  mutate(Course_code = as.character(Course_code))
+unsw <- choose("data/unsw-master-datascidec.csv", "unsw")%>% 
+   mutate(Course_code = as.character(Course_code))
+uwa <- choose("data/uwa-master-datasci.csv","uwa") %>% 
+  mutate(Course_code = as.character(Course_code))
+
+#merge all data frames together
+total <- bind_rows(monash, uom, usyd, uq, uade, anu, uwa, unsw)
+```
+
+## Text Analysis - Unit Overview
+
+```{r category}
+ai <- c("neural", "artificial", "machine")
+it <- c("debugging", "software", "information")
+```
+
+```{r overview data}
+overview <- total %>%
+  unnest_tokens(bigram, Overview, token = "ngrams", n = 2) %>% 
+  separate(bigram,
+           into = c("word1", "word2"),
+           sep = " ") %>% 
+  mutate(word1 = singularize(word1),
+         word2 = singularize(word2)) %>% 
+  mutate(word1 = ifelse(word1 == "datum","data", word1),
+         word2 = ifelse(word2 == "datum","data", word2))
+
+bigram_ov <- overview %>% 
+  filter(!word1 %in% stop_words$word & !word2 %in% stop_words$word) %>%  
+  filter(!word1 %in% c("content","topic", "unit", "subject", "final", "capstone", "involve", "project", "master", "practical", "programming") & 
+         !word2 %in% c("student", "skill", "set", "piece", "concept", "capstone", "delivery", "domain", "manner", "due", "range", "unit", "master")) %>% 
+  subset(!grepl("[0-9]", word1)) %>% 
+  subset(!grepl("[0-9]", word2)) %>% 
+  mutate(word = as_factor(paste(word1, word2, sep = " "))) %>%
+  filter(!word == "data science") %>% 
+  distinct(School, Unit, word) %>% 
+  group_by(School) %>% 
+  count(word, sort = TRUE) %>% 
+  ungroup() %>% 
+  mutate(category = case_when(str_detect(word, "data") ~ "IT",
+                              str_detect(word, "regression") ~ "Math",
+                              str_detect(word, "software") ~ "IT",
+                              str_detect(word, "information") ~"IT",
+                              str_detect(word, "neural") ~ "AI",
+                              str_detect(word, "artificial") ~ "AI",
+                              str_detect(word, "machine") ~ "AI",
+                              str_detect(word, "debugging") ~ "IT")) %>% 
+  mutate(category = if_else(is.na(category), "Other", category))
+  
+```
+
+```{r}
+bigram_ov %>% 
+  filter(n > 3) %>% 
+  mutate(word = fct_reorder(word, n, sum))%>% 
+  ggplot(aes(x=n,
+             y = word,
+             fill = category))+
+  geom_col()+
+  scale_fill_brewer(palette = "Dark2") +
+  theme_minimal()+
+  labs(y = "",
+       x = "",
+       fill = "Category",
+       title = "Bigram - unit overview (n > 3)")
+```
+
+-   the most frequent word appeared 'data science' is removed
+
+-   machine learning appears most often
+
+-   involves basic math concepts such as linear regression
+
+-   AI, neural network and software development
+
+```{r}
+bigram_ov %>% 
+  filter(n > 3) %>% 
+  mutate(word = fct_reorder(word, n, sum))%>% 
+  ggplot(aes(x=n,
+             y = word,
+             fill = category))+
+  geom_col()+
+  theme_minimal()+
+  scale_fill_brewer(palette = "Dark2") +
+  theme(legend.position = "bottom") +
+  facet_wrap(~School, scales = "free_y") +
+  scale_x_continuous(breaks = c(2,4,6,8,10)) +
+  labs(y = "",
+       x = "",
+       fill = "Category",
+       title = "Bigram - unit overview by univeristy (n > 3)")
+```
+
+-   ANU is the only university contributes to linear regression
+
+-   UADE is the only university contributes to artificial intelligence
+
+-   UWA is the only university contributes to neural network
+
+## Text Analysis - Unit Learning Outcome
+
+```{r}
+outcome <- total %>%
+  filter(!School == "unsw") %>% 
+  unnest_tokens(bigram, Outcomes, token = "ngrams", n = 2) %>% 
+  separate(bigram, 
+           into = c("word1", "word2"),
+           sep = " ") %>% 
+  na.omit() %>% 
+  mutate(word1 = singularize(word1),
+         word2 = singularize(word2)) %>% 
+  mutate(word1 = ifelse(word1 == "datum","data", word1),
+         word2 = ifelse(word2 == "datum","data", word2))
+
+
+bigram_oc <- outcome %>% 
+  filter(!word1 %in% stop_words$word & !word2 %in% stop_words$word) %>%  
+  filter(!word1 %in% c("student", "due", "basic") & 
+         !word2 %in% c("student", "set", "completion", "knowledge", "setting", "understand", "effectively")) %>% 
+  subset(!grepl("[0-9]", word1)) %>% 
+  subset(!grepl("[0-9]", word2)) %>% 
+  mutate(word = as_factor(paste(word1, word2, sep = " "))) %>%
+  filter(!word == "data science") %>% 
+  distinct(School, Unit, word) %>% 
+  group_by(School) %>% 
+  count(word, sort = TRUE) %>% 
+  ungroup() %>% 
+  mutate(category = case_when(str_detect(word, "data") ~ "IT",
+                              str_detect(word, "statistical") ~ "Math",
+                              str_detect(word, "neural") ~ "AI",
+                              str_detect(word, "artificial") ~ "AI",
+                              str_detect(word, "machine") ~ "AI",
+                              str_detect(word, "research") ~"Research")) %>% 
+   mutate(category = if_else(is.na(category), "Other", category))
+  
+```
+
+```{r}
+bigram_oc%>% 
+  filter(n > 4) %>% 
+  mutate(word = fct_reorder(word, n, sum))%>% 
+  ggplot(aes(x=n,
+             y = word,
+             fill = category
+             ))+
+  geom_col()+
+  scale_fill_brewer(palette = "Dark2") +
+  theme_minimal()+
+  labs(y = "",
+       x = "",
+       fill = "Category",
+       title = "Bigram - unit outcome (n > 4)")
+```
+
+-   "real world" appears the most often, also has high appearances in overview
+
+-   machine learning again appears more than 15 times, followed by statistical analysis
+
+-   words relate to research get mentioned a lot
+
+```{r}
+bigram_oc%>% 
+  filter(n > 4) %>% 
+  mutate(word = fct_reorder(word, n, sum))%>% 
+  ggplot(aes(x=n,
+             y = word,
+             fill = category))+
+  geom_col()+
+  scale_fill_brewer(palette = "Dark2") +
+  theme_minimal()+
+  theme(legend.position = "bottom") +
+  facet_wrap(~School, scales = "free_y") +
+  scale_x_continuous(breaks = c(0,3,6,9,12))+
+  labs(y = "",
+       x ="",
+       fill = "Category",
+       title = "Bigram - unit outcome by university (n > 4)")
+```
+
+-   Monash and ANU contribute to the "research related" words
+
+-   UWA and UQ mentioned statistical analysis relatively often
+
+## Component Analysis - Computational vs Statistical/Mathematical
+
+```{r}
+math <- c("STAT", "MATH", "MATHS", "STATS", "MAT", "MAST")
+
+it <- c("COMP", "DATA", "FIT", "CITS", "INFS")
+
+comp <- total %>% 
+  mutate(group = str_extract(Unit_code, "[A-Za-z]+")) %>% 
+  group_by(School) %>% 
+  count(group, sort = T) %>% 
+  ungroup() %>% 
+  mutate(category = case_when(group %in% it ~ "IT",
+                              group %in% math ~ "Stat/Math")) %>% 
+  mutate(category = if_else(is.na(category), "Other", category))
+```
+
+```{r}
+comp %>% 
+  mutate(category = fct_reorder(category, n, sum)) %>% 
+  ggplot(aes(x = n,
+             y = category,
+             fill = category)) +
+  geom_col() +
+  scale_fill_brewer(palette = "Dark2") +
+  labs(x = "",
+       y = "",
+       title = "Component analysis") +
+  theme(legend.position = "bottom") +
+  theme_minimal()
+```
+
+-   Overall, majority of the units offered fall under IT department
+
+-   Similar numbers observed from Stat/Math and other
+
+```{r}
+comp %>% 
+  mutate(category = fct_reorder(category, n, sum)) %>% 
+  ggplot(aes(x = n,
+             y = category,
+             fill = category)) +
+  geom_col() +
+  scale_fill_brewer(palette = "Dark2") +
+  labs(x = "",
+       y = "",
+       title = "Component analysis by univeristy") +
+  facet_wrap(~School, scales = "free_y") +
+  theme(legend.position = "bottom") +
+  theme_minimal()
+```
+
+-   Number of IT units are the highest across all GO8
+
+-   More evenly distributed at ANU and UQ
+
+-   IT/computational component takes the dominant position at Monash and UADE
+
+-   Surprisingly low number of units in stat/math at USYD and Monash
+
+## To be Considered
+
+-   Core and elective units are not separated
+
+-   Programming languages used
+
+-   Missing information
