@@ -34,7 +34,7 @@ rD <- rsDriver(browser="firefox", port=4778L, verbose=F)
 remDr <- rD[["client"]]
 
 baseurl <- "https://www.handbook.unsw.edu.au"
-year <- 2022
+year <- 2023
 wait_time <- function() Sys.sleep(sample(3:5, 1))
 
 data <- tibble(Course = character(),
@@ -46,7 +46,7 @@ data <- tibble(Course = character(),
                Prohibition = character(),
                Prerequisite = character())
 
-remDr$navigate("https://www.handbook.unsw.edu.au/postgraduate/programs/2022/8959")
+remDr$navigate("https://www.handbook.unsw.edu.au/postgraduate/programs/2023/8959")
 course_html <- read_html(remDr$getPageSource()[[1]])
 
 ```
@@ -81,20 +81,34 @@ tryCatch({
     
     core <- links[5:length(links)]
     
-    # Extract core and elective units for each specialisation
     
+    # Extract units for each specialisation
     for(spec in specialisation){
       remDr$navigate(glue("{baseurl}{spec}"))
       wait_time()
       spec_html <- read_html(remDr$getPageSource()[[1]])
       
-      spec_core <- spec_html %>% 
-        html_element("#SpecialisationStructure") %>% 
-        html_element("")
+      spec_units <- spec_html %>% 
+        html_element("#curriculumStructure") %>% 
+        html_element(".css-to4w00-Box") %>% 
+        html_elements("a") %>% 
+        html_attr("href")
+
     }
-    
+      
+      # combine specialisation unit with core units
+      curriculum <- union(core, spec)
+
   
     for(unit in curriculum) {
+      
+      # define unit type
+      if(unit %in% core){
+        ut <- "core"
+      } else{
+        ut <- "specialisation or elective"
+      }
+      
       remDr$navigate(glue("{baseurl}{unit}"))
       wait_time()
       unit_html <- read_html(remDr$getPageSource()[[1]])
@@ -145,7 +159,7 @@ tryCatch({
       }
       
       
-      data_core <- data %>% 
+      data <- data %>% 
         bind_rows(tibble(!!!c(list(Course = paste0("Master of ", title), 
                                    Course_code = "8959", 
                                    Course_overview = coverview,
