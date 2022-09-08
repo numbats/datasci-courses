@@ -72,3 +72,116 @@ school_words %>%
   theme_minimal()
 ```
 
+```{r bigram data}
+bigram <- total %>%
+#  group_by(School) %>% 
+  unnest_tokens(bigram, Overview, token = "ngrams",n=2) %>% 
+  separate(bigram, c("word1", "word2") , sep = " ") %>% 
+  filter(!word1 %in% stop_words$word & !word2 %in% stop_words$word ) %>% 
+  mutate(bigram = paste(word1, word2)) 
+
+# school_words<- unnested %>% 
+#   subset(!grepl("[0-9]", word)) %>% #remove words with numbers
+#   count(word, sort = TRUE) 
+
+bigram_counts <- bigram %>%
+  group_by(School,Unit_code) %>% 
+  distinct(bigram) %>% 
+  ungroup() %>% 
+  group_by(School) %>% 
+  count(bigram, sort = TRUE)
+
+bigram_counts %>%
+  filter(n>1) %>% 
+  group_by(School) %>% 
+  slice_max(order_by = n, n = 10) %>% 
+  ggplot(aes(y = bigram, x = n))+
+  geom_col()+
+  facet_wrap(.~School, scales = "free")
+```
+
+
+```{r trigram}
+trigram <- total %>%
+#  group_by(School) %>% 
+  unnest_tokens(trigram, Overview, token = "ngrams",n=3) %>% 
+  separate(trigram, c("word1", "word2", "word3") , sep = " ") %>% 
+  filter(!word1 %in% stop_words$word & !word2 %in% stop_words$word  & !word3 %in% stop_words$word ) %>% 
+  mutate(trigram = paste(word1, word2, word3)) 
+
+# school_words<- unnested %>% 
+#   subset(!grepl("[0-9]", word)) %>% #remove words with numbers
+#   count(word, sort = TRUE) 
+
+trigram_counts <- trigram %>%
+  group_by(School,Unit_code) %>% 
+  distinct(trigram) %>% 
+  ungroup() %>% 
+  group_by(School) %>% 
+  count(trigram, sort = TRUE)
+
+trigram_counts %>%
+  filter(n>1) %>% 
+  group_by(School) %>% 
+  slice_max(order_by = n, n = 10) %>% 
+  ggplot(aes(y = trigram, x = n))+
+  geom_col()+
+  facet_wrap(.~School, scales = "free_y")
+```
+
+```{r}
+
+#str_detect(text, “ r[.,; ]")
+#str_detect(text, “ python[.,; ]")
+#str_detect(text, “ julia[.,; ]")
+#matlab, stata, spss, sas
+```
+
+
+```{r stem words}
+library(SnowballC)
+stemword <- total %>%
+  group_by(School, Unit) %>%
+  unnest_tokens(word, Overview) %>%
+  anti_join(stop_words,by = "word") %>% 
+  distinct(School, Unit, word) %>% 
+  ungroup() %>% 
+  group_by(School) %>% 
+  mutate(stem = wordStem(word)) %>%
+  count(stem, sort = TRUE)
+
+
+stemword %>% 
+  filter(n > 10) %>% 
+  ggplot(aes(n, fct_reorder(stem, n))) +
+  geom_col() +
+  labs(y = NULL) +
+  facet_wrap(~School, scales = "free_y")
+```
+
+```{r hunspell_stem}
+library(hunspell)
+
+stemword2 <- total %>%
+  group_by(School, Unit) %>%
+  unnest_tokens(word, Overview) %>%
+  anti_join(stop_words,by = "word") %>% 
+  distinct(School, Unit, word) %>% 
+  ungroup() %>% 
+  group_by(School) %>% 
+  mutate(stem = hunspell_stem(word)) %>%
+  rowwise() %>% 
+  mutate(stem = paste(stem, collapse = ','))
+#  unnest(stem) %>%
+#  count(stem, sort = TRUE)
+
+
+stemword2 %>% 
+  filter(n > 10) %>% 
+  ggplot(aes(n, fct_reorder(stem, n))) +
+  geom_col() +
+  labs(y = NULL) +
+  facet_wrap(~School, scales = "free_y")
+```
+
+
