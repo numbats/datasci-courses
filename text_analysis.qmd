@@ -184,4 +184,23 @@ stemword2 %>%
   facet_wrap(~School, scales = "free_y")
 ```
 
+```{r languages}
+python <-total %>% 
+  mutate(Overview = tolower(enc2utf8(Overview))) %>%  #avoid error invalid multibyte string
+  filter(grepl('python', Overview))
+
+rlang <- total %>% 
+  mutate(Overview = tolower(enc2utf8(Overview))) %>%  #avoid error invalid multibyte string
+  filter(str_detect(Overview, "[.,; ]r[.,; ]"))
+
+sas <- total %>% 
+  mutate(Overview = tolower(enc2utf8(Overview))) %>%  #avoid error invalid multibyte string
+  filter(str_detect(Overview, "[.,; ]sas[.,; ]"))
+
+
+spss <- total %>% 
+  mutate(Overview = tolower(enc2utf8(Overview))) %>%  #avoid error invalid multibyte string
+  filter(str_detect(Overview, "[.,; ]spss[.,; ]"))
+
+```
 
