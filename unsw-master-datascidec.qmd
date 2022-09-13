@@ -12,6 +12,7 @@ library(tidyverse)
 library(rvest)
 library(RSelenium)
 library(glue)
+library(stringi)
 knitr::opts_chunk$set(echo = FALSE,
                       cache = TRUE,
                       cache.path = "cache/",
@@ -34,8 +35,7 @@ rD <- rsDriver(browser="firefox", port=4778L, verbose=F)
 remDr <- rD[["client"]]
 
 baseurl <- "https://www.handbook.unsw.edu.au"
-year <- 2023
-wait_time <- function() Sys.sleep(sample(3:5, 1))
+wait_time <- function() Sys.sleep(sample(10:15, 1))
 
 data <- tibble(Course = character(),
                Course_code = character(),
@@ -46,7 +46,7 @@ data <- tibble(Course = character(),
                Prohibition = character(),
                Prerequisite = character())
 
-remDr$navigate("https://www.handbook.unsw.edu.au/postgraduate/programs/2023/8959")
+remDr$navigate("https://www.handbook.unsw.edu.au/postgraduate/programs/2022/8959")
 course_html <- read_html(remDr$getPageSource()[[1]])
 
 ```
@@ -92,39 +92,34 @@ tryCatch({
         html_element("#curriculumStructure") %>% 
         html_element(".css-to4w00-Box") %>% 
         html_elements("a") %>% 
-        html_attr("href")
-
-    }
+        html_attr("href") %>% 
+        stri_remove_empty()
       
-      # combine specialisation unit with core units
-      curriculum <- union(core, spec)
-
-  
-    for(unit in curriculum) {
-      
-      # define unit type
+      for (unit in spec_units){
+        
+        # define unit type
       if(unit %in% core){
         ut <- "core"
       } else{
         ut <- "specialisation or elective"
       }
-      
+        
       remDr$navigate(glue("{baseurl}{unit}"))
       wait_time()
-      unit_html <- read_html(remDr$getPageSource()[[1]])
-      
+      specunit_html <- read_html(remDr$getPageSource()[[1]])
+        
       # get unit name
-      subject_text <- unit_html %>% 
+      subject_text <- specunit_html %>% 
         html_element("h2") %>% 
         html_text()
       
       # get unit code
-      cunit <- unit_html %>% 
+      cunit <- specunit_html %>% 
         html_element("h5") %>% 
         html_text()
       
       # unit overview
-      overviews <- unit_html %>% 
+      overviews <- specunit_html %>% 
         html_element("#Overview") %>% 
         html_element(".css-1x8hb4i-Box-CardBody") %>% 
         html_elements("div") %>% 
@@ -133,11 +128,11 @@ tryCatch({
         html_text()
       
       # check if there's any pre-requisites and extract if yes
-      reqs <- unit_html %>% 
+      reqs <- specunit_html %>% 
         html_element("#ConditionsforEnrolment")
       
       if(length(reqs) > 0) {
-        pre <- unit_html %>% 
+        pre <- specunit_html %>% 
         html_element("#ConditionsforEnrolment") %>% 
         html_elements(".css-1x8hb4i-Box-CardBody") %>% 
         html_text() 
@@ -146,11 +141,11 @@ tryCatch({
       }
       
       # check if there's any prohibations and extract if yes
-      probs <- unit_html %>% 
+      probs <- specunit_html %>% 
         html_element("#ExclusionCourses")
       
       if(length(probs) > 0) {
-        pro <- unit_html %>% 
+        pro <- specunit_html %>% 
         html_element("#ExclusionCourses") %>% 
         html_elements(".unit-title") %>% 
         html_text() 
@@ -170,8 +165,79 @@ tryCatch({
                                    Prohibition = pro
                                    )))) %>% 
         mutate(Unit_type = ut)
+        
+      }
+
     }
-    
+      
+
+    for(unit in core) {
+
+      ut <- "core"
+
+      remDr$navigate(glue("{baseurl}{unit}"))
+      wait_time()
+      unit_html <- read_html(remDr$getPageSource()[[1]])
+
+      # get unit name
+      subject_text <- unit_html %>%
+        html_element("h2") %>%
+        html_text()
+
+      # get unit code
+      cunit <- unit_html %>%
+        html_element("h5") %>%
+        html_text()
+
+      # unit overview
+      overviews <- unit_html %>%
+        html_element("#Overview") %>%
+        html_element(".css-1x8hb4i-Box-CardBody") %>%
+        html_elements("div") %>%
+        .[!is.na(html_attr(., "aria-hidden")) &
+            html_attr(., "aria-hidden")=="true"] %>%
+        html_text()
+
+      # check if there's any pre-requisites and extract if yes
+      reqs <- unit_html %>%
+        html_element("#ConditionsforEnrolment")
+
+      if(length(reqs) > 0) {
+        pre <- unit_html %>%
+        html_element("#ConditionsforEnrolment") %>%
+        html_elements(".css-1x8hb4i-Box-CardBody") %>%
+        html_text()
+      } else {
+        pre <- "None"
+      }
+
+      # check if there's any prohibations and extract if yes
+      probs <- unit_html %>%
+        html_element("#ExclusionCourses")
+
+      if(length(probs) > 0) {
+        pro <- unit_html %>%
+        html_element("#ExclusionCourses") %>%
+        html_elements(".unit-title") %>%
+        html_text()
+      } else {
+        pro <- "None"
+      }
+
+
+      data <- data %>%
+        bind_rows(tibble(!!!c(list(Course = paste0("Master of ", title),
+                                   Course_code = "8959",
+                                   Course_overview = coverview,
+                                   Unit_code = cunit,
+                                   Unit = subject_text,
+                                   Overview = overviews,
+                                   Prerequisite = pre,
+                                   Prohibition = pro
+                                   )))) %>%
+        mutate(Unit_type = ut)
+    }
+
     
 
     }
@@ -181,6 +247,12 @@ tryCatch({
 ```
 
 ```{r}
-write.csv(data, file = "data/unsw-master-datascidec.csv")
+data_cleaned <- data %>% 
+  distinct(Unit_code, Unit,
+           .keep_all = TRUE)
+```
+
+```{r}
+write.csv(data_cleaned, file = "data/unsw-master-datascidec.csv")
 ```
 
