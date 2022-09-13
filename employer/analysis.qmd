@@ -1,0 +1,43 @@
+---
+title: "DS Job Salary"
+author: "Emi Tanaka"
+format: html
+---
+
+Note: this is a very crude analysis. The code is dirty and quick. 
+
+```{r setup, include = FALSE}
+library(tidyverse)
+df <- read_csv("listings2019_2021.csv")
+```
+```{r, cache = TRUE, message = FALSE, warning = FALSE}
+glimpse(df)
+
+out <- df %>% 
+  mutate(salary = map_dbl(salary_string, ~{
+    out <- str_extract_all(.x, "[0-9]+,?[0-9]+[kK.%]?") %>% 
+      str_replace("[,+]", "") %>% 
+      str_replace("[kK]", "000")
+    out <- out[!out %in% "00"]
+    out <- out[!str_detect(out, "[.%]")]
+    if(length(out)==0) return(NA_real_)
+    x <- mean(as.numeric(out))
+    if(!is.na(.x) && any(str_detect(.x, "(day|pd)"))) return(x * 48 * 5)
+    return(x)
+  })) 
+```
+
+```{r}
+money <- out %>% 
+  filter(salary > 50000) 
+
+money %>% 
+  ggplot(aes(salary)) +
+    geom_histogram() +
+    scale_x_continuous(labels = scales::dollar) +
+  geom_vline(xintercept = median(money$salary),
+             color = "red")
+median(money$salary)
+```
+
+
