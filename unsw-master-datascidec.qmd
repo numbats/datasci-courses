@@ -35,7 +35,7 @@ rD <- rsDriver(browser="firefox", port=4778L, verbose=F)
 remDr <- rD[["client"]]
 
 baseurl <- "https://www.handbook.unsw.edu.au"
-wait_time <- function() Sys.sleep(sample(10:15, 1))
+wait_time <- function() Sys.sleep(sample(12:15, 1))
 
 data <- tibble(Course = character(),
                Course_code = character(),
@@ -173,7 +173,11 @@ tryCatch({
 
     for(unit in core) {
 
-      ut <- "core"
+      if(unit %in% core){
+        ut <- "core"
+      } else{
+        ut <- "specialisation or elective"
+      }
 
       remDr$navigate(glue("{baseurl}{unit}"))
       wait_time()
@@ -248,8 +252,22 @@ tryCatch({
 
 ```{r}
 data_cleaned <- data %>% 
-  distinct(Unit_code, Unit,
-           .keep_all = TRUE)
+  distinct(Unit_code,
+           .keep_all = TRUE) %>% 
+  mutate(Unit_type = if_else(Unit_code%in%c("COMP9311",
+                                            "COMP9020",
+                                            "COMP9021",
+                                            "COMP9417",
+                                            "MATH5836",
+                                            "DATA5002",
+                                            "DATA5011",
+                                            "DATA5012",
+                                            "DATA9001",
+                                            "ECON5103",
+                                            "ECON5111",
+                                            "MATH5855",
+                                            "MATH5905"), 
+                             "core", "specialisation"))
 ```
 
 ```{r}
