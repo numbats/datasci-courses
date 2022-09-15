@@ -223,7 +223,7 @@ commerce <- c("ECON", "FINS", "MARK", "ACCT", "FINM", "MGMT", "MKTG")
 spatial <- c("GEOM", "ITLS")
 
 science <- c("EDUC", "SCIE", 
-             "SOCR") # social science
+             "SOCR") #social science
 
 health <- c("BINF", "BMS", "HTIN", "PUBH")
 
@@ -253,8 +253,8 @@ comp %>%
   labs(x = "",
        y = "",
        title = "Component analysis") +
-  theme(legend.position = "bottom") +
-  theme_minimal()
+  theme_minimal() +
+  theme(legend.position = "bottom") 
 ```
 
 ```{r}
@@ -269,8 +269,9 @@ comp %>%
        y = "",
        title = "Component analysis by univeristy") +
   facet_wrap(~School, scales = "free_y") +
-  theme(legend.position = "bottom") #+
-  #theme_minimal()
+  theme_minimal() +
+  theme(legend.position = "bottom")
+  
 ```
 
 ## To be Considered
