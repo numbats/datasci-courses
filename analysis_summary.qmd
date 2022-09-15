@@ -245,6 +245,11 @@ commerce <- c("ECON", "FINS", "MARK", "ACCT", "FINM", "MGMT", "MKTG")
 
 spatial <- c("GEOM", "ITLS")
 
+science <- c("EDUC", "SCIE", 
+             "SOCR") # social science
+
+health <- c("BINF", "BMS", "HTIN", "PUBH")
+
 comp <- total %>% 
   mutate(group = str_extract(Unit_code, "[A-Za-z]+")) %>% 
   group_by(School) %>% 
@@ -253,7 +258,10 @@ comp <- total %>%
   mutate(category = case_when(group %in% it ~ "IT",
                               group %in% math ~ "Stat/Math",
                               group %in% commerce ~ "Commerce",
-                              group %in% spatial ~ "Spatial")) %>% 
+                              group %in% spatial ~ "Spatial",
+                              group %in% science ~ "Science/Social Science",
+                              group %in% health ~ "Health/Bioinfo/Biostat")) %>% 
+  #Bioinformatics/Biostatistics
   mutate(category = if_else(is.na(category), "Other", category))
 ```
 
@@ -288,8 +296,8 @@ comp %>%
        y = "",
        title = "Component analysis by univeristy") +
   facet_wrap(~School, scales = "free_y") +
-  theme(legend.position = "bottom") +
-  theme_minimal()
+  theme(legend.position = "bottom") #+
+  #theme_minimal()
 ```
 
 -   Number of IT units are the highest across all GO8
