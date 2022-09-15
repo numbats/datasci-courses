@@ -1,0 +1,71 @@
+---
+title: "DS Job Salary"
+author: "Tina Tsou"
+format: html
+---
+
+```{r setup, include = FALSE}
+library(tidyverse)
+library(tidytext)
+library(pluralize)
+df <- read_csv("listings2019_2021.csv")
+```
+
+```{r, cache = TRUE, message = FALSE, warning = FALSE}
+glimpse(df)
+
+unnested <- df %>%
+  select(c('jobId', 'jobTitle', 'jobClassification', 'advertiserName', 'workType', 'mobileAdTemplate')) %>% 
+  unnest_tokens(word, mobileAdTemplate) %>% 
+  anti_join(stop_words,by = "word") %>% 
+  group_by(jobId, jobTitle, jobClassification, advertiserName, workType) %>% 
+  distinct(word) %>% 
+  ungroup() 
+
+unnested %>%
+  count(word, sort = TRUE) %>% 
+  filter(n>800) %>% 
+  ggplot(aes(x = n,y= fct_reorder(word, n)))+
+  geom_col()
+
+```
+
+```{r}
+bigram <- df %>%
+  select(c('jobId', 'jobTitle', 'jobClassification', 'advertiserName', 'workType', 'mobileAdTemplate')) %>% 
+  unnest_tokens(bigram, mobileAdTemplate, token = "ngrams",n=2) %>% 
+  separate(bigram, c("word1", "word2") , sep = " ") %>% 
+  filter(!word1 %in% stop_words$word & !word2 %in% stop_words$word ) %>% 
+  mutate(bigram = paste(word1, word2)) %>% 
+  #mutate(bigram = singularize(bigram)) %>% 
+  group_by(jobId, jobTitle, jobClassification, advertiserName, workType) %>% 
+  distinct(bigram) %>% 
+  ungroup() 
+
+bigram %>%
+  count(bigram, sort = TRUE) %>% 
+  filter(n>200) %>% 
+  ggplot(aes(x = n,y= fct_reorder(bigram, n)))+
+  geom_col()
+
+```
+
+
+```{r}
+trigram <- df %>%
+  select(c('jobId', 'jobTitle', 'jobClassification', 'advertiserName', 'workType', 'mobileAdTemplate')) %>% 
+  unnest_tokens(trigram, mobileAdTemplate, token = "ngrams",n=3) %>% 
+  separate(trigram, c("word1", "word2", "word3") , sep = " ") %>% 
+  filter(!word1 %in% stop_words$word & !word2 %in% stop_words$word & !word3 %in% stop_words$word) %>% 
+  mutate(trigram = paste(word1, word2,word3)) %>% 
+  group_by(jobId, jobTitle, jobClassification, advertiserName, workType) %>% 
+  distinct(trigram) %>% 
+  ungroup() 
+
+trigram %>%
+  count(trigram, sort = TRUE) %>% 
+  filter(n>100) %>% 
+  ggplot(aes(x = n,y= fct_reorder(trigram, n)))+
+  geom_col()
+
+```
