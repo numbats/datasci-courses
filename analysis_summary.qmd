@@ -172,10 +172,16 @@ bigram_oc <- outcome %>%
   group_by(School) %>% 
   count(word, sort = TRUE) %>% 
   ungroup() %>% 
-  mutate(category = case_when(group %in% it ~ "IT",
-                              str_detect(word, "statistical") ~ "Math",
-                              group %in% ai ~ "AI",
-                              str_detect(word, "research") ~"Research")) %>% 
+  mutate(category = case_when(str_detect(word, "statistical") ~ "Math",
+                              str_detect(word, "research") ~"Research",
+                              str_detect(word, "data") ~ "IT",
+                              str_detect(word, "regression") ~ "Math",
+                              str_detect(word, "software") ~ "IT",
+                              str_detect(word, "information") ~"IT",
+                              str_detect(word, "neural") ~ "AI",
+                              str_detect(word, "artificial") ~ "AI",
+                              str_detect(word, "machine") ~ "AI",
+                              str_detect(word, "debugging") ~ "IT")) %>% 
    mutate(category = if_else(is.na(category), "Other", category))
   
 ```
@@ -229,9 +235,15 @@ bigram_oc%>%
 ## Component Analysis - Computational vs Statistical/Mathematical
 
 ```{r}
-math <- c("STAT", "MATH", "MATHS", "STATS", "MAT", "MAST")
+math <- c("STAT", "MATH", "MATHS", "STATS", "MAT", "MAST", "ACTL", "QBUS")
 
-it <- c("COMP", "DATA", "FIT", "CITS", "INFS")
+it <- c("COMP", "FIT", "CITS", "INFS", "COSC", "CSSE", "CSYS", "EDPC", "INMT", "PHIL", "PHYS", #it
+        "BUSN","DATA", #data
+        "INFO", "INFS") #analytics
+
+commerce <- c("ECON", "FINS", "MARK", "ACCT", "FINM", "MGMT", "MKTG")
+
+spatial <- c("GEOM", "ITLS")
 
 comp <- total %>% 
   mutate(group = str_extract(Unit_code, "[A-Za-z]+")) %>% 
@@ -239,7 +251,9 @@ comp <- total %>%
   count(group, sort = T) %>% 
   ungroup() %>% 
   mutate(category = case_when(group %in% it ~ "IT",
-                              group %in% math ~ "Stat/Math")) %>% 
+                              group %in% math ~ "Stat/Math",
+                              group %in% commerce ~ "Commerce",
+                              group %in% spatial ~ "Spatial")) %>% 
   mutate(category = if_else(is.na(category), "Other", category))
 ```
 
