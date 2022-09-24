@@ -1,0 +1,11 @@
+name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
+clean_wiki_article|function|f5987328c8444446|||||||||||||||
+clean_wiki_computing|stem|5e5407af87d20022|f5f2cfe01e09d77f|2ce83989310da3aa|-269377252||t19258.4737876038s|f5c8a03dce6341c7|3978051|rds|local|vector|||510.704||
+clean_wiki_sociology|stem|bbe3ed76577128a8|a409e09e07b3836d|35caaec9c0d34002|-984679161||t19258.4678684041s|3538637ff04e3582|9288216|rds|local|vector|||849.989||
+clean_wiki_stats|stem|d87dd4c75bd08162|b2163d77c41f98d0|dae0dab08e2ee64c|1121728837||t19258.5018941366s|20592c31068f29f8|8961988|rds|local|vector|||2427.143||
+get_clean_combined_wikis|function|e65810077753e08d|||||||||||||||
+get_wiki_articles|function|9dccbb6638e1891a|||||||||||||||
+wiki_computing|stem|6792f2c631470bfd|a6fdf2702e41c7d5|8a2ef92c6cb491ed|-51037440||t19258.4580007706s|77e10a16c5c70e80|5366|rds|local|vector|||0.489||
+wiki_sociology|stem|000f4d916fb6257d|a4f71f47b99381c2|8a2ef92c6cb491ed|973765263||t19258.4579949268s|166107ec03889132|8211|rds|local|vector|||1.444||
+wiki_stats|stem|3bb6a58da12320bc|0413c8d84abb2abc|8a2ef92c6cb491ed|-707944799||t19258.4580088962s|f608c8dd0ba01676|24680|rds|local|vector|||0.668||
+wiki_url|object|610941c887699db3|||||||||||||||
