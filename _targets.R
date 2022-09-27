@@ -48,7 +48,7 @@ list(
              cue = tar_cue(mode = "thorough")),
   tar_target(word2vec_model_ssc, model_glove(vocab_ssc_prune, tcm_ssc),
              cue = tar_cue(mode = "thorough")),
-  tar_target(word2vec_dist_ssc, dist2(t(word2vec_model_ssc$components), method="cosine"),
+  tar_target(word2vec_dist_ssc, dist2(t(word2vec_model_ssc$components), method = "cosine"),
              cue = tar_cue(mode = "thorough"), format = "rds", repository = "local"),
   tar_target(word2vec_res, find_close_words("statistics", word2vec_dist_ssc, 10),
              cue = tar_cue(mode = "thorough")),
