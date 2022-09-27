@@ -52,6 +52,11 @@ list(
              cue = tar_cue(mode = "thorough"), format = "rds", repository = "local"),
   tar_target(word2vec_res, find_close_words("statistics", word2vec_dist_ssc, 10),
              cue = tar_cue(mode = "thorough")),
+  tar_target(lda_model03_ssc, model_lda(dtm_ssc, ntopics = 3),
+             format = "rds", repository = "local"),
+  tar_target(lda_model20_ssc, model_lda(dtm_ssc, ntopics = 20),
+             format = "rds", repository = "local"),
+  
   
   NULL
 )
