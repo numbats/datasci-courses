@@ -9,7 +9,7 @@ library(targets)
 
 # Set target options:
 tar_option_set(
-  packages = c("tidyverse", "rvest", "glue"), # packages that your targets need to run
+  packages = c("tidyverse", "rvest", "glue", "text2vec", "SnowballC"), # packages that your targets need to run
   format = "rds" # default storage format
   # Set other options as needed.
 )
@@ -31,5 +31,27 @@ list(
   tar_target(wiki_computing, get_wiki_articles("https://en.wikipedia.org/wiki/Index_of_computing_articles")),
   tar_target(clean_wiki_stats, map(wiki_stats, clean_wiki_article), format = "rds", repository = "local"),
   tar_target(clean_wiki_sociology, map(wiki_sociology, clean_wiki_article), format = "rds", repository = "local"),
-  tar_target(clean_wiki_computing, map(wiki_computing, clean_wiki_article), format = "rds", repository = "local")
+  tar_target(clean_wiki_computing, map(wiki_computing, clean_wiki_article), format = "rds", repository = "local"),
+  tar_target(clean_ssc, preprocess_text(c(clean_wiki_stats, clean_wiki_sociology, clean_wiki_computing))),
+  # do pre-processing separately (since it doesn't seem to be doing right using `create_vocabularly`?)
+  tar_target(itoken_ssc, itoken(clean_ssc, tokenizer = stem_tokenizer),
+             cue = tar_cue(mode = "thorough")),
+  # some how need cue to be explicitly stated as thorough, otherwise it seems to skip it!
+  tar_target(vocab_ssc, create_vocabulary(itoken_ssc, ngram = c(1, 3), stopwords = stopwords::stopwords()),
+             cue = tar_cue(mode = "thorough")),
+  tar_target(vocab_ssc_prune, prune_vocab(vocab_ssc, n_min = 40),
+             cue = tar_cue(mode = "thorough")),
+  tar_target(dtm_ssc, create_dtm(itoken_ssc, vocab_vectorizer(vocab_ssc_prune)),
+             cue = tar_cue(mode = "thorough")),
+  tar_target(tcm_ssc, create_tcm(itoken_ssc, vocab_vectorizer(vocab_ssc_prune), 
+                                 skip_grams_window = 5L),
+             cue = tar_cue(mode = "thorough")),
+  tar_target(word2vec_model_ssc, model_glove(vocab_ssc_prune, tcm_ssc),
+             cue = tar_cue(mode = "thorough")),
+  tar_target(word2vec_dist_ssc, dist2(t(word2vec_model_ssc$components), method="cosine"),
+             cue = tar_cue(mode = "thorough"), format = "rds", repository = "local"),
+  tar_target(word2vec_res, find_close_words("statistics", word2vec_dist_ssc, 10),
+             cue = tar_cue(mode = "thorough")),
+  
+  NULL
 )

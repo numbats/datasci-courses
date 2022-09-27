@@ -18,9 +18,7 @@ clean_wiki_article <- function(x) {
   contents <- jsonlite::fromJSON(glue("{wiki_url}/w/api.php?action=query&titles=", x, "&prop=extracts&redirects=&format=json"))
   contents$query$pages[[1]]$extract %>% 
     read_html() %>% 
-    html_text() %>% 
-    str_replace_all("\\n", " ") %>% 
-    str_replace_all('\\"', "") 
+    html_text() 
 }
 
 get_clean_combined_wikis <- function(x) {
