@@ -11,7 +11,11 @@ get_clean_combined_wikis|function|388a207f6eea3126|||||||||||||||
 get_wiki_articles|function|9dccbb6638e1891a|||||||||||||||
 it_ssc|stem|4b46f1f62498ca0f|1c652521317d6741|3e572f19d8f70487|1910026503||t19262.0377024931s|5a1772c085cb18c6|181552253|rds|local|vector|||0.017||
 itoken_ssc|stem|f180cb029c61f657|eaa20adce70978c2|5ea17bcb03f84ae4|1138773920||t19262.2589542033s|8e0e0e32bc3800a5|102324471|rds|local|vector|||0.016||
+lda_model_ssc|stem|37952b0ea3a1bc69|8c1dcd6ccaaf4725|6dc6a27b6d87decd|1066299984||t19262.3581153418s|2221caa552173285|363295|rds|local|vector|||219.123||
+lda_model03_ssc|stem|25ca67a2f0268fac|b00e85363fed248e|6e0ece022d6739de|2041726591||t19262.6606640059s|e8b213a0ed7fe579|6054504|rds|local|vector|||5719.396||
+lda_model20_ssc|stem|f2c71c12cfd83822|dfc26b0700697efb|6e0ece022d6739de|1426157953||t19262.5944365345s|31f0c75eeb2d1ce5|9866182|rds|local|vector|||14347.841||
 model_glove|function|044cf6052c242f47|||||||||||||||
+model_lda|function|b54f0348745e8be1|||||||||||||||
 preprocess_text|function|122955ecd9d6c5ac|||||||||||||||
 preprocessor|function|ec258a084aa97a34|||||||||||||||
 prune_vocab|function|e25597f9eb5e0ddd|||||||||||||||
