@@ -55,7 +55,7 @@ list(
   tar_target(lda_model03_ssc, model_lda(dtm_ssc, ntopics = 3),
              format = "rds", repository = "local"),
   tar_target(lda_model20_ssc, model_lda(dtm_ssc, ntopics = 20),
-             format = "rds", repository = "local"),
+             format = "rds", repository = "local"), # the two lda models took about 5.5 hours to fit
   
   
   NULL
