@@ -19,7 +19,7 @@ model_glove <- function(vocab, tcm, niter = 25) {
 #' @param n The number of close words
 find_close_words <- function(w, d, n) {
   words <- rownames(d)
-  i <- which(words == SnowballC::wordStem(w))
+  i <- which(words == paste(tolower(SnowballC::wordStem(w)), collapse = "_"))
   if (length(i) > 0) {
     res <- sort(d[i, ])[2:(n + 1)]
     data.frame(word = names(res), distance = unname(res))

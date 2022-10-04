@@ -32,6 +32,8 @@ list(
   tar_target(clean_wiki_stats, map(wiki_stats, clean_wiki_article), format = "rds", repository = "local"),
   tar_target(clean_wiki_sociology, map(wiki_sociology, clean_wiki_article), format = "rds", repository = "local"),
   tar_target(clean_wiki_computing, map(wiki_computing, clean_wiki_article), format = "rds", repository = "local"),
+  tar_target(clean_stats, preprocess_text(clean_wiki_stats)),
+  
   tar_target(clean_ssc, preprocess_text(c(clean_wiki_stats, clean_wiki_sociology, clean_wiki_computing))),
   # do pre-processing separately (since it doesn't seem to be doing right using `create_vocabularly`?)
   tar_target(itoken_ssc, itoken(clean_ssc, tokenizer = stem_tokenizer),
@@ -56,7 +58,7 @@ list(
              format = "rds", repository = "local"),
   tar_target(lda_model20_ssc, model_lda(dtm_ssc, ntopics = 20),
              format = "rds", repository = "local"), # the two lda models took about 5.5 hours to fit
-  
+  # topicmodels::get_terms(targets::tar_read(lda_model20_ssc), k = 10)
   
   NULL
 )
