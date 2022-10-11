@@ -89,6 +89,7 @@ list(
   tar_target(lda_model15_comp, model_lda(dtm_comp, ntopics = 15),
              format = "rds", repository = "local"),
   # topicmodels::get_terms(targets::tar_read(lda_model20_ssc), k = 10)
+
   
   NULL
 )
