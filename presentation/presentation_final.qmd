@@ -1,5 +1,5 @@
 ---
-title: "Data Science in Australia"
+title: "Data Science Degree in Australia"
 author: "Tina and Rachel"
 date: "17 October 2022"
 format: 
@@ -9,10 +9,16 @@ format:
     multiplex: true
     theme: assets/rladies.scss
     show-slide-number: all
+    width: 1280
+    height: 720
     controls: true
     css: assets/custom.css
 execute:
   echo: true
+title-slide-attributes: 
+  data-background-image: images/bgpic.jpg
+  data-background-size: contain
+  data-background-opacity: "0.6"
 
 ---
 
