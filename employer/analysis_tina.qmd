@@ -69,3 +69,41 @@ trigram %>%
   geom_col()
 
 ```
+```{r}
+df %>% select(c(25:49)) %>% 
+  pivot_longer(everything(),
+               names_to = "Program", 
+               values_to = "sum") %>% 
+  group_by(Program) %>% 
+  summarise(sum = sum(sum)) %>%
+  arrange(-sum) %>% 
+  ggplot(aes(y = fct_reorder(Program, sum), x= sum))+geom_col()
+```
+
+```{r}
+unnested <- df %>%
+  select(c('jobId', 'jobTitle', 'jobClassification', 'advertiserName', 'workType', 'mobileAdTemplate')) %>% 
+  unnest_tokens(word, mobileAdTemplate) %>% 
+  anti_join(stop_words,by = "word") %>% 
+  group_by(jobId, jobTitle, jobClassification, advertiserName, workType) %>% 
+  distinct(word) %>% 
+  ungroup() 
+
+unique(df$jobTitle)
+
+
+scientist <- df %>% 
+  select(jobTitle) %>% 
+  mutate(jobTitle = tolower(jobTitle)) %>% 
+  filter(jobTitle %in% str_subset(jobTitle,"scientist"))
+
+analyst <- df %>% 
+  select(jobTitle) %>% 
+  mutate(jobTitle = tolower(jobTitle)) %>% 
+  filter(jobTitle %in% str_subset(jobTitle,"analyst"))
+
+both <- inner_join(scientist, analyst)
+
+```
+
+

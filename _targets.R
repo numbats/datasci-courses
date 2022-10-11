@@ -56,15 +56,61 @@ list(
              cue = tar_cue(mode = "thorough")),
   tar_target(lda_model03_ssc, model_lda(dtm_ssc, ntopics = 3),
              format = "rds", repository = "local"),
+  tar_target(lda_model20_ssc, model_lda(dtm_ssc, ntopics = 20),
+             format = "rds", repository = "local"),
+  # the two lda models took about 5.5 hours to fit
+  
+  
+  # try out more ntopics options
+  tar_target(lda_model06_ssc, model_lda(dtm_ssc, ntopics = 6),
+             format = "rds", repository = "local"), 
+  
   tar_target(lda_model08_ssc, model_lda(dtm_ssc, ntopics = 8),
              format = "rds", repository = "local"),
+  
+  tar_target(lda_model10_ssc, model_lda(dtm_ssc, ntopics = 10),
+             format = "rds", repository = "local"),
+  
   tar_target(lda_model12_ssc, model_lda(dtm_ssc, ntopics = 12),
              format = "rds", repository = "local"),
+  
+  tar_target(lda_model15_ssc, model_lda(dtm_ssc, ntopics = 15),
+             format = "rds", repository = "local"),
+  
   tar_target(lda_model17_ssc, model_lda(dtm_ssc, ntopics = 17),
              format = "rds", repository = "local"),
-  tar_target(lda_model20_ssc, model_lda(dtm_ssc, ntopics = 20),
-             format = "rds", repository = "local"), # the two lda models took about 5.5 hours to fit
+
+             
+  
+ 
+  
+  # computing data only
+  tar_target(clean_comp, preprocess_text(clean_wiki_computing)),
+  # do pre-processing separately (since it doesn't seem to be doing right using `create_vocabularly`?)
+  tar_target(itoken_comp, itoken(clean_comp, tokenizer = stem_tokenizer),
+             cue = tar_cue(mode = "thorough")),
+  # some how need cue to be explicitly stated as thorough, otherwise it seems to skip it!
+  tar_target(vocab_comp, create_vocabulary(itoken_comp, ngram = c(1, 3), stopwords = stopwords::stopwords()),
+             cue = tar_cue(mode = "thorough")),
+  tar_target(vocab_comp_prune, prune_vocab(vocab_ssc, n_min = 40),
+             cue = tar_cue(mode = "thorough")),
+  tar_target(dtm_comp, create_dtm(itoken_comp, vocab_vectorizer(vocab_comp_prune)),
+             cue = tar_cue(mode = "thorough")),
+  tar_target(tcm_comp, create_tcm(itoken_comp, vocab_vectorizer(vocab_comp_prune), 
+                                 skip_grams_window = 5L),
+             cue = tar_cue(mode = "thorough")),
+  tar_target(word2vec_model_comp, model_glove(vocab_comp_prune, tcm_comp),
+             cue = tar_cue(mode = "thorough")),
+  tar_target(word2vec_dist_comp, dist2(t(word2vec_model_comp$components), method = "cosine"),
+             cue = tar_cue(mode = "thorough"), format = "rds", repository = "local"),
+  tar_target(lda_model03_comp, model_lda(dtm_comp, ntopics = 3),
+             format = "rds", repository = "local"),
+  tar_target(lda_model10_comp, model_lda(dtm_comp, ntopics = 10),
+             format = "rds", repository = "local"),
+  tar_target(lda_model15_comp, model_lda(dtm_comp, ntopics = 15),
+             format = "rds", repository = "local"),
   # topicmodels::get_terms(targets::tar_read(lda_model20_ssc), k = 10)
+
   
   
   
