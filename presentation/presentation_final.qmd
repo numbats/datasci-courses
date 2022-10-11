@@ -24,18 +24,29 @@ Quarto enables you to weave together content and executable code into a finished
 
 ## Introduction
 
-When you click the **Render** button a document will be generated that includes:
+Agenda of the day
 
--   Content authored with markdown
--   Output from executable code
+- How employers define a 'data scientist'
 
-## Data Collection
+- Data science degree in Australian universities
 
-When you click the **Render** button a presentation will be generated that includes both content and the output of embedded code. You can embed code like this:
+## Employer Perspectives
 
-```{r}
-1 + 1
-```
+## University Perspectivves
+
+## Data Collection - Web Scraping, ethics (robot.text)
+
+## Simple EDA, Text Analysis, Text Corpus
+
+## A Work in Porgress - wordtovec
+
+## Limitations and Future Directions (briefly sum up)
+
+- Inconsistency of the data
+
+- No information on programming languages taught at universities
+
+- Not all universities have data science degree
 
 ## References and Resources
 
