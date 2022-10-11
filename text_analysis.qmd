@@ -148,6 +148,7 @@ stemword <- total %>%
   ungroup() %>% 
   group_by(School) %>% 
   mutate(stem = wordStem(word)) %>%
+  group_by(word,stem) %>% 
   count(stem, sort = TRUE)
 
 
