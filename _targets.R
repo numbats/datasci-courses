@@ -56,9 +56,47 @@ list(
              cue = tar_cue(mode = "thorough")),
   tar_target(lda_model03_ssc, model_lda(dtm_ssc, ntopics = 3),
              format = "rds", repository = "local"),
+  tar_target(lda_model08_ssc, model_lda(dtm_ssc, ntopics = 8),
+             format = "rds", repository = "local"),
+  tar_target(lda_model12_ssc, model_lda(dtm_ssc, ntopics = 12),
+             format = "rds", repository = "local"),
+  tar_target(lda_model17_ssc, model_lda(dtm_ssc, ntopics = 17),
+             format = "rds", repository = "local"),
   tar_target(lda_model20_ssc, model_lda(dtm_ssc, ntopics = 20),
              format = "rds", repository = "local"), # the two lda models took about 5.5 hours to fit
   # topicmodels::get_terms(targets::tar_read(lda_model20_ssc), k = 10)
+  
+  
+  
+  # statistics data only
+  tar_target(clean_s, preprocess_text(clean_wiki_stats)),
+  # do pre-processing separately (since it doesn't seem to be doing right using `create_vocabularly`?)
+  tar_target(itoken_s, itoken(clean_s, tokenizer = stem_tokenizer),
+             cue = tar_cue(mode = "thorough")),
+  # some how need cue to be explicitly stated as thorough, otherwise it seems to skip it!
+  tar_target(vocab_s, create_vocabulary(itoken_s, ngram = c(1, 3), stopwords = stopwords::stopwords()),
+             cue = tar_cue(mode = "thorough")),
+  tar_target(vocab_s_prune, prune_vocab(vocab_s, n_min = 40),
+             cue = tar_cue(mode = "thorough")),
+  tar_target(dtm_s, create_dtm(itoken_s, vocab_vectorizer(vocab_s_prune)),
+             cue = tar_cue(mode = "thorough")),
+  tar_target(tcm_s, create_tcm(itoken_s, vocab_vectorizer(vocab_s_prune), 
+                                 skip_grams_window = 5L),
+             cue = tar_cue(mode = "thorough")),
+  tar_target(word2vec_model_s, model_glove(vocab_s_prune, tcm_s),
+             cue = tar_cue(mode = "thorough")),
+  tar_target(word2vec_dist_s, dist2(t(word2vec_model_s$components), method = "cosine"),
+             cue = tar_cue(mode = "thorough"), format = "rds", repository = "local"),
+  tar_target(word2vec_res_s, find_close_words("statistics", word2vec_dist_s, 10),
+             cue = tar_cue(mode = "thorough")),
+  tar_target(lda_model05_s, model_lda(dtm_s, ntopics = 5),
+             format = "rds", repository = "local"),
+  tar_target(lda_model10_s, model_lda(dtm_s, ntopics = 10),
+             format = "rds", repository = "local"),
+  tar_target(lda_model15_s, model_lda(dtm_s, ntopics = 15),
+             format = "rds", repository = "local"),
+  tar_target(lda_model20_s, model_lda(dtm_s, ntopics = 20),
+             format = "rds", repository = "local"),
   
   NULL
 )
