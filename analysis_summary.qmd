@@ -377,7 +377,7 @@ topicmodels::get_terms(targets::tar_read(lda_model10_s), k = 10)
 
 
 ```{r}
-target::tar_load(lda_model10_comp)
+targets::tar_load(lda_model10_comp)
 
 topics_comp <- tidy(lda_model10_comp, matrix = "beta")
 
