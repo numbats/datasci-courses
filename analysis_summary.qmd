@@ -296,15 +296,14 @@ words <- total %>%
 ```
 
 ```{r}
-target::tar_load(lda_model10_s)
-target::tar_load(lda_model12_ssc)
+targets::tar_load(lda_model10_s)
+targets::tar_load(lda_model12_ssc)
 
 topics_ssc <- tidy(lda_model12_ssc, matrix = "beta")
 
 topics_s <- tidy(lda_model10_s, matrix = "beta")
 
 ```
-
 
 
 ```{r}
@@ -319,6 +318,10 @@ words_s <- words %>%
   group_by(School, Course, Course_code, Unit, Unit_code, words, stem) %>% 
   top_n(1, beta) %>% 
   mutate(topic = as_factor(topic))
+
+# write.csv(words_ssc, file = "presentation/ssc.csv")
+
+# write.csv(words_s, file = "presentation/stats.csv")
 ```
 
 
@@ -367,5 +370,48 @@ words_s %>%
 
 ```{r}
 topicmodels::get_terms(targets::tar_read(lda_model10_s), k = 10)
+
 ```
 
+
+
+
+```{r}
+target::tar_load(lda_model10_comp)
+
+topics_comp <- tidy(lda_model10_comp, matrix = "beta")
+
+words_comp <- words %>% 
+  left_join(topics_comp, by = c("stem" = "term") ) %>% 
+  group_by(School, Course, Course_code, Unit, Unit_code, words, stem) %>% 
+  top_n(1, beta) %>% 
+  mutate(topic = as_factor(topic))
+
+write.csv(words_comp, file = "presentation/comp.csv")
+```
+
+
+```{r}
+words_comp %>% 
+  distinct(School, Unit, topic) %>% 
+  group_by(School) %>% 
+  count(topic, sort = TRUE) %>% 
+  ungroup() %>% 
+  mutate(topic = fct_reorder(topic, n, sum))%>% #reorder_within(topic, n, School)
+  ggplot(aes(x = n,
+             y = topic,
+             fill = topic))+
+  geom_col() +
+  scale_fill_brewer(palette = "Paired") +
+  theme_minimal() +
+  #scale_y_reordered() +
+  facet_wrap(~School, scales = "free_y") +
+  theme(legend.position = "none") +
+  labs(title = "Topic Count - LDA_COMP")
+```
+
+
+```{r}
+topicmodels::get_terms(targets::tar_read(lda_model10_comp), k = 10)
+
+```
