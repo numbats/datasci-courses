@@ -23,11 +23,13 @@ title-slide-attributes:
 
 ---
 
-## {#title-slide background="images/datasci.jpg" background-size="90%"}
+## {#title-slide background-image="images/bg.jpg" background-opacity="0.5"}
+
+![](images/datasci.jpg)
 
 ## Background Story & Motivations {background-image="images/bg.jpg" background-opacity="0.5"}
 
-- 
+- Data science has been a buzzword since it came out
 
 - 
 
@@ -51,15 +53,111 @@ here is speaker notes.
 
 ## Employer Perspectives {background-image="images/bg.jpg" background-opacity="0.5"}
 
-## University Perspectivves {background-image="images/bg.jpg" background-opacity="0.5"}
+-
 
-## Data Collection - Web Scraping, ethics (robot.text) {background-image="images/bg.jpg" background-opacity="0.5"}
+-
 
-## Simple EDA, Text Analysis, Text Corpus {background-image="images/bg.jpg" background-opacity="0.5"}
+## University Perspectives {background-image="images/bg.jpg" background-opacity="0.5"}
 
-## A Work in Porgress - wordtovec {background-image="images/bg.jpg" background-opacity="0.5"}
+:::{incremental}
+- What are the teaching contents? (e.g. statistics, math, IT etc.)
 
-## Limitations and Future Directions (briefly sum up) {background-image="images/bg.jpg" background-opacity="0.5"}
+- What could be the common skill sets of a data science graduate?
+
+- Is there a 'standard structure' for data science degree?
+:::
+
+
+## Data Collection {.scrollable background-image="images/bg.jpg" background-opacity="0.5"}
+
+- Web scrapping course information, list of subjects and unit outlines from universities' websites
+
+- Performed using RSelenium and rvest
+
+- Used robots.text files as guidelines
+
+
+## Data Collection - Web Scraping {.scrollable background-image="images/bg.jpg" background-opacity="0.5"}
+
+Initial settings and navigation to the course handbook
+
+```{.r code-line-numbers="|6-7|9-11|13-22|24-25"}
+library(RSelenium)
+library(tidyverse)
+library(rvest)
+library(glue)
+
+rD <- rsDriver(browser="firefox", port=4778L, verbose=F)
+remDr <- rD[["client"]]
+
+baseurl <- "https://handbook.unimelb.edu.au"
+year <- 2022
+wait_time <- function() Sys.sleep(sample(3:5, 1))
+
+data <- tibble(Course = character(),
+               Course_code = character(),
+               Course_overview = character(),
+               Unit = character(),
+               Unit_code = character(),
+               Overview = character(),
+               Prerequisite = character(),
+               Corequisite = character(),
+               Prohibition = character(),
+               Outcomes = character())
+
+remDr$navigate("https://handbook.unimelb.edu.au/2022/courses/mc-datasc")
+course_html <- read_html(remDr$getPageSource()[[1]])
+```
+
+
+## Data Collection - Web Scraping {.scrollable background-image="images/bg.jpg" background-opacity="0.5"}
+
+Extract required information
+
+```{.r code-inline-numbers=""}
+
+
+```
+
+
+
+## Be Mindful of Ethics Issues! {background-image="images/bg.jpg" background-opacity="0.5"}
+
+- 
+
+
+## Text Analysis - Bigram {background-image="images/bg.jpg" background-opacity="0.5"}
+
+```{r}
+library(tidyverse)
+library(tidytext)
+```
+
+- overview barplot
+
+## Break Down by University {background-image="images/bg.jpg" background-opacity="0.5"}
+
+- university breakdown, similarities and differences
+
+## Component Analysis {background-image="images/bg.jpg" background-opacity="0.5"}
+
+Computational, Statistical or Mathematical? 
+
+- bar plot for components
+
+- use of unit code could be misleading
+
+## Further Analysis with the Concept of Text Corpus {background-image="images/bg.jpg" background-opacity="0.5"}
+
+- word count after applying three models
+
+## Still a Work in Porgress... {background-image="images/bg.jpg" background-opacity="0.5"}
+
+- It takes experienced linguists and huge efforts to build a text corpus
+
+- The models are still relatively basic and requires more trimming and training
+
+## Limitations and Future Directions {background-image="images/bg.jpg" background-opacity="0.5"}
 
 - Inconsistency of the data
 
@@ -71,4 +169,12 @@ here is speaker notes.
 
 -   The slides are made using [Quarto](https://quarto.org/) with [Emi Tanaka's](https://github.com/emitanaka/talks) and [Danyang Dai's](https://github.com/DanyangDai) CSS design.
 
-- links for images used: <https://sundaskhalid.medium.com/data-science-the-what-where-and-why-fcf6fd86d76>
+- links for images used: 
+<https://sundaskhalid.medium.com/data-science-the-what-where-and-why-fcf6fd86d76>
+
+<https://www.google.com/url?sa=i&url=https%3A%2F%2Fkeepcalms.com%2Fp%2Fthanks-for-listening-it-s-time-for-questions%2F&psig=AOvVaw05JlCCDdUQAzj3LcIcBKLb&ust=1665630877564000&source=images&cd=vfe&ved=0CAwQjRxqFwoTCIiej9jc2foCFQAAAAAdAAAAABAJ>
+
+
+## {background-image="images/bg.jpg" background-opacity="0.5"}
+
+![](images/qa.png){width="750" height="600" fig-align="center"}

@@ -51,6 +51,7 @@ uwa <- choose("data/uwa-master-datasci.csv","uwa") %>%
 
 #merge all data frames together
 total <- bind_rows(monash, uom, usyd, uq, uade, anu, uwa, unsw)
+
 ```
 
 ## Text Analysis - Unit Overview
@@ -284,6 +285,8 @@ total <- total %>%
   mutate(description = if_else(School == "unsw", 
                                total$Overview, 
                                str_c(total$Overview, " ", total$Outcomes)))
+
+# write.csv(total, file = "presentation/unidata.csv")
 
 words <- total %>% 
   unnest_tokens(words, description) %>% 
