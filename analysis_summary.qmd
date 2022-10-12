@@ -274,10 +274,95 @@ comp %>%
   
 ```
 
-## To be Considered
+## word to vec
 
--   Core and elective units are not separated
+```{r}
+library(stringr)
+library(SnowballC)
 
--   Programming languages used
+total <- total %>% 
+  mutate(description = if_else(School == "unsw", 
+                               total$Overview, 
+                               str_c(total$Overview, " ", total$Outcomes)))
 
--   Missing information
+words <- total %>% 
+  unnest_tokens(words, description) %>% 
+  filter(!words %in% stop_words$word) %>% 
+  subset(!grepl("[0-9]", words)) %>% 
+  mutate(stem = wordStem(words, language = "english"))
+```
+
+```{r}
+target::tar_load(lda_model10_s)
+target::tar_load(lda_model12_ssc)
+
+topics_ssc <- tidy(lda_model12_ssc, matrix = "beta")
+
+topics_s <- tidy(lda_model10_s, matrix = "beta")
+
+```
+
+
+
+```{r}
+words_ssc <- words %>% 
+  left_join(topics_ssc, by = c("stem" = "term") ) %>% 
+  group_by(School, Course, Course_code, Unit, Unit_code, words, stem) %>% 
+  top_n(1, beta) %>% 
+  mutate(topic = as_factor(topic))
+
+words_s <- words %>% 
+  left_join(topics_s, by = c("stem" = "term") ) %>% 
+  group_by(School, Course, Course_code, Unit, Unit_code, words, stem) %>% 
+  top_n(1, beta) %>% 
+  mutate(topic = as_factor(topic))
+```
+
+
+```{r}
+words_ssc %>% 
+  distinct(School, Unit, topic) %>% 
+  group_by(School) %>% 
+  count(topic, sort = TRUE) %>% 
+  ungroup() %>% 
+  mutate(topic = fct_reorder(topic, n, sum))%>% #reorder_within(topic, n, School)
+  ggplot(aes(x = n,
+             y = topic,
+             fill = topic))+
+  geom_col() +
+  scale_fill_brewer(palette = "Paired") +
+  theme_minimal() +
+  #scale_y_reordered() +
+  facet_wrap(~School, scales = "free_y") +
+  theme(legend.position = "none") +
+  labs(title = "Topic Count - LDA_SSC")
+```
+
+```{r}
+topicmodels::get_terms(targets::tar_read(lda_model12_ssc), k = 10)
+```
+
+```{r}
+words_s %>% 
+  distinct(School, Unit, topic) %>% 
+  group_by(School) %>% 
+  count(topic, sort = TRUE) %>% 
+  ungroup() %>% 
+  mutate(topic = fct_reorder(topic, n, sum))%>% #reorder_within(topic, n, School)
+  ggplot(aes(x = n,
+             y = topic,
+             fill = topic))+
+  geom_col() +
+  scale_fill_brewer(palette = "Paired") +
+  theme_minimal() +
+  #scale_y_reordered() +
+  facet_wrap(~School, scales = "free_y") +
+  theme(legend.position = "none") +
+  labs(title = "Topic Count - LDA_S")
+
+```
+
+```{r}
+topicmodels::get_terms(targets::tar_read(lda_model10_s), k = 10)
+```
+

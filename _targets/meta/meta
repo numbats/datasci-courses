@@ -1,25 +1,8 @@
 name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
-<<<<<<< HEAD
-clean_comp|stem|0ba3e2c6506f40be|685893f7cbc9b690|a0feadbb14eb5014|1526532352||t19276.3409449435s|84d010b2df8e7452|3622481|rds|local|vector|||1.61||
 clean_s|stem|2c5eb156059e90f4|7ab49d2c0e91813c|9134e471ebc5ef2f|113713180||t19271.2598059988s|19032ffa3e5dac07|8217576|rds|local|vector|||3.87||
-clean_ssc|stem|e223d1922b9c6e18|9976f6aea9ec8175|09bcf299296eced2|1602951138||t19269.4955068823s|f72b84afc6ca35b3|20468920|rds|local|vector|||8.23||
 clean_stats|stem|2c5eb156059e90f4|7ab49d2c0e91813c|9134e471ebc5ef2f|1244353432||t19269.4955683161s|19032ffa3e5dac07|8217576|rds|local|vector|||3.39||
-clean_wiki_article|function|858234ceee2b8e6c|||||||||||||||
-clean_wiki_computing|stem|15344e572cb210f2|f5f2cfe01e09d77f|9382acfe79b9bb9e|-269377252||t19269.4663768036s|ad20a80fe73f4946|4015248|rds|local|vector|||523.07||
-clean_wiki_sociology|stem|f460a4a0416cd6d7|a409e09e07b3836d|16aaeb4523123133|-984679161||t19269.4603116482s|9313350ffe51d9fa|9409292|rds|local|vector|||864.16||
-clean_wiki_stats|stem|b6c3208e1cad23d0|b2163d77c41f98d0|44ad7f7f4032ee4e|1121728837||t19269.4953572281s|b39f65e5c2568871|9061906|rds|local|vector|||2502.09||
 dtm_s|stem|4bf189924c5abba8|03e4ca7550957240|3e422cc1d64b9846|1310893800||t19271.2602682237s|db19f151af582a9f|2438845|rds|local|vector|||6.02||
-dtm_sc|stem||c6675542013ad8a9|497f452214f0a5f1|-94127613||t19262.0801724282s||0|rds|local|vector|||1.755|cannot wait for child 32347 as it does not exist. cannot wait for child 32346 as it does not exist. cannot wait for child 32345 as it does not exist. cannot wait for child 32348 as it does not exist. cannot wait for child 32350 as it does not exist. cannot wait for child 32349 as it does not exist. cannot wait for child 32351 as it does not exist. cannot wait for child 32352 as it does not exist. cannot wait for child 32354 as it does not exist. cannot wait for child 32353 as it does not exist|values must be length 1, but FUNX1 result is length 0
-dtm_ssc|stem|d63cc0c705efdc11|b325c8c9124f8251|431e9b17c9ae6cd9|-1061889282||t19269.4968758065s|66bcd316ab632007|5663295|rds|local|vector|||13.3||
-find_close_words|function|8cd9104d67f1f0bc|||||||||||||||
-get_clean_combined_wikis|function|388a207f6eea3126|||||||||||||||
-get_wiki_articles|function|9dccbb6638e1891a|||||||||||||||
-it_ssc|stem|4b46f1f62498ca0f|1c652521317d6741|3e572f19d8f70487|1910026503||t19262.0377024931s|5a1772c085cb18c6|181552253|rds|local|vector|||0.017||
-itoken_comp|stem|0eab34c8287ea94f|10c2e63e2bb54de2|74b4c5cfe05c40dc|-637467071||t19276.3409942502s|7ff85bdc3a37583d|18118808|rds|local|vector|||0.03||
 itoken_s|stem|a74f58093f71ed2b|97914505bcd20daa|5f2bbfe132f244cf|1078174542||t19271.2599048874s|75f7482e8b853d3d|41091301|rds|local|vector|||0.03||
-itoken_ssc|stem|d267ed84c8da38e6|eaa20adce70978c2|d6f3eccff18664c9|1138773920||t19269.4958423666s|9ff2f27868809fc8|102350086|rds|local|vector|||0.02||
-lda_model_ssc|stem|37952b0ea3a1bc69|8c1dcd6ccaaf4725|6dc6a27b6d87decd|1066299984||t19262.3581153418s|2221caa552173285|363295|rds|local|vector|||219.123||
-lda_model03_ssc|stem|a68a8fdd2b837075|b00e85363fed248e|82ba28de051636ca|2041726591||t19270.4226608068s|7966bfffa305f72c|6069322|rds|local|vector|||7176.69||
 lda_model05_s|stem|58ee70f7e006559e|b3ce9232e1b7f0c7|e0575504620c6639|-499034668||t19271.6177847478s|2700b60d4f8970f5|3454277|rds|local|vector|||4286.23||
 lda_model08_ssc|stem|adab2b49c07b6bb2|62f6d6e8227972c2|82ba28de051636ca|1199473320||t19269.8734104466s|25d1edae7e54653d|8042271|rds|local|vector|||11651.61||
 lda_model10_s|stem|ce653070fecac1ee|47774fff67091528|e0575504620c6639|-1195000779||t19271.3365751668s|c0fc9da3c34455c3|4055226|rds|local|vector|||6142.28||
@@ -27,8 +10,6 @@ lda_model12_ssc|stem|fa33805622fe4f0c|d00649873bf24e7f|82ba28de051636ca|51281793
 lda_model15_s|stem|e4e124131cf5189e|49c894e69ae8d8cd|e0575504620c6639|-94243798||t19271.4365175786s|be9d193cc7277b88|4443466|rds|local|vector|||8629.41||
 lda_model17_ssc|stem|aba2790bccd2ae6b|26c6b48ba0305ca0|82ba28de051636ca|-1388817695||t19269.7385232282s|ab7bcc056e0818f0|9561228|rds|local|vector|||20428.55||
 lda_model20_s|stem|968ecdeb51c9b53a|fd70d3a17284747a|e0575504620c6639|1380500840||t19271.5681614206s|ea7eb1c3766556da|4727438|rds|local|vector|||11372.48||
-lda_model20_ssc|stem|061dcdadef6a8196|dfc26b0700697efb|82ba28de051636ca|1426157953||t19270.3395744461s|a8ccceb9646ba767|9875888|rds|local|vector|||25159.33||
-=======
 clean_comp|stem|6da13c9eb86cf3b3|685893f7cbc9b690|4c21affa2726212a|1526532352||t19270.5590131801s|c15ff90e35dc5ad9|3622080|rds|local|vector|||1||
 clean_ssc|stem|f492899a069fe058|9976f6aea9ec8175|6c768ce325f5944b|1602951138||t19269.2614321766s|8875861b826921f5|20468330|rds|local|vector|||5.11||
 clean_wiki_article|function|858234ceee2b8e6c|||||||||||||||
@@ -53,34 +34,20 @@ lda_model10_ssc|stem|f1ce95851870516a|4cc54e4cc66f0ca0|00c58209c16d5158|-6328157
 lda_model15_comp|stem|4e4ae624fec0532f|fb262de2f5aadb5b|df8bb8052907cb42|-1236615392||t19270.5953200259s|276d4a5a735990a5|1780007|rds|local|vector|||1731.492||
 lda_model15_ssc|stem|0824fa8cc777ec6c|ca7733e662eee7ac|00c58209c16d5158|443734476||t19270.323323947s|a083d0ba6513ffcf|9207957|rds|local|vector|||10164.199||
 lda_model20_ssc|stem|db7a2b2549907188|dfc26b0700697efb|00c58209c16d5158|1426157953||t19269.4607178757s|adefb6c87a321b66|9936743|rds|local|vector|||12129.76||
->>>>>>> 8b67dc7d818c5f5d84bbe688ef213b952c7f634d
 model_glove|function|044cf6052c242f47|||||||||||||||
 model_lda|function|b54f0348745e8be1|||||||||||||||
 preprocess_text|function|122955ecd9d6c5ac|||||||||||||||
 preprocessor|function|ec258a084aa97a34|||||||||||||||
 prune_vocab|function|e25597f9eb5e0ddd|||||||||||||||
 stem_tokenizer|function|892248ccf5ff3cf7|||||||||||||||
-<<<<<<< HEAD
+<<<<<<< HEAD|||||||||||||||||
 tcm_s|stem|9b0c369f81e65184|9378d5ba08a8bb99|5ac0c187b8b6123e|1383583901||t19271.2604076917s|ffbec025fcbdd871|4931805|rds|local|vector|||10.22||
-tcm_ssc|stem|5e1ab1da7a5062b4|61fc7b271a891894|c08b485c04ef9cfc|1942888602||t19269.4971975242s|3e4208f0165d0c4d|12738609|rds|local|vector|||23.98||
-tokens_ssc|stem|33f6b01abac898c5|95243d17de21758e|20805d8297c7ad9f|-441295927||t19262.0176954203s|d480e915784754b1|30257944|rds|local|vector|||2.111||
-vocab_comp|stem|03935a33de73d4f1|96adcf783ab13c20|62c16650616be307|-278542966||t19276.3411411337s|0ceed6d0bc1d3a5e|9472328|rds|local|vector|||9.83||
 vocab_s|stem|a50442f9ab75bd89|fd8022bea66d77b4|8633bd41408ff115|940988305||t19271.2601861536s|7550a418ddae7f7e|16520023|rds|local|vector|||19.34||
 vocab_s_prune|stem|5faac8a8e94337e2|c5a7b7f3c1c05ad0|20fded0dca95644c|1275651123||t19271.260189196s|8e62c3aab0f3d079|77652|rds|local|vector|||0.09||
-vocab_ssc|stem|83e9f820b5ae08df|57148093352e392c|93630621438752de|798502072||t19269.4966192345s|221d1095abdc6093|44537400|rds|local|vector|||53.17||
-vocab_ssc_cull|stem|798caa93c7bbfa15|6da9839180cbb205|9d6e3a4f60245ab8|7819311||t19262.1992041161s|c73276395f7583c9|1049585|rds|local|vector|||2.118||
-vocab_ssc_prune|stem|9156c797fd83e65e|75e591f0ff608c91|47ec50ed2f237d6a|-1197897957||t19269.4967013121s|c660b7dcc49228cd|148748|rds|local|vector|||6.85||
-wiki_computing|stem|d5f8ccdbf42ad1bf|a6fdf2702e41c7d5|8a2ef92c6cb491ed|-51037440||t19269.4502769684s|eab02f5ceadfdf52|5367|rds|local|vector|||0.52||
-wiki_sociology|stem|0921583ef920222c|a4f71f47b99381c2|8a2ef92c6cb491ed|973765263||t19269.4502704444s|89e61673090ccd7f|8221|rds|local|vector|||3.26|package text2vec was built under R version 4.1.3|
-wiki_stats|stem|c2aff19782fa2cd5|0413c8d84abb2abc|8a2ef92c6cb491ed|-707944799||t19269.450285204s|f3537a81aeaebb6b|24680|rds|local|vector|||0.7||
-wiki_url|object|610941c887699db3|||||||||||||||
 word2vec_dist_s|stem|823a5d59a4a61b71|03558db6568e78ca|9a5e2a3fd4d99b30|-932804005||t19271.6183510239s|f22303ffddb02a93|888382323|rds|local|vector|||1.65||
-word2vec_dist_ssc|stem|20278cf9a9765e4d|82b2703f43056cef|b263f7843335d5c1|-1397698731||t19270.4245522695s|ba5f292f6a9e2e06|3119101364|rds|local|vector|||5.24||
 word2vec_model_s|stem|8eb290270e68b030|01ea4445c3c96389|b9d123efe450c1c8|-1234196165||t19271.6178326529s|146dcc9b72708c48|1516196|rds|local|vector|||3.92||
-word2vec_model_ssc|stem|5fabe3dd9ed4b5a7|229fad14c79548e8|b7e9a0905968c504|-1501247177||t19270.4227774777s|51cef03e9e896c99|2847248|rds|local|vector|||9.59||
-word2vec_res|stem|f4b1c331b41b6cfc|2f9d32459edad1ec|6049e48bc5db7ed1|1669976533||t19270.4246036841s|dc490c373b0cd971|332|rds|local|vector|||0.02||
 word2vec_res_s|stem|9c551361f1665d91|c2c49eef5e22886b|d358f8c0a13b6f7a|598372915||t19271.6183763128s|9cbf28bdb25cb6aa|330|rds|local|vector|||0||
-=======
+=======|||||||||||||||||
 tcm_comp|stem|799d3e49a211afb6|3b3a465dc29ad43f|3bd80953b5a4024e|2063145179||t19270.5592633836s|1c389cf7a4d50fc1|2966535|rds|local|vector|||2.328||
 tcm_ssc|stem|c5c58ed2474b3e6a|61fc7b271a891894|3f391f128e9dfab2|1942888602||t19269.2621566328s|21f387eb2b00c602|12728813|rds|local|vector|||10.764||
 tokens_ssc|stem|33f6b01abac898c5|95243d17de21758e|20805d8297c7ad9f|-441295927||t19262.0176954203s|d480e915784754b1|30257944|rds|local|vector|||2.111||
@@ -98,4 +65,17 @@ word2vec_dist_ssc|stem|cbc2c5de3d759edb|82b2703f43056cef|56a47458551fb814|-13976
 word2vec_model_comp|stem|f9e9cf3c6c7e76bf|3bbc1d84dcb35697|06b77971c1fec8ef|1619188517||t19270.6049003242s|6fbb9073e2be8114|2681123|rds|local|vector|||2.136||
 word2vec_model_ssc|stem|fd75eb5181e8d06b|229fad14c79548e8|bb407291d01d11ab|-1501247177||t19269.525002309s|d1604573746660b7|2847100|rds|local|vector|||8.463||
 word2vec_res|stem|560586341eb4a097|2f9d32459edad1ec|fba43f4de5e2b8e4|1669976533||t19269.5262784782s|65b2697406fa85d2|331|rds|local|vector|||3.08||
->>>>>>> 8b67dc7d818c5f5d84bbe688ef213b952c7f634d
+>>>>>>> 8b67dc7d818c5f5d84bbe688ef213b952c7f634d|||||||||||||||||
+wiki_url|object|610941c887699db3
+model_lda|function|b54f0348745e8be1
+clean_wiki_article|function|858234ceee2b8e6c
+find_close_words|function|8cd9104d67f1f0bc
+prune_vocab|function|e25597f9eb5e0ddd
+preprocess_text|function|122955ecd9d6c5ac
+stem_tokenizer|function|892248ccf5ff3cf7
+model_glove|function|044cf6052c242f47
+get_wiki_articles|function|9dccbb6638e1891a
+get_clean_combined_wikis|function|388a207f6eea3126
+wiki_stats|stem|c2aff19782fa2cd5|0413c8d84abb2abc|8a2ef92c6cb491ed|-707944799||t19276.9731778808s|f3537a81aeaebb6b|24680|rds|local|vector|||5.25|package text2vec was built under R version 4.1.3|
+wiki_sociology|stem|0921583ef920222c|a4f71f47b99381c2|8a2ef92c6cb491ed|973765263||t19276.9731926937s|89e61673090ccd7f|8221|rds|local|vector|||1.22||
+wiki_computing|stem|d5f8ccdbf42ad1bf|a6fdf2702e41c7d5|8a2ef92c6cb491ed|-51037440||t19276.9732111662s|eab02f5ceadfdf52|5367|rds|local|vector|||1.58||
