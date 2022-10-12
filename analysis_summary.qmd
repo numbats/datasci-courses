@@ -351,7 +351,7 @@ words_s %>%
   mutate(topic = fct_reorder(topic, n, sum))%>% #reorder_within(topic, n, School)
   ggplot(aes(x = n,
              y = topic,
-             fill = topic))+
+             fill = topic)) +
   geom_col() +
   scale_fill_brewer(palette = "Paired") +
   theme_minimal() +

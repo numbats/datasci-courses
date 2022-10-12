@@ -13,6 +13,7 @@ format:
     height: 720
     controls: true
     css: assets/custom.css
+    transition: convex
 execute:
   echo: true
 title-slide-attributes: 
@@ -22,31 +23,43 @@ title-slide-attributes:
 
 ---
 
-# {#title-slide background="images/datasci.jpg" background-size="80%"}
+## {#title-slide background="images/datasci.jpg" background-size="90%"}
 
-## Background Story & Motivations
+## Background Story & Motivations {background-image="images/bg.jpg" background-opacity="0.5"}
 
-Quarto enables you to weave together content and executable code into a finished presentation. To learn more about Quarto presentations see <https://quarto.org/docs/presentations/>.
+- 
 
-## Introduction
+- 
 
-Agenda of the day
+:::{.notes}
+here is speaker notes.
+:::
 
+## Agenda of the day {background-image="images/bg.jpg" background-opacity="0.5"}
+
+:::{.incremental}
 - How employers define a 'data scientist'
 
 - Data science degree in Australian universities
 
-## Employer Perspectives
+  - Data collection
 
-## University Perspectivves
+  - Text analysis
 
-## Data Collection - Web Scraping, ethics (robot.text)
+- Limitations and future directions
+:::
 
-## Simple EDA, Text Analysis, Text Corpus
+## Employer Perspectives {background-image="images/bg.jpg" background-opacity="0.5"}
 
-## A Work in Porgress - wordtovec
+## University Perspectivves {background-image="images/bg.jpg" background-opacity="0.5"}
 
-## Limitations and Future Directions (briefly sum up)
+## Data Collection - Web Scraping, ethics (robot.text) {background-image="images/bg.jpg" background-opacity="0.5"}
+
+## Simple EDA, Text Analysis, Text Corpus {background-image="images/bg.jpg" background-opacity="0.5"}
+
+## A Work in Porgress - wordtovec {background-image="images/bg.jpg" background-opacity="0.5"}
+
+## Limitations and Future Directions (briefly sum up) {background-image="images/bg.jpg" background-opacity="0.5"}
 
 - Inconsistency of the data
 
@@ -54,7 +67,7 @@ Agenda of the day
 
 - Not all universities have data science degree
 
-## References and Resources
+## References and Resources {background-image="images/bg.jpg" background-opacity="0.5"}
 
 -   The slides are made using [Quarto](https://quarto.org/) with [Emi Tanaka's](https://github.com/emitanaka/talks) and [Danyang Dai's](https://github.com/DanyangDai) CSS design.
 
