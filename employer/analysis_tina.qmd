@@ -81,6 +81,30 @@ df %>% select(c(25:49)) %>%
 ```
 
 ```{r}
+# breakdown of job titles
+scientist <- df %>% 
+  select(jobTitle) %>% 
+  mutate(jobTitle = tolower(jobTitle)) %>% 
+  filter(str_detect(jobTitle, "scientist"),
+         !str_detect(jobTitle, "analyst"))
+
+analyst <- df %>% 
+  select(jobTitle) %>% 
+  mutate(jobTitle = tolower(jobTitle)) %>% 
+  filter(str_detect(jobTitle,"analyst"),
+         !str_detect(jobTitle, "scientist"))
+
+both <- df %>% 
+  select(jobTitle) %>% 
+  mutate(jobTitle = tolower(jobTitle)) %>% 
+  filter(str_detect(jobTitle, "scientist"),
+         str_detect(jobTitle, "analyst"))
+
+both <- inner_join(scientist, analyst)
+
+```
+
+```{r}
 unnested <- df %>%
   select(c('jobId', 'jobTitle', 'jobClassification', 'advertiserName', 'workType', 'mobileAdTemplate')) %>% 
   unnest_tokens(word, mobileAdTemplate) %>% 
@@ -88,21 +112,6 @@ unnested <- df %>%
   group_by(jobId, jobTitle, jobClassification, advertiserName, workType) %>% 
   distinct(word) %>% 
   ungroup() 
-
-unique(df$jobTitle)
-
-
-scientist <- df %>% 
-  select(jobTitle) %>% 
-  mutate(jobTitle = tolower(jobTitle)) %>% 
-  filter(jobTitle %in% str_subset(jobTitle,"scientist"))
-
-analyst <- df %>% 
-  select(jobTitle) %>% 
-  mutate(jobTitle = tolower(jobTitle)) %>% 
-  filter(jobTitle %in% str_subset(jobTitle,"analyst"))
-
-both <- inner_join(scientist, analyst)
 
 ```
 
