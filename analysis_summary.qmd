@@ -444,3 +444,8 @@ words_comp %>%
 topicmodels::get_terms(targets::tar_read(lda_model10_comp), k = 10)
 
 ```
+```{r}
+#save model file
+saveRDS(targets::tar_load(lda_model10_comp),"employer/lda_model10_comp.rda")
+```
+
