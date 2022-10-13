@@ -11,7 +11,7 @@
 
   <meta name="author" content="Tina and Rachel">
   <meta name="dcterms.date" content="2022-10-17">
-  <title>Data Science Degree in Australia</title>
+  <title>Defining Data Science</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -385,7 +385,8 @@
     <div class="slides">
 
 <section id="title-slide" data-background-image="images/bgpic.jpg" data-background-opacity="0.6" data-background-size="contain" class="center">
-  <h1 class="title">Data Science Degree in Australia</h1>
+  <h1 class="title">Defining Data Science</h1>
+  <p class="subtitle">A Case Study in Australia</p>
   <p class="author">Tina and Rachel</p>
   <p class="date">17 October 2022</p>
 </section>
@@ -398,52 +399,31 @@
 <h2>Background Story &amp; Motivations</h2>
 <ul>
 <li><p>Data science has been a buzzword since it came out</p></li>
-<li></li>
+<li><p>Is there a standard definition of data science in Australia?</p></li>
+<li><p>Does data science mean the same thing to universities and employers?</p></li>
 </ul>
-<aside class="notes">
-<p>here is speaker notes.</p>
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
 </section>
 <section id="agenda-of-the-day" class="slide level2" data-background-image="images/bg.jpg" data-background-opacity="0.5">
 <h2>Agenda of the day</h2>
 <div>
 <ul>
-<li class="fragment"><p>How employers define a ‘data scientist’</p></li>
-<li class="fragment"><p>Data science degree in Australian universities</p>
+<li class="fragment"><p>Data science degree in Australian universities (Go8)</p>
 <ul>
 <li class="fragment"><p>Data collection</p></li>
 <li class="fragment"><p>Text analysis</p></li>
 </ul></li>
-<li class="fragment"><p>Limitations and future directions</p></li>
+<li class="fragment"><p>How employers define a ‘data scientist’</p></li>
+<li class="fragment"><p>Key findings, limitations and future directions</p></li>
 </ul>
 </div>
 </section>
-<section id="employer-perspectives" class="slide level2" data-background-image="images/bg.jpg" data-background-opacity="0.5">
-<h2>Employer Perspectives</h2>
-<ul>
-<li></li>
-<li></li>
-</ul>
-</section>
-<section id="university-perspectives" class="slide level2" data-background-image="images/bg.jpg" data-background-opacity="0.5">
-<h2>University Perspectives</h2>
-<div class="{incremental}">
+<section id="data-science-degrees-at-universities" class="slide level2" data-background-image="images/bg.jpg" data-background-opacity="0.5">
+<h2>Data Science Degrees at Universities</h2>
 <ul>
 <li><p>What are the teaching contents? (e.g.&nbsp;statistics, math, IT etc.)</p></li>
 <li><p>What could be the common skill sets of a data science graduate?</p></li>
-<li><p>Is there a ‘standard structure’ for data science degree?</p></li>
+<li><p>Is there a ‘standard structure’ for data science degree across the Go8?</p></li>
 </ul>
-</div>
 </section>
 <section id="data-collection" class="slide level2 scrollable" data-background-image="images/bg.jpg" data-background-opacity="0.5">
 <h2>Data Collection</h2>
@@ -456,71 +436,75 @@
 <section id="data-collection---web-scraping" class="slide level2 scrollable" data-background-image="images/bg.jpg" data-background-opacity="0.5">
 <h2>Data Collection - Web Scraping</h2>
 <p>Initial settings and navigation to the course handbook</p>
-<div class="sourceCode" id="cb1" data-code-line-numbers="|6-7|9-11|13-22|24-25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(RSelenium)</span>
-<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-3"><a href="#cb1-3"></a><span class="fu">library</span>(rvest)</span>
-<span id="cb1-4"><a href="#cb1-4"></a><span class="fu">library</span>(glue)</span>
-<span id="cb1-5"><a href="#cb1-5"></a></span>
-<span id="cb1-6"><a href="#cb1-6"></a>rD <span class="ot">&lt;-</span> <span class="fu">rsDriver</span>(<span class="at">browser=</span><span class="st">"firefox"</span>, <span class="at">port=</span>4778L, <span class="at">verbose=</span>F)</span>
-<span id="cb1-7"><a href="#cb1-7"></a>remDr <span class="ot">&lt;-</span> rD[[<span class="st">"client"</span>]]</span>
-<span id="cb1-8"><a href="#cb1-8"></a></span>
-<span id="cb1-9"><a href="#cb1-9"></a>baseurl <span class="ot">&lt;-</span> <span class="st">"https://handbook.unimelb.edu.au"</span></span>
-<span id="cb1-10"><a href="#cb1-10"></a>year <span class="ot">&lt;-</span> <span class="dv">2022</span></span>
-<span id="cb1-11"><a href="#cb1-11"></a>wait_time <span class="ot">&lt;-</span> <span class="cf">function</span>() <span class="fu">Sys.sleep</span>(<span class="fu">sample</span>(<span class="dv">3</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span>))</span>
-<span id="cb1-12"><a href="#cb1-12"></a></span>
-<span id="cb1-13"><a href="#cb1-13"></a>data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">Course =</span> <span class="fu">character</span>(),</span>
-<span id="cb1-14"><a href="#cb1-14"></a>               <span class="at">Course_code =</span> <span class="fu">character</span>(),</span>
-<span id="cb1-15"><a href="#cb1-15"></a>               <span class="at">Course_overview =</span> <span class="fu">character</span>(),</span>
-<span id="cb1-16"><a href="#cb1-16"></a>               <span class="at">Unit =</span> <span class="fu">character</span>(),</span>
-<span id="cb1-17"><a href="#cb1-17"></a>               <span class="at">Unit_code =</span> <span class="fu">character</span>(),</span>
-<span id="cb1-18"><a href="#cb1-18"></a>               <span class="at">Overview =</span> <span class="fu">character</span>(),</span>
-<span id="cb1-19"><a href="#cb1-19"></a>               <span class="at">Prerequisite =</span> <span class="fu">character</span>(),</span>
-<span id="cb1-20"><a href="#cb1-20"></a>               <span class="at">Corequisite =</span> <span class="fu">character</span>(),</span>
-<span id="cb1-21"><a href="#cb1-21"></a>               <span class="at">Prohibition =</span> <span class="fu">character</span>(),</span>
-<span id="cb1-22"><a href="#cb1-22"></a>               <span class="at">Outcomes =</span> <span class="fu">character</span>())</span>
-<span id="cb1-23"><a href="#cb1-23"></a></span>
-<span id="cb1-24"><a href="#cb1-24"></a>remDr<span class="sc">$</span><span class="fu">navigate</span>(<span class="st">"https://handbook.unimelb.edu.au/2022/courses/mc-datasc"</span>)</span>
-<span id="cb1-25"><a href="#cb1-25"></a>course_html <span class="ot">&lt;-</span> <span class="fu">read_html</span>(remDr<span class="sc">$</span><span class="fu">getPageSource</span>()[[<span class="dv">1</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb1" data-code-line-numbers="1-2|4-5|7-9|11-20|22-23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(RSelenium)</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(rvest)</span>
+<span id="cb1-3"><a href="#cb1-3"></a></span>
+<span id="cb1-4"><a href="#cb1-4"></a>rD <span class="ot">&lt;-</span> <span class="fu">rsDriver</span>(<span class="at">browser=</span><span class="st">"firefox"</span>, <span class="at">port=</span>4778L, <span class="at">verbose=</span>F)</span>
+<span id="cb1-5"><a href="#cb1-5"></a>remDr <span class="ot">&lt;-</span> rD[[<span class="st">"client"</span>]]</span>
+<span id="cb1-6"><a href="#cb1-6"></a></span>
+<span id="cb1-7"><a href="#cb1-7"></a>baseurl <span class="ot">&lt;-</span> <span class="st">"https://handbook.unimelb.edu.au"</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a>year <span class="ot">&lt;-</span> <span class="dv">2022</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a>wait_time <span class="ot">&lt;-</span> <span class="cf">function</span>() <span class="fu">Sys.sleep</span>(<span class="fu">sample</span>(<span class="dv">3</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span>))</span>
+<span id="cb1-10"><a href="#cb1-10"></a></span>
+<span id="cb1-11"><a href="#cb1-11"></a>data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">Course =</span> <span class="fu">character</span>(),</span>
+<span id="cb1-12"><a href="#cb1-12"></a>               <span class="at">Course_code =</span> <span class="fu">character</span>(),</span>
+<span id="cb1-13"><a href="#cb1-13"></a>               <span class="at">Course_overview =</span> <span class="fu">character</span>(),</span>
+<span id="cb1-14"><a href="#cb1-14"></a>               <span class="at">Unit =</span> <span class="fu">character</span>(),</span>
+<span id="cb1-15"><a href="#cb1-15"></a>               <span class="at">Unit_code =</span> <span class="fu">character</span>(),</span>
+<span id="cb1-16"><a href="#cb1-16"></a>               <span class="at">Overview =</span> <span class="fu">character</span>(),</span>
+<span id="cb1-17"><a href="#cb1-17"></a>               <span class="at">Prerequisite =</span> <span class="fu">character</span>(),</span>
+<span id="cb1-18"><a href="#cb1-18"></a>               <span class="at">Corequisite =</span> <span class="fu">character</span>(),</span>
+<span id="cb1-19"><a href="#cb1-19"></a>               <span class="at">Prohibition =</span> <span class="fu">character</span>(),</span>
+<span id="cb1-20"><a href="#cb1-20"></a>               <span class="at">Outcomes =</span> <span class="fu">character</span>())</span>
+<span id="cb1-21"><a href="#cb1-21"></a></span>
+<span id="cb1-22"><a href="#cb1-22"></a>remDr<span class="sc">$</span><span class="fu">navigate</span>(<span class="st">"https://handbook.unimelb.edu.au/2022/courses/mc-datasc"</span>)</span>
+<span id="cb1-23"><a href="#cb1-23"></a>course_html <span class="ot">&lt;-</span> <span class="fu">read_html</span>(remDr<span class="sc">$</span><span class="fu">getPageSource</span>()[[<span class="dv">1</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="data-collection---web-scraping-1" class="slide level2 scrollable" data-background-image="images/bg.jpg" data-background-opacity="0.5">
 <h2>Data Collection - Web Scraping</h2>
 <p>Extract required information</p>
+<iframe src="https://handbook.monash.edu/2023/courses/C6009" width="100%" height="400px">
+</iframe>
 <div class="sourceCode" id="cb2" data-code-inline-numbers=""><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="be-mindful-of-ethics-issues" class="slide level2" data-background-image="images/bg.jpg" data-background-opacity="0.5">
 <h2>Be Mindful of Ethics Issues!</h2>
 <ul>
-<li></li>
+<li><p>Getting blocked…</p></li>
+<li><p>Waiting time, pages that are prohibited for web scrapping</p></li>
+<li><p>Robots.text</p></li>
 </ul>
 </section>
 <section id="text-analysis---bigram" class="slide level2" data-background-image="images/bg.jpg" data-background-opacity="0.5">
 <h2>Text Analysis - Bigram</h2>
+<div class="columns">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb3-2"><a href="#cb3-2"></a><span class="fu">library</span>(tidytext)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div><div class="column" style="width:40%;">
+<p>overview</p>
+</div><div class="column" style="width:60%;">
+<p>university breakdown - proportion</p>
+</div>
 </div>
 <ul>
-<li>overview barplot</li>
+<li>count is too small to make meaningful interpretations</li>
 </ul>
 </section>
-<section id="break-down-by-university" class="slide level2" data-background-image="images/bg.jpg" data-background-opacity="0.5">
-<h2>Break Down by University</h2>
-<ul>
-<li>university breakdown, similarities and differences</li>
-</ul>
-</section>
-<section id="component-analysis" class="slide level2" data-background-image="images/bg.jpg" data-background-opacity="0.5">
-<h2>Component Analysis</h2>
+<section id="break-down-by-faculty" class="slide level2" data-background-image="images/bg.jpg" data-background-opacity="0.5">
+<h2>Break Down by Faculty</h2>
 <p>Computational, Statistical or Mathematical?</p>
 <ul>
-<li><p>bar plot for components</p></li>
-<li><p>use of unit code could be misleading</p></li>
+<li><p>Conducted based on the first few characters from unit code</p></li>
+<li><p>Using only the unit code could be misleading</p></li>
 </ul>
 </section>
-<section id="further-analysis-with-the-concept-of-text-corpus" class="slide level2" data-background-image="images/bg.jpg" data-background-opacity="0.5">
-<h2>Further Analysis with the Concept of Text Corpus</h2>
+<section id="further-analysis-with-the-concepts-of-text-corpus" class="slide level2" data-background-image="images/bg.jpg" data-background-opacity="0.5">
+<h2>Further Analysis with the Concepts of Text Corpus</h2>
 <ul>
-<li>word count after applying three models</li>
+<li><p>wordtovec, but due to time we’ll only talk about lda</p></li>
+<li><p>word count after applying three models</p></li>
+<li><p>contructing tcm, document term matrix</p></li>
+<li><p>convering text data into something numerical</p></li>
 </ul>
 </section>
 <section id="still-a-work-in-porgress" class="slide level2" data-background-image="images/bg.jpg" data-background-opacity="0.5">
@@ -530,13 +514,41 @@
 <li><p>The models are still relatively basic and requires more trimming and training</p></li>
 </ul>
 </section>
+<section id="employer-perspectives" class="slide level2" data-background-image="images/bg.jpg" data-background-opacity="0.5">
+<h2>Employer Perspectives</h2>
+<ul>
+<li></li>
+<li></li>
+</ul>
+</section>
 <section id="limitations-and-future-directions" class="slide level2" data-background-image="images/bg.jpg" data-background-opacity="0.5">
 <h2>Limitations and Future Directions</h2>
 <ul>
 <li><p>Inconsistency of the data</p></li>
 <li><p>No information on programming languages taught at universities</p></li>
 <li><p>Not all universities have data science degree</p></li>
+<li><p>The LDA models fitted are not optimised</p></li>
 </ul>
+</section>
+<section id="to-sum-up" class="slide level2 scrollable" data-background-image="images/bg.jpg" data-background-opacity="0.5">
+<h2>To Sum Up!</h2>
+<div class="{incremental}">
+<ul>
+<li><p>What we have done:</p>
+<ul>
+<li><p>Collected data across Go8 through web scrapping</p></li>
+<li><p>Conducted exploratory analysis from various aspects on both university and employer data</p></li>
+<li><p>Built LDA models through web scrapping Wikipedia articles to establish our own ‘text corpus’</p></li>
+</ul></li>
+<li><p>Key findings:</p>
+<ul>
+<li><p>There is no obvious ‘standard structure’ for data science degree across Go8 (different unit codes etc.)</p></li>
+<li><p>The degree is dominated by computational component, even the statistical aspects of it are more computational</p></li>
+<li><p>employers want more python, how monash differs compare with other universities.</p></li>
+</ul></li>
+<li><p>post questions to the audience, how data science should evolve, where should it head</p></li>
+</ul>
+</div>
 </section>
 <section id="references-and-resources" class="slide level2" data-background-image="images/bg.jpg" data-background-opacity="0.5">
 <h2>References and Resources</h2>
