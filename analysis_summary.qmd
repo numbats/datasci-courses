@@ -281,14 +281,14 @@ comp %>%
 library(stringr)
 library(SnowballC)
 
-total <- total %>% 
+total_comb <- total %>% 
   mutate(description = if_else(School == "unsw", 
                                total$Overview, 
                                str_c(total$Overview, " ", total$Outcomes)))
 
-# write.csv(total, file = "presentation/unidata.csv")
+# write.csv(total_comb, file = "presentation/unidata.csv")
 
-words <- total %>% 
+words <- total_comb %>% 
   unnest_tokens(words, description) %>% 
   filter(!words %in% stop_words$word) %>% 
   subset(!grepl("[0-9]", words)) %>% 
@@ -391,9 +391,9 @@ words_s %>%
   scale_fill_brewer(palette = "Paired") +
   theme_minimal() +
   #scale_y_reordered() +
-  facet_wrap(~School, scales = "free_y") +
+  #facet_wrap(~School, scales = "free_y") +
   theme(legend.position = "none") +
-  labs(title = "Topic Count - LDA_S")
+  labs(title = "Topic Count Overview - LDA_S")
 
 ```
 
@@ -402,7 +402,27 @@ topicmodels::get_terms(targets::tar_read(lda_model10_s), k = 10)
 
 ```
 
+```{r}
+words_s %>% 
+  distinct(School, Unit, topic) %>% 
+  group_by(School) %>% 
+  count(topic, sort = TRUE) %>% 
+  mutate(prop = round(n/sum(n),4)) %>% 
+  ungroup() %>% 
+  mutate(topic = fct_reorder(topic, prop, sum))%>% #reorder_within(topic, n, School)
+  ggplot(aes(x = prop,
+             y = topic,
+             fill = topic)) +
+  geom_col() +
+  scale_fill_brewer(palette = "Paired") +
+  theme_minimal() +
+  #scale_y_reordered() +
+  facet_wrap(~School, scales = "free_y") +
+  theme(legend.position = "none") +
+  labs(x = "proportion",
+       title = "Topic Proportion by University - LDA_S")
 
+```
 
 
 ```{r}
@@ -444,8 +464,82 @@ words_comp %>%
 topicmodels::get_terms(targets::tar_read(lda_model10_comp), k = 10)
 
 ```
+
 ```{r}
 #save model file
 saveRDS(targets::tar_load(lda_model10_comp),"employer/lda_model10_comp.rda")
+
+saveRDS(targets::tar_load(lda_model10_s),"presentation/lda_model10_s.rda")
+
 ```
+
+
+## Bigram, university breakdown by proportion using combined overview and outcome 
+
+```{r}
+words_bi <- total_comb %>%
+  unnest_tokens(bigram, description, token = "ngrams", n = 2) %>% 
+  separate(bigram,
+           into = c("word1", "word2"),
+           sep = " ") %>% 
+  filter(!word1 %in% stop_words$word & !word2 %in% stop_words$word) %>%  
+  filter(!word1 %in% c("content","topic", "unit", "subject", "final", "capstone", "involve", "project", "master", "practical", "programming") & 
+         !word2 %in% c("student", "skill", "set", "piece", "concept", "capstone", "delivery", "domain", "manner", "due", "range", "unit", "master")) %>% 
+  subset(!grepl("[0-9]", word1)) %>% 
+  subset(!grepl("[0-9]", word2)) %>% 
+  mutate(word = as_factor(paste(word1, word2, sep = " "))) %>%
+  #filter(!word == "data science") %>% 
+  distinct(School, Unit, word) %>% 
+  group_by(School) %>% 
+  count(word, sort = TRUE) %>% 
+  ungroup() %>% 
+  mutate(category = case_when(str_detect(word, "data") ~ "IT",
+                              str_detect(word, "regression") ~ "Math",
+                              str_detect(word, "software") ~ "IT",
+                              str_detect(word, "information") ~"IT",
+                              str_detect(word, "neural") ~ "IT",
+                              str_detect(word, "artificial") ~ "AI",
+                              str_detect(word, "machine") ~ "IT",
+                              str_detect(word, "debugging") ~ "IT")) %>% 
+  mutate(category = if_else(is.na(category), "Other", category))
+
+
+```
+
+```{r}
+words_bi %>% 
+  filter(n > 4) %>% 
+  mutate(word = fct_reorder(word, n, sum))%>% 
+  ggplot(aes(x=n,
+             y = word,
+             fill = category))+
+  geom_col()+
+  scale_fill_brewer(palette = "Dark2") +
+  theme_minimal()+
+  labs(y = "",
+       x = "",
+       fill = "Category",
+       title = "Bigram - an overview (n > 3)")
+```
+
+```{r}
+words_bi %>% 
+  group_by(School) %>% 
+  mutate(prop = round(n/sum(n),4)) %>% 
+  ungroup() %>% 
+  filter(prop > 0.005) %>% 
+  mutate(word = fct_reorder(word, prop, sum)) %>% 
+  ggplot(aes(x = prop,
+             y = word,
+             fill = category))+
+  geom_col()+
+  scale_fill_brewer(palette = "Dark2") +
+  theme_minimal()+
+  facet_wrap(~School, scales = "free_y") +
+  labs(y = "",
+       x = "",
+       fill = "Category",
+       title = "Bigram - break down by univeristy (prop > 0.005)")
+```
+
 
