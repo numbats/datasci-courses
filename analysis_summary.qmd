@@ -470,6 +470,8 @@ topicmodels::get_terms(targets::tar_read(lda_model10_comp), k = 10)
 saveRDS(targets::tar_load(lda_model10_comp),"employer/lda_model10_comp.rda")
 
 saveRDS(targets::tar_load(lda_model10_s),"presentation/lda_model10_s.rda")
+saveRDS(targets::tar_load(lda_model10_comp),"presentation/lda_model10_comp.rda")
+saveRDS(targets::tar_load(lda_model10_comp),"presentation/lda_model10_ssc.rda")
 
 ```
 
