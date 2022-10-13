@@ -8,6 +8,7 @@ format: html
 library(tidyverse)
 library(tidytext)
 library(pluralize)
+library(kableExtra)
 df <- read_csv("listings2019_2021.csv")
 ```
 
@@ -104,15 +105,76 @@ both <- inner_join(scientist, analyst)
 
 ```
 
-```{r}
-unnested <- df %>%
-  select(c('jobId', 'jobTitle', 'jobClassification', 'advertiserName', 'workType', 'mobileAdTemplate')) %>% 
-  unnest_tokens(word, mobileAdTemplate) %>% 
-  anti_join(stop_words,by = "word") %>% 
-  group_by(jobId, jobTitle, jobClassification, advertiserName, workType) %>% 
-  distinct(word) %>% 
-  ungroup() 
-
+```{r languages}
+df %>% 
+   select(c(25:49)) %>% 
+   pivot_longer(cols = everything(),
+                names_to = "language",
+                values_to = "count") %>% 
+   group_by(language) %>% 
+   summarise(count =sum(count)) %>% 
+   arrange(-count) %>% 
+   ggplot(aes(x = count, fct_reorder(language, count), fill = language))+
+   geom_col() +theme_minimal()+theme(legend.position = "none")
 ```
 
+```{r languages for ds}
+df %>% 
+  filter(tolower(jobTitle) %in% scientist$jobTitle) %>% 
+   select(c(25:49)) %>% 
+   pivot_longer(cols = everything(),
+                names_to = "language",
+                values_to = "count") %>% 
+   group_by(language) %>% 
+   summarise(count =sum(count)) %>% 
+   arrange(-count) %>% 
+   ggplot(aes(x = count, fct_reorder(language, count), fill = language))+
+   geom_col() +theme_minimal()+theme(legend.position = "none")+ 
+  labs( title = "Languages for Data Science Jobs",
+        y = "Languages")
+```
+```{r languages for analyst}
+df %>% 
+  filter(tolower(jobTitle) %in% analyst$jobTitle) %>% 
+   select(c(25:49)) %>% 
+   pivot_longer(cols = everything(),
+                names_to = "language",
+                values_to = "count") %>% 
+   group_by(language) %>% 
+   summarise(count =sum(count)) %>% 
+   arrange(-count) %>% 
+   ggplot(aes(x = count, fct_reorder(language, count), fill = language))+
+   geom_col() +theme_minimal()+theme(legend.position = "none")+ 
+  labs( title = "Languages for Analyst Jobs",
+        y = "Languages")
+```
+```{r university}
+df %>% 
+  filter(grepl("education|university|college", advertiserName, ignore.case = TRUE)) %>% 
+  select(advertiserName) %>% 
+  unique() %>% rename("University" = advertiserName) %>% 
+  kable(escape = F) %>%
+  kable_paper("striped", full_width = F) %>% 
+  row_spec(c(1:3,7,10,11,17),bold = T, color = "white", background = "#006DAE")
+```
+```{r go8employers}
+unijob <- df %>% 
+  filter(advertiserName %in% c("The Australian National University", "University of New South Wales","The University of Sydney", "The University of Queensland", "The University Of Melbourne"," Federation University Australia", "University of Queensland")) 
+
+unijob %>% 
+   pivot_longer(cols = c(25:49),
+                names_to = "language",
+                values_to = "count") %>% 
+  group_by(advertiserName, language)%>% 
+  mutate(advertiserName = ifelse(advertiserName == "University of Queensland", "The University of Queensland",
+                                 advertiserName)) %>% 
+  summarise(count =sum(count)) %>% 
+  ggplot(aes(x = count, y = language))+
+  geom_col()+
+  facet_wrap(~advertiserName, scales = "free_y")+theme_minimal()
+```
+
+```{r}
+
+```
 
