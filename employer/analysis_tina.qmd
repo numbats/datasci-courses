@@ -9,6 +9,7 @@ library(tidyverse)
 library(tidytext)
 library(pluralize)
 library(ggridges)
+library(SnowballC)
 library(kableExtra)
 df <- read_csv("listings2019_2021.csv")
 ```
@@ -24,6 +25,9 @@ unnested <- df %>%
   distinct(word) %>% 
   ungroup() 
 
+emp_word <- unnested %>% 
+  mutate(stem = wordStem(word, language = "english"))
+
 unnested %>%
   count(word, sort = TRUE) %>% 
   filter(n>800) %>% 
@@ -33,10 +37,52 @@ unnested %>%
 ```
 
 ```{r}
-lda_10_comp <- readRDS("lda_model10_comp.rda")
+lda_model10_comp <- readRDS("lda_model10_comp.rda")
 
-topics_comp <- tidy(lda_10_comp, matrix = "beta")
+topics_comp <- tidy(lda_model10_comp, matrix = "beta")
 
+emp_word_comp <- emp_word %>% 
+  left_join(topics_comp, by = c("stem" = "term") ) %>% 
+  group_by(jobTitle, jobClassification, advertiserName, workType, word, stem) %>% 
+  top_n(1, beta) %>% 
+  mutate(topic = as_factor(topic))
+
+emp_word_comp %>% 
+  distinct(jobTitle, jobClassification, topic) %>% 
+  group_by(jobClassification) %>% 
+  count(topic, sort = TRUE) %>% 
+  ungroup() %>% 
+  mutate(topic = fct_reorder(topic, n, sum))%>% #reorder_within(topic, n, School)
+  ggplot(aes(x = n,
+             y = topic,
+             fill = topic))+
+  geom_col() +
+  scale_fill_brewer(palette = "Paired") +
+  theme_minimal() +
+  #scale_y_reordered() +
+  facet_wrap(~jobClassification, scales = "free") +
+  theme(legend.position = "none") +
+  labs(title = "Topic Count - LDA_COMP")
+
+```
+```{r}
+emp_word_comp  %>% 
+  count(topic, sort = TRUE) %>% 
+  ungroup() %>% 
+  mutate(topic = fct_reorder(topic, n, sum))%>% 
+  ggplot(aes(x = n,
+             y = topic,
+             fill = topic))+
+  geom_col() +
+  scale_fill_brewer(palette = "Paired") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(title = "Topic Count - LDA_COMP")
+```
+
+
+```{r}
+topicmodels::get_terms(lda_model10_comp, k = 10)
 
 ```
 
@@ -215,9 +261,11 @@ out %>%
   filter(count == 1) %>% 
   select(language, salary) %>% 
   filter(!is.na(salary)) %>% 
-  ggplot(aes(x = salary, y = language))+
+  ggplot(aes(x = salary, y = language, fill = ..x..))+
   geom_density_ridges_gradient(size =0.1, scale = 1)+
+  paletteer::scale_fill_paletteer_c("viridis::plasma")+
   scale_x_continuous(labels = scales::dollar)+
-  theme_ridges()+labs(title = "Salary distribution for Languages")
+  theme_ridges()+labs(title = "Salary distribution for Languages")+
+  theme(legend.position = "none")
 ```
 
