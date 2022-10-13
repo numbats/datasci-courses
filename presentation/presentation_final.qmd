@@ -176,10 +176,84 @@ Computational, Statistical or Mathematical?
 
 
 ## Employer Perspectives {background-image="images/bg.jpg" background-opacity="0.5"}
+```{r employer data, echo = FALSE}
+jobs <- read_csv("../employer/listings2019_2021.csv")
 
--
+```
+::: {.panel-tabset}
 
--
+### Job Description Bigram
+
+```{r employer bigram, echo = FALSE}
+emp_bigram <- jobs%>%
+  select(c('jobId', 'jobTitle', 'jobClassification', 'advertiserName', 'workType', 'mobileAdTemplate')) %>% 
+  unnest_tokens(bigram, mobileAdTemplate, token = "ngrams",n=2) %>% 
+  separate(bigram, c("word1", "word2") , sep = " ") %>% 
+  filter(!word1 %in% stop_words$word & !word2 %in% stop_words$word ) %>% 
+  mutate(bigram = paste(word1, word2)) %>% 
+  group_by(jobId, jobTitle, jobClassification, advertiserName, workType) %>% 
+  distinct(bigram) %>% 
+  ungroup() 
+
+emp_bigram %>%
+  count(bigram, sort = TRUE) %>% 
+  filter(n>300) %>% 
+  ggplot(aes(x = n,y= fct_reorder(bigram, n), fill = n))+
+  geom_col()+
+  theme_minimal()+paletteer::scale_fill_paletteer_c("viridis::plasma")+
+  theme(legend.position = "none")+
+  labs(title= "Job Description Bigrams", 
+       y = "Bigrams", 
+       x= "Total Count")
+```
+
+### Languages
+
+```{r echo = FALSE}
+jobs %>% select(c(25:49)) %>% 
+  pivot_longer(everything(),
+               names_to = "Program", 
+               values_to = "sum") %>% 
+  group_by(Program) %>% 
+  summarise(sum = sum(sum)) %>%
+  arrange(-sum) %>% 
+  ggplot(aes(y = fct_reorder(Program, sum), 
+             x= sum,
+             fill = Program))+
+  geom_col()+
+  geom_text(aes(label = sum, hjust=0.1), color ="black")+
+  theme_minimal()+theme(legend.position = "none")+
+  labs(title = "Programming languages mentioned in Job Ads.",
+       y = "Language", x = "Count")
+```
+### Salary
+```{r job_salary, echo = FALSE}
+library(priceR)
+
+Salary <- jobs$salary_string %>% 
+  extract_salary(
+    include_periodicity = TRUE,
+    working_weeks_per_year = 48 
+    ) %>% 
+  cbind(jobs, .)
+
+Salary %>% 
+  select(jobClassification, salary) %>% 
+  filter(!is.na(salary) &salary < 1000000) %>%
+  ggplot(aes(x = salary,
+             y = jobClassification,
+             color =..x..))+
+  geom_point()+
+ paletteer::scale_color_paletteer_c("viridis::plasma")+
+  scale_x_continuous(labels = scales::dollar)+
+  theme_minimal()+labs(title = "Salary distribution for Languages")+
+  theme(legend.position = "none")
+```
+
+
+
+
+:::
 
 
 ## Limitations and Future Directions {background-image="images/bg.jpg" background-opacity="0.5"}
