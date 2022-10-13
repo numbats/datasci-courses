@@ -8,6 +8,7 @@ format: html
 library(tidyverse)
 library(tidytext)
 library(pluralize)
+library(ggridges)
 library(kableExtra)
 df <- read_csv("listings2019_2021.csv")
 ```
@@ -30,6 +31,7 @@ unnested %>%
   geom_col()
 
 ```
+
 
 ```{r}
 bigram <- df %>%
@@ -87,22 +89,26 @@ scientist <- df %>%
   select(jobTitle) %>% 
   mutate(jobTitle = tolower(jobTitle)) %>% 
   filter(str_detect(jobTitle, "scientist"),
-         !str_detect(jobTitle, "analyst"))
+         !str_detect(jobTitle, "analyst"))%>% 
+  rename("scientist" = jobTitle)
 
 analyst <- df %>% 
   select(jobTitle) %>% 
   mutate(jobTitle = tolower(jobTitle)) %>% 
   filter(str_detect(jobTitle,"analyst"),
-         !str_detect(jobTitle, "scientist"))
+         !str_detect(jobTitle, "scientist"))%>% 
+  rename("analyst" = jobTitle)
 
 both <- df %>% 
   select(jobTitle) %>% 
   mutate(jobTitle = tolower(jobTitle)) %>% 
   filter(str_detect(jobTitle, "scientist"),
-         str_detect(jobTitle, "analyst"))
+         str_detect(jobTitle, "analyst")) %>% 
+  rename("both" = jobTitle)
 
-both <- inner_join(scientist, analyst)
 
+VennDiagram::venn.diagram()
+  
 ```
 
 ```{r languages}
@@ -174,7 +180,36 @@ unijob %>%
   facet_wrap(~advertiserName, scales = "free_y")+theme_minimal()
 ```
 
-```{r}
 
+# Salary
+```{r}
+#code from emi's analysis
+out <- df %>% 
+  mutate(salary = map_dbl(salary_string, ~{
+    out <- str_extract_all(.x, "[0-9]+,?[0-9]+[kK.%]?") %>% 
+      str_replace("[,+]", "") %>% 
+      str_replace("[kK]", "000")
+    out <- out[!out %in% "00"]
+    out <- out[!str_detect(out, "[.%]")]
+    if(length(out)==0) return(NA_real_)
+    x <- mean(as.numeric(out))
+    if(!is.na(.x) && any(str_detect(.x, "(day|pd)"))) return(x * 48 * 5)
+    return(x)
+  })) 
+```
+
+```{r}
+out %>% 
+  select(salary, R:Fortran) %>% 
+  pivot_longer(R:Fortran, 
+               names_to = "language",
+               values_to = "count") %>% 
+  filter(count == 1) %>% 
+  select(language, salary) %>% 
+  filter(!is.na(salary)) %>% 
+  ggplot(aes(x = salary, y = language))+
+  geom_density_ridges_gradient(size =0.1, scale = 1)+
+  scale_x_continuous(labels = scales::dollar)+
+  theme_ridges()+labs(title = "Salary distribution for Languages")
 ```
 
