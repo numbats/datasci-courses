@@ -320,7 +320,7 @@ words_s <- words %>%
   top_n(1, beta) %>% 
   mutate(topic = as_factor(topic))
 
-# write.csv(words_ssc, file = "presentation/ssc.csv")
+# write.csv(words_ssc12, file = "presentation/ssc.csv")
 
 # write.csv(words_s, file = "presentation/stats.csv")
 ```
@@ -355,7 +355,7 @@ words_ssc2 <- words %>%
   group_by(School, Course, Course_code, Unit, Unit_code, words, stem) %>% 
   top_n(1, beta) %>% 
   mutate(topic = as_factor(topic))
-# write.csv(words_ssc2, file = "presentation/ssc2.csv")
+# write.csv(words_ssc2, file = "presentation/ssc.csv")
 
 words_ssc2 %>% 
   distinct(School, Unit, topic) %>% 
@@ -465,15 +465,51 @@ topicmodels::get_terms(targets::tar_read(lda_model10_comp), k = 10)
 
 ```
 
+
+```{r}
+targets::tar_load(lda_model10_cS)
+
+topics_cs <- tidy(lda_model10_cs, matrix = "beta")
+
+words_cs <- words %>% 
+  left_join(topics_cs, by = c("stem" = "term") ) %>% 
+  group_by(School, Course, Course_code, Unit, Unit_code, words, stem) %>% 
+  top_n(1, beta) %>% 
+  mutate(topic = as_factor(topic))
+
+#write.csv(words_cs, file = "presentation/data/cs.csv")
+```
+
+
 ```{r}
 #save model file
+saveRDS(targets::tar_load(lda_model10_ssc),"presentation/lda_model10_ssc.rda")
+
 saveRDS(targets::tar_load(lda_model10_comp),"employer/lda_model10_comp.rda")
 
 saveRDS(targets::tar_load(lda_model10_s),"presentation/lda_model10_s.rda")
-saveRDS(targets::tar_load(lda_model10_comp),"presentation/lda_model10_comp.rda")
-saveRDS(targets::tar_load(lda_model10_comp),"presentation/lda_model10_ssc.rda")
+
+saveRDS(targets::tar_load(lda_model10_cs),"presentation/lda_model10_cs.rda")
 
 ```
+
+
+```{r}
+# save top 10 terms for each topic
+
+term_cs <- topicmodels::get_terms(targets::tar_read(lda_model10_cs), k = 10) %>% 
+  as_tibble()
+
+term_s <- topicmodels::get_terms(targets::tar_read(lda_model10_s), k = 10) %>% 
+  as_tibble()
+
+term_ssc <- topicmodels::get_terms(targets::tar_read(lda_model10_ssc), k = 10) %>% 
+  as_tibble()
+  
+term_comp <- topicmodels::get_terms(targets::tar_read(lda_model10_comp), k = 10) %>% 
+  as_tibble()
+```
+
 
 
 ## Bigram, university breakdown by proportion using combined overview and outcome 

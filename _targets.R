@@ -144,5 +144,37 @@ list(
   tar_target(lda_model20_s, model_lda(dtm_s, ntopics = 20),
              format = "rds", repository = "local"),
   
+  
+  
+  
+  # computing and statistics data combined
+  tar_target(clean_cs, preprocess_text(c(clean_wiki_stats, clean_wiki_computing))),
+  # do pre-processing separately (since it doesn't seem to be doing right using `create_vocabularly`?)
+  tar_target(itoken_cs, itoken(clean_cs, tokenizer = stem_tokenizer),
+             cue = tar_cue(mode = "thorough")),
+  # some how need cue to be explicitly stated as thorough, otherwise it seems to skip it!
+  tar_target(vocab_cs, create_vocabulary(itoken_cs, ngram = c(1, 3), stopwords = stopwords::stopwords()),
+             cue = tar_cue(mode = "thorough")),
+  tar_target(vocab_cs_prune, prune_vocab(vocab_cs, n_min = 40),
+             cue = tar_cue(mode = "thorough")),
+  tar_target(dtm_cs, create_dtm(itoken_cs, vocab_vectorizer(vocab_cs_prune)),
+             cue = tar_cue(mode = "thorough")),
+  tar_target(tcm_cs, create_tcm(itoken_cs, vocab_vectorizer(vocab_cs_prune), 
+                               skip_grams_window = 5L),
+             cue = tar_cue(mode = "thorough")),
+  tar_target(word2vec_model_cs, model_glove(vocab_cs_prune, tcm_cs),
+             cue = tar_cue(mode = "thorough")),
+  tar_target(word2vec_dist_cs, dist2(t(word2vec_model_cs$components), method = "cosine"),
+             cue = tar_cue(mode = "thorough"), format = "rds", repository = "local"),
+  # tar_target(lda_model05_s, model_lda(dtm_s, ntopics = 5),
+  #            format = "rds", repository = "local"),
+  tar_target(lda_model10_cs, model_lda(dtm_cs, ntopics = 10),
+             format = "rds", repository = "local"),
+  # tar_target(lda_model15_s, model_lda(dtm_s, ntopics = 15),
+  #            format = "rds", repository = "local"),
+  # tar_target(lda_model20_s, model_lda(dtm_s, ntopics = 20),
+  #            format = "rds", repository = "local"),
+  
+  
   NULL
 )
