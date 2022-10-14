@@ -175,8 +175,7 @@ unidata_bigram <- unidata %>%
 ```
 
 ::: {.panel-tabset}
-
-### An Overview
+## An Overview
 
 ```{r echo=FALSE}
 unidata_bigram %>% 
@@ -198,7 +197,7 @@ unidata_bigram %>%
 
 - similar words (e.g. research finginds, designs etc.) are not grouped
 
-### University Breakdown
+## University Breakdown
 
 ```{r echo=FALSE}
 unidata_bigram %>%

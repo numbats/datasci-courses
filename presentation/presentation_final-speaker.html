@@ -7,7 +7,7 @@
 <link href="presentation_final_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="presentation_final_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
 <link href="presentation_final_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.0.18">
+  <meta name="generator" content="quarto-1.0.36">
 
   <meta name="author" content="Tina and Rachel">
   <meta name="dcterms.date" content="2022-10-17">
@@ -478,7 +478,7 @@
 <li><p>Robots.text</p></li>
 </ul>
 </section>
-<section id="text-analysis---bigram" class="slide level2 scrollable" data-background-image="images/bg.jpg" data-background-opacity="0.5">
+<section id="text-analysis---bigram" class="slide level2 scrollable smaller" data-background-image="images/bg.jpg" data-background-opacity="0.5">
 <h2>Text Analysis - Bigram</h2>
 <div class="cell">
 
@@ -492,7 +492,7 @@
 <div id="tabset-1-1">
 <div class="cell">
 <div class="cell-output-display">
-<p><img data-src="presentation_final_files/figure-revealjs/unnamed-chunk-4-1.png" width="960"></p>
+<p><img data-src="presentation_final_files/figure-revealjs/unnamed-chunk-2-1.png" width="960"></p>
 </div>
 </div>
 <ul>
@@ -503,7 +503,7 @@
 <div id="tabset-1-2">
 <div class="cell">
 <div class="cell-output-display">
-<p><img data-src="presentation_final_files/figure-revealjs/unnamed-chunk-6-1.png" width="960"></p>
+<p><img data-src="presentation_final_files/figure-revealjs/unnamed-chunk-3-1.png" width="960"></p>
 </div>
 </div>
 <ul>
@@ -514,7 +514,7 @@
 </div>
 </div>
 </section>
-<section id="break-down-by-faculty" class="slide level2 scrollable" data-background-image="images/bg.jpg" data-background-opacity="0.5">
+<section id="break-down-by-faculty" class="slide level2 scrollable smaller" data-background-image="images/bg.jpg" data-background-opacity="0.5">
 <h2>Break Down by Faculty</h2>
 <p>Computational, Statistical or Mathematical?</p>
 <div class="cell">
@@ -522,7 +522,7 @@
 </div>
 <div class="cell">
 <div class="cell-output-display">
-<p><img data-src="presentation_final_files/figure-revealjs/unnamed-chunk-10-1.png" width="960"></p>
+<p><img data-src="presentation_final_files/figure-revealjs/unnamed-chunk-5-1.png" width="960"></p>
 </div>
 </div>
 <ul>
@@ -531,7 +531,7 @@
 </ul>
 <div class="cell">
 <div class="cell-output-display">
-<p><img data-src="presentation_final_files/figure-revealjs/unnamed-chunk-12-1.png" width="960"></p>
+<p><img data-src="presentation_final_files/figure-revealjs/unnamed-chunk-6-1.png" width="960"></p>
 </div>
 </div>
 <ul>
@@ -547,12 +547,12 @@
 <ul>
 <li><p>A three-level hierarchical Bayesian model</p></li>
 <li><p>each word is modeled as a finite mixture over an underlying set of topics, texts are converted to numbers</p></li>
-<li><p>words are ‘close’ tp each other are then grouped together</p></li>
+<li><p>words are ‘close’ to each other are then grouped together</p></li>
 </ul></li>
-<li><p>The model is trained by scrapping Wikipedia articles in statistics, sociology and computing</p>
+<li><p>The model is trained by scrapping Wikipedia articles in <strong>statistics, sociology and computing</strong></p>
 <ul>
 <li><p>sociology data actually brings in noises to the model</p></li>
-<li><p>the most informative results is provided by model using only the statistics or computing data</p></li>
+<li><p>the most informative results is provided by model using only the <strong>statistics</strong> or computing data</p></li>
 </ul></li>
 </ul>
 </section>
@@ -562,14 +562,14 @@
 <div class="column" style="width:80%;">
 <div class="cell">
 <div class="cell-output-display">
-<p><img data-src="presentation_final_files/figure-revealjs/unnamed-chunk-14-1.png" width="960"></p>
+<p><img data-src="presentation_final_files/figure-revealjs/unnamed-chunk-7-1.png" width="960"></p>
 </div>
 </div>
 </div><div class="column" style="width:20%;">
 <div class="cell">
 <div class="cell-output-display">
 
-<div style="border: 1px solid #ddd; padding: 5px; overflow-x: scroll; width:220px; "><table>
+<div style="border: 1px solid #ddd; padding: 5px; overflow-x: scroll; width:200px; "><table>
  <thead>
   <tr>
    <th style="text-align:left;"> Topic 1 </th>
@@ -742,7 +742,7 @@
 <div id="tabset-2-2">
 <div class="cell">
 <div class="cell-output-display">
-<p><img data-src="presentation_final_files/figure-revealjs/unnamed-chunk-18-1.png" width="960"></p>
+<p><img data-src="presentation_final_files/figure-revealjs/unnamed-chunk-9-1.png" width="960"></p>
 </div>
 </div>
 </div>
@@ -1075,7 +1075,10 @@
         }
       }
       const toggleBodyColorPrimary = () => {
-        toggleBodyColorMode(window.document.querySelector("link#quarto-bootstrap"));
+        const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+        if (bsSheetEl) {
+          toggleBodyColorMode(bsSheetEl);
+        }
       }
       toggleBodyColorPrimary();  
       const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
