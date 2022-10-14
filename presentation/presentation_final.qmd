@@ -109,11 +109,23 @@ Extract required information
 <iframe src="https://handbook.monash.edu/2023/courses/C6009" width="100%" height="400px"></iframe>
 
 
-```{.r code-inline-numbers=""}
+## Data Collection - Web Scraping {.scrollable background-image="images/bg.jpg" background-opacity="0.5"}
 
-
+```{.r code-line-numbers="1-2|3-5|6-7|8-12|13"}
+remDr$navigate(glue("https:{unit}"))
+wait_time()
+webElem<- remDr$findElement(
+  using = "css",
+  "html body div.keyline table tbody tr td div.content p table tbody tr td.odd a")
+webElem$clickElement()
+wait_time()
+webElem2<- remDr$findElement(
+  using = "xpath",
+  "/html/body/div[1]/table[4]/tbody/tr/td/div/a[2]")
+webElem2$clickElement()
+wait_time()
+unit_html <- read_html(remDr$getPageSource()[[1]])
 ```
-
 
 ## Be Mindful of Ethics Issues! {background-image="images/bg.jpg" background-opacity="0.5"}
 
@@ -129,21 +141,15 @@ Extract required information
 ```{r read-data, echo=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(tidytext)
-
-unidata <- read_csv("data/unidata.csv") %>% 
+rmv_col <- function(x){
+  read_csv(x) %>% 
   select(-`...1`)
-
-data_ssc <- read_csv("data/ssc.csv") %>% 
-  select(-`...1`)
-
-data_s <- read_csv("data/stats.csv") %>% 
-  select(-`...1`)
-
-data_cs <- read_csv("data/cs.csv") %>% 
-  select(-`...1`)
-
-data_comp <- read_csv("data/comp.csv") %>% 
-  select(-`...1`)
+}
+unidata <- rmv_col("data/unidata.csv")
+data_ssc <- rmv_col("data/ssc.csv") 
+data_s <- rmv_col("data/stats.csv") 
+data_cs <- rmv_col("data/cs.csv")
+data_comp <- rmv_col("data/comp.csv") 
 ```
 
 ```{r echo=FALSE, warning=FALSE}
@@ -175,7 +181,8 @@ unidata_bigram <- unidata %>%
 ```
 
 ::: {.panel-tabset}
-## An Overview
+
+### An Overview
 
 ```{r echo=FALSE}
 unidata_bigram %>% 
@@ -197,7 +204,7 @@ unidata_bigram %>%
 
 - similar words (e.g. research finginds, designs etc.) are not grouped
 
-## University Breakdown
+### University Breakdown
 
 ```{r echo=FALSE}
 unidata_bigram %>%
@@ -355,8 +362,7 @@ data_s %>%
 ::: {.column width="20%"}
 ```{r echo=FALSE}
 library(kableExtra)
-read_csv("data/term_s.csv") %>% 
-  select(-`...1`) %>% 
+rmv_col("data/term_s.csv") %>% 
   kable() %>% 
   scroll_box(width = "200px")
 ```
@@ -379,11 +385,14 @@ read_csv("data/term_s.csv") %>%
 ## Employer Perspectives {background-image="images/bg.jpg" background-opacity="0.5"}
 ```{r employer data, echo = FALSE}
 jobs <- read_csv("../employer/listings2019_2021.csv")
-
+emp_word_comp <- rmv_col("data/emp_comp.csv")
 ```
 ::: {.panel-tabset}
+### Summary
+- 2,857 Data Science job postings on Seek.com from 2019-2021
+- 535 Senior/ Managerial positions and 25 graduate program
 
-### Job Description Bigram
+### Bigram
 
 ```{r employer bigram, echo = FALSE}
 emp_bigram <- jobs%>%
@@ -424,7 +433,7 @@ jobs %>% select(c(25:49)) %>%
   geom_col()+
   geom_text(aes(label = sum, hjust=0.1), color ="black")+
   theme_minimal()+theme(legend.position = "none")+
-  labs(title = "Programming languages mentioned in Job Ads.",
+  labs(title = "Programming languages mentioned in Job Ads",
        y = "Language", x = "Count")
 ```
 ### Salary
@@ -451,8 +460,38 @@ Salary %>%
   theme(legend.position = "none")
 ```
 
+### Topic Break Down
+:::: {.columns}
+::: {.column width="80%"}
+```{r echo = FALSE}
+emp_word_comp %>% 
+#  distinct(jobTitle, jobClassification, topic) %>% 
+  group_by(jobClassification) %>% 
+  count(topic, sort = TRUE) %>% 
+  ungroup() %>% 
+  filter(n> 600) %>% 
+  mutate(topic = fct_reorder(topic, n, sum))%>% #reorder_within(topic, n, School)
+  ggplot(aes(x = n,
+             y = topic,
+             fill = topic))+
+  geom_col() +
+  scale_fill_brewer(palette = "Paired") +
+  theme_minimal() +
+  #scale_y_reordered() +
+  facet_wrap(~jobClassification, scales = "free_y") +
+  theme(legend.position = "none") +
+  labs(title = "Job Classification Topic Count - LDA_COMP")
+```
+:::
 
-
+::: {.column width="20%"}
+```{r echo = FALSE}
+rmv_col("data/emp_topics.csv") %>% 
+  kable() %>% 
+  scroll_box(width = "200px")
+```
+:::
+:::: 
 
 :::
 

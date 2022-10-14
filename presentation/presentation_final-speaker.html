@@ -468,7 +468,22 @@
 <p>Extract required information</p>
 <iframe src="https://handbook.monash.edu/2023/courses/C6009" width="100%" height="400px">
 </iframe>
-<div class="sourceCode" id="cb2" data-code-inline-numbers=""><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="data-collection---web-scraping-2" class="slide level2 scrollable" data-background-image="images/bg.jpg" data-background-opacity="0.5">
+<h2>Data Collection - Web Scraping</h2>
+<div class="sourceCode" id="cb2" data-code-line-numbers="1-2|3-5|6-7|8-12|13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>remDr<span class="sc">$</span><span class="fu">navigate</span>(<span class="fu">glue</span>(<span class="st">"https:{unit}"</span>))</span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="fu">wait_time</span>()</span>
+<span id="cb2-3"><a href="#cb2-3"></a>webElem<span class="ot">&lt;-</span> remDr<span class="sc">$</span><span class="fu">findElement</span>(</span>
+<span id="cb2-4"><a href="#cb2-4"></a>  <span class="at">using =</span> <span class="st">"css"</span>,</span>
+<span id="cb2-5"><a href="#cb2-5"></a>  <span class="st">"html body div.keyline table tbody tr td div.content p table tbody tr td.odd a"</span>)</span>
+<span id="cb2-6"><a href="#cb2-6"></a>webElem<span class="sc">$</span><span class="fu">clickElement</span>()</span>
+<span id="cb2-7"><a href="#cb2-7"></a><span class="fu">wait_time</span>()</span>
+<span id="cb2-8"><a href="#cb2-8"></a>webElem2<span class="ot">&lt;-</span> remDr<span class="sc">$</span><span class="fu">findElement</span>(</span>
+<span id="cb2-9"><a href="#cb2-9"></a>  <span class="at">using =</span> <span class="st">"xpath"</span>,</span>
+<span id="cb2-10"><a href="#cb2-10"></a>  <span class="st">"/html/body/div[1]/table[4]/tbody/tr/td/div/a[2]"</span>)</span>
+<span id="cb2-11"><a href="#cb2-11"></a>webElem2<span class="sc">$</span><span class="fu">clickElement</span>()</span>
+<span id="cb2-12"><a href="#cb2-12"></a><span class="fu">wait_time</span>()</span>
+<span id="cb2-13"><a href="#cb2-13"></a>unit_html <span class="ot">&lt;-</span> <span class="fu">read_html</span>(remDr<span class="sc">$</span><span class="fu">getPageSource</span>()[[<span class="dv">1</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="be-mindful-of-ethics-issues" class="slide level2" data-background-image="images/bg.jpg" data-background-opacity="0.5">
 <h2>Be Mindful of Ethics Issues!</h2>
@@ -730,26 +745,188 @@
 
 </div>
 <div class="panel-tabset">
-<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">Job Description Bigram</a></li><li><a href="#tabset-2-2">Languages</a></li><li><a href="#tabset-2-3">Salary</a></li></ul>
+<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">Summary</a></li><li><a href="#tabset-2-2">Bigram</a></li><li><a href="#tabset-2-3">Languages</a></li><li><a href="#tabset-2-4">Salary</a></li><li><a href="#tabset-2-5">Topic Break Down</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1">
+<ul>
+<li>2,857 Data Science job postings on Seek.com from 2019-2021</li>
+<li>535 Senior/ Managerial positions and 25 graduate program</li>
+</ul>
+</div>
+<div id="tabset-2-2">
 <div class="cell">
 <div class="cell-output-display">
 <p><img data-src="presentation_final_files/figure-revealjs/employer%20bigram-1.png" width="960"></p>
 </div>
 </div>
 </div>
-<div id="tabset-2-2">
+<div id="tabset-2-3">
 <div class="cell">
 <div class="cell-output-display">
 <p><img data-src="presentation_final_files/figure-revealjs/unnamed-chunk-9-1.png" width="960"></p>
 </div>
 </div>
 </div>
-<div id="tabset-2-3">
+<div id="tabset-2-4">
 <div class="cell">
 <div class="cell-output-display">
 <p><img data-src="presentation_final_files/figure-revealjs/job_salary-1.png" width="960"></p>
+</div>
+</div>
+</div>
+<div id="tabset-2-5">
+<div class="columns">
+<div class="column" style="width:80%;">
+<div class="cell">
+<div class="cell-output-display">
+<p><img data-src="presentation_final_files/figure-revealjs/unnamed-chunk-10-1.png" width="960"></p>
+</div>
+</div>
+</div><div class="column" style="width:20%;">
+<div class="cell">
+<div class="cell-output-display">
+
+<div style="border: 1px solid #ddd; padding: 5px; overflow-x: scroll; width:200px; "><table>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> Topic I </th>
+   <th style="text-align:left;"> Topic II </th>
+   <th style="text-align:left;"> Topic III </th>
+   <th style="text-align:left;"> Topic IV </th>
+   <th style="text-align:left;"> Topic V </th>
+   <th style="text-align:left;"> Topic VI </th>
+   <th style="text-align:left;"> Topic VII </th>
+   <th style="text-align:left;"> Topic VIII </th>
+   <th style="text-align:left;"> Topic IX </th>
+   <th style="text-align:left;"> Topic X </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> window </td>
+   <td style="text-align:left;"> comput </td>
+   <td style="text-align:left;"> ibm </td>
+   <td style="text-align:left;"> algorithm </td>
+   <td style="text-align:left;"> network </td>
+   <td style="text-align:left;"> bit </td>
+   <td style="text-align:left;"> format </td>
+   <td style="text-align:left;"> intel </td>
+   <td style="text-align:left;"> softwar </td>
+   <td style="text-align:left;"> languag </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> system </td>
+   <td style="text-align:left;"> system </td>
+   <td style="text-align:left;"> comput </td>
+   <td style="text-align:left;"> can </td>
+   <td style="text-align:left;"> use </td>
+   <td style="text-align:left;"> instruct </td>
+   <td style="text-align:left;"> use </td>
+   <td style="text-align:left;"> chip </td>
+   <td style="text-align:left;"> compani </td>
+   <td style="text-align:left;"> program </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> version </td>
+   <td style="text-align:left;"> program </td>
+   <td style="text-align:left;"> system </td>
+   <td style="text-align:left;"> number </td>
+   <td style="text-align:left;"> can </td>
+   <td style="text-align:left;"> memori </td>
+   <td style="text-align:left;"> imag </td>
+   <td style="text-align:left;"> design </td>
+   <td style="text-align:left;"> appl </td>
+   <td style="text-align:left;"> use </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> releas </td>
+   <td style="text-align:left;"> use </td>
+   <td style="text-align:left;"> disk </td>
+   <td style="text-align:left;"> function </td>
+   <td style="text-align:left;"> web </td>
+   <td style="text-align:left;"> use </td>
+   <td style="text-align:left;"> digit </td>
+   <td style="text-align:left;"> processor </td>
+   <td style="text-align:left;"> free </td>
+   <td style="text-align:left;"> compil </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> support </td>
+   <td style="text-align:left;"> machin </td>
+   <td style="text-align:left;"> drive </td>
+   <td style="text-align:left;"> set </td>
+   <td style="text-align:left;"> data </td>
+   <td style="text-align:left;"> address </td>
+   <td style="text-align:left;"> can </td>
+   <td style="text-align:left;"> bit </td>
+   <td style="text-align:left;"> use </td>
+   <td style="text-align:left;"> code </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> user </td>
+   <td style="text-align:left;"> design </td>
+   <td style="text-align:left;"> use </td>
+   <td style="text-align:left;"> state </td>
+   <td style="text-align:left;"> internet </td>
+   <td style="text-align:left;"> regist </td>
+   <td style="text-align:left;"> video </td>
+   <td style="text-align:left;"> core </td>
+   <td style="text-align:left;"> also </td>
+   <td style="text-align:left;"> function </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> oper_system </td>
+   <td style="text-align:left;"> process </td>
+   <td style="text-align:left;"> control </td>
+   <td style="text-align:left;"> languag </td>
+   <td style="text-align:left;"> secur </td>
+   <td style="text-align:left;"> processor </td>
+   <td style="text-align:left;"> standard </td>
+   <td style="text-align:left;"> mhz </td>
+   <td style="text-align:left;"> develop </td>
+   <td style="text-align:left;"> object </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> oper </td>
+   <td style="text-align:left;"> develop </td>
+   <td style="text-align:left;"> machin </td>
+   <td style="text-align:left;"> use </td>
+   <td style="text-align:left;"> access </td>
+   <td style="text-align:left;"> oper </td>
+   <td style="text-align:left;"> disc </td>
+   <td style="text-align:left;"> use </td>
+   <td style="text-align:left;"> open </td>
+   <td style="text-align:left;"> type </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> os </td>
+   <td style="text-align:left;"> inform </td>
+   <td style="text-align:left;"> card </td>
+   <td style="text-align:left;"> symbol </td>
+   <td style="text-align:left;"> protocol </td>
+   <td style="text-align:left;"> can </td>
+   <td style="text-align:left;"> data </td>
+   <td style="text-align:left;"> introduc </td>
+   <td style="text-align:left;"> sourc </td>
+   <td style="text-align:left;"> can </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> file </td>
+   <td style="text-align:left;"> softwar </td>
+   <td style="text-align:left;"> unit </td>
+   <td style="text-align:left;"> problem </td>
+   <td style="text-align:left;"> link </td>
+   <td style="text-align:left;"> data </td>
+   <td style="text-align:left;"> file </td>
+   <td style="text-align:left;"> microprocessor </td>
+   <td style="text-align:left;"> user </td>
+   <td style="text-align:left;"> implement </td>
+  </tr>
+</tbody>
+</table></div>
+
+</div>
+</div>
 </div>
 </div>
 </div>
