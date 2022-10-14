@@ -124,7 +124,7 @@ Extract required information
 - Robots.text
 
 
-## Text Analysis - Bigram {background-image="images/bg.jpg" background-opacity="0.5"}
+## Text Analysis - Bigram {.scrollable .smaller background-image="images/bg.jpg" background-opacity="0.5"}
 
 ```{r read-data, echo=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -145,10 +145,6 @@ data_cs <- read_csv("data/cs.csv") %>%
 data_comp <- read_csv("data/comp.csv") %>% 
   select(-`...1`)
 ```
-
-:::: {.columns}
-
-::: {.column width="40%"}
 
 ```{r echo=FALSE, warning=FALSE}
 unidata_bigram <- unidata %>% 
@@ -178,6 +174,10 @@ unidata_bigram <- unidata %>%
   mutate(category = if_else(is.na(category), "Other", category))
 ```
 
+::: {.panel-tabset}
+
+### An Overview
+
 ```{r echo=FALSE}
 unidata_bigram %>% 
   filter(n > 4) %>% 
@@ -194,9 +194,11 @@ unidata_bigram %>%
        title = "An overview (n > 3)")
 ```
 
-:::
+- count is too small to make meaningful interpretations
 
-::: {.column width="60%"}
+- similar words (e.g. research finginds, designs etc.) are not grouped
+
+### University Breakdown
 
 ```{r echo=FALSE}
 unidata_bigram %>%
@@ -220,32 +222,153 @@ unidata_bigram %>%
        title = "Bigram - break down by univeristy (prop > 0.005)")
 ```
 
+- ANU and UQ are filtered out
+
+- too few words left to make meaningful interpretations
+
 :::
 
-::::
 
-
-- count is too small to make meaningful interpretations
-
-## Break Down by Faculty {background-image="images/bg.jpg" background-opacity="0.5"}
+## Break Down by Faculty {.scrollable .smaller background-image="images/bg.jpg" background-opacity="0.5"}
 
 Computational, Statistical or Mathematical? 
+
+```{r echo=FALSE}
+math <- c("STAT", "MATH", "MATHS", "STATS", "MAT", "MAST", "ACTL", "QBUS")
+
+it <- c("COMP", "FIT", "CITS", "INFS", "COSC", "CSSE", "CSYS", "EDPC", "INMT", "PHIL", "PHYS", #it
+        "BUSN","DATA", #data
+        "INFO", "INFS") #analytics
+
+commerce <- c("ECON", "FINS", "MARK", "ACCT", "FINM", "MGMT", "MKTG")
+
+spatial <- c("GEOM", "ITLS")
+
+science <- c("EDUC", "SCIE", 
+             "SOCR") #social science
+
+health <- c("BINF", "BMS", "HTIN", "PUBH")
+
+comp <- unidata %>% 
+  mutate(group = str_extract(Unit_code, "[A-Za-z]+")) %>% 
+  group_by(School) %>% 
+  count(group, sort = T) %>% 
+  ungroup() %>% 
+  mutate(category = case_when(group %in% it ~ "IT",
+                              group %in% math ~ "Stat/Math",
+                              group %in% commerce ~ "Commerce",
+                              group %in% spatial ~ "Spatial",
+                              group %in% science ~ "Science/Social Science",
+                              group %in% health ~ "Health/Bioinfo/Biostat")) %>% 
+  #Bioinformatics/Biostatistics
+  mutate(category = if_else(is.na(category), "Other", category))
+```
+
+```{r echo=FALSE}
+comp %>% 
+  mutate(category = fct_reorder(category, n, sum)) %>% 
+  ggplot(aes(x = n,
+             y = category,
+             fill = category)) +
+  geom_col() +
+  scale_fill_brewer(palette = "Dark2") +
+  labs(x = "",
+       y = "",
+       title = "Teaching content by faculty") +
+  theme_minimal() +
+  theme(legend.position = "none") 
+```
 
 - Conducted based on the first few characters from unit code
 
 - Using only the unit code could be misleading
 
-## Further Analysis with the Concepts of Text Corpus {background-image="images/bg.jpg" background-opacity="0.5"}
+```{r echo=FALSE}
+comp %>% 
+  mutate(category = fct_reorder(category, n, sum)) %>% 
+  group_by(School) %>% 
+  mutate(prop = round(n/sum(n),4)) %>% 
+  ungroup() %>% 
+  ggplot(aes(x = prop,
+             y = category,
+             fill = category)) +
+  geom_col() +
+  scale_fill_brewer(palette = "Dark2") +
+  labs(x = "",
+       y = "",
+       title = "Breakdown by univeristy - proportion") +
+  facet_wrap(~School, scales = "free_y") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
 
+- Data science degrees are dominated by IT at Monash, UADE, USYD and UWA
 
+- More evenly distributed at ANU and UNSW
 
-- wordtovec, but due to time we'll only talk about lda
+- UniMelb and UQ offers realtively higher proportion of stat/math contents
 
-- word count after applying three models
+## Further Analysis with the Concepts of Text Corpus {.smaller background-image="images/bg.jpg" background-opacity="0.5"}
 
-- contructing tcm, document term matrix
+- Adapted the concepts of Word2Vec model, but due to time we have only fitted a fairly basic Latent Dirichlet Allocation (LDA) model
 
-- convering text data into something numerical
+  - A three-level hierarchical Bayesian model
+  
+  - each word is modeled as a finite mixture over an underlying set of topics, texts are converted to numbers
+  
+  - words are 'close' to each other are then grouped together
+
+- The model is trained by scrapping Wikipedia articles in **statistics, sociology and computing**
+
+  - sociology data actually brings in noises to the model
+  
+  - the most informative results is provided by model using only the **statistics** or computing data
+  
+## Topics Breakdown by University {.scrollable .smaller background-image="images/bg.jpg" background-opacity="0.5"}
+
+:::: {.columns}
+
+::: {.column width="80%"}
+```{r echo=FALSE, fig.height=6}
+data_s %>% 
+  mutate(topic = as_factor(topic)) %>% 
+  #distinct(School, Unit, topic) %>% 
+  group_by(School) %>% 
+  count(topic, sort = TRUE) %>%
+  mutate(prop = round(n/sum(n),4)) %>% 
+  ungroup() %>% 
+  mutate(topic = fct_reorder(topic, prop, sum))%>% 
+  ggplot(aes(x = prop,
+             y = topic,
+             fill = topic))+
+  geom_col() +
+  scale_fill_brewer(palette = "Paired") +
+  theme_minimal() +
+  #scale_y_reordered() +
+  facet_wrap(~School, scales = "free_y") +
+  theme(legend.position = "none") +
+  labs(x = "proportion",
+       title = "Topic proportion - LDA_Stats")
+
+```
+:::
+
+::: {.column width="20%"}
+```{r echo=FALSE}
+library(kableExtra)
+read_csv("data/term_s.csv") %>% 
+  select(-`...1`) %>% 
+  kable() %>% 
+  scroll_box(width = "200px")
+```
+:::
+
+::::
+
+- Topics 1 and 6 are the dominating topics across Go8, and both associated to computation, data, algorithm
+
+- Topics 2, 3, 5, 9, 10 contains more words like model, regression, sample, probability, Bayesian, hypothesis etc. indicating a more computational based statistical components
+
 
 ## Still a Work in Porgress... {background-image="images/bg.jpg" background-opacity="0.5"}
 
@@ -345,7 +468,7 @@ Salary %>%
 
 - The LDA models fitted are not optimised
 
-## To Sum Up! {.scrollable background-image="images/bg.jpg" background-opacity="0.5"}
+## To Sum Up! {.smaller background-image="images/bg.jpg" background-opacity="0.5"}
 
 :::{incremental}
 
