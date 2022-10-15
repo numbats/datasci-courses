@@ -52,7 +52,21 @@ emp_word %>%
 
 ```
 
-```{r}
+```{r lda_stat}
+lda_model10_s <- readRDS("lda_model10_s.rda")
+
+topics_stat <- tidy(lda_model10_s, matrix = "beta")
+
+emp_word_stat <- emp_word %>% 
+  left_join(topics_stat, by = c("stem" = "term") ) %>% 
+  group_by(jobTitle, jobClassification, advertiserName, workType,word, stem) %>% 
+  top_n(1, beta) %>% 
+  mutate(topic = as.factor(topic))
+
+#write.csv(emp_word_stat, file = "../presentation/data/emp_stat.csv")
+```
+
+```{r lda_comp}
 lda_model10_comp <- readRDS("lda_model10_comp.rda")
 
 topics_comp <- tidy(lda_model10_comp, matrix = "beta")
