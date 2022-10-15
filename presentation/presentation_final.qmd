@@ -149,14 +149,6 @@ unit_html <- read_html(remDr$getPageSource()[[1]])
 :::
 ::::
 
-## Be Mindful of Ethics Issues! {background-image="images/bg.jpg" background-opacity="0.5"}
-
-- Getting blocked...
-
-- Waiting time, pages that are prohibited for web scrapping
-
-- robots.txt
-
 ## Data We Collected
 
 ```{r read-data, echo=FALSE, message=FALSE, warning=FALSE}
