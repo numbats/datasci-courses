@@ -312,3 +312,27 @@ out %>%
   theme(legend.position = "none")
 ```
 
+### Salary
+```{r job_salary, echo = FALSE}
+library(priceR)
+
+Salary <- jobs$salary_string %>% 
+  extract_salary(
+    include_periodicity = TRUE,
+    working_weeks_per_year = 48 
+    ) %>% 
+  cbind(jobs, .)
+
+Salary %>% 
+  select(jobClassification, salary) %>% 
+  filter(!is.na(salary) &salary < 1000000) %>%
+  ggplot(aes(x = salary,
+             y = jobClassification,
+             color =..x..))+
+  geom_point()+
+ paletteer::scale_color_paletteer_c("viridis::plasma")+
+  scale_x_continuous(labels = scales::dollar)+
+  theme_minimal()+labs(title = "Salary distribution for Languages")+
+  theme(legend.position = "none")
+```
+

@@ -65,12 +65,15 @@ title-slide-attributes:
 
 
 ## Data Collection {.scrollable background-image="images/bg.jpg" background-opacity="0.5"}
+:::{.incremental}
 
 - Web scrapping course information, list of subjects and unit outlines from universities' websites
 
-- Performed using RSelenium and rvest
+- Performed using `RSelenium` and `rvest`
 
 - Used robots.txt files as guidelines
+
+:::
 
 ## Web Scraping {.scrollable background-image="images/bg.jpg" background-opacity="0.5"}
 
@@ -112,6 +115,15 @@ course_html <- read_html(remDr$getPageSource()[[1]])
 
 ## Web Scraping {.scrollable background-image="images/bg.jpg" background-opacity="0.5"}
 
+Extract required information
+
+<iframe src="https://handbook.monash.edu/2023/courses/C6009" width="100%" height="400px"></iframe>
+
+
+## Data Collection - Web Scraping {.scrollable background-image="images/bg.jpg" background-opacity="0.5"}
+:::: {.columns}
+
+::: {.column width="50%"}
 ```{.r code-line-numbers="1-2|3-5|6-7|8-12|13"}
 remDr$navigate(glue("https:{unit}"))
 wait_time()
@@ -127,8 +139,17 @@ webElem2$clickElement()
 wait_time()
 unit_html <- read_html(remDr$getPageSource()[[1]])
 ```
+:::
 
-## Be Mindful of Ethics! {background-image="images/bg.jpg" background-opacity="0.5"}
+::: {.column width="50%"}
+::: {.incremental}
+- 
+- 
+:::
+:::
+::::
+
+## Be Mindful of Ethics Issues! {background-image="images/bg.jpg" background-opacity="0.5"}
 
 - Getting blocked...
 
@@ -190,8 +211,6 @@ unidata_bigram <- unidata %>%
                               str_detect(word, "debugging") ~ "IT")) %>% 
   mutate(category = if_else(is.na(category), "Other", category))
 ```
-
-
 
 ```{r echo=FALSE}
 unidata_bigram %>% 
@@ -364,7 +383,7 @@ rmv_col("data/term_s.csv") %>%
 
 --->
 
-
+# Employer Data {background-color="#006DAE"}
 ## Employer Perspectives {background-image="images/bg.jpg" background-opacity="0.5"}
 ```{r employer data, echo = FALSE}
 jobs <- read_csv("../employer/listings2019_2021.csv")
@@ -418,29 +437,6 @@ jobs %>% select(c(25:49)) %>%
   theme_minimal()+theme(legend.position = "none")+
   labs(title = "Programming languages mentioned in Job Ads",
        y = "Language", x = "Count")
-```
-### Salary
-```{r job_salary, echo = FALSE}
-library(priceR)
-
-Salary <- jobs$salary_string %>% 
-  extract_salary(
-    include_periodicity = TRUE,
-    working_weeks_per_year = 48 
-    ) %>% 
-  cbind(jobs, .)
-
-Salary %>% 
-  select(jobClassification, salary) %>% 
-  filter(!is.na(salary) &salary < 1000000) %>%
-  ggplot(aes(x = salary,
-             y = jobClassification,
-             color =..x..))+
-  geom_point()+
- paletteer::scale_color_paletteer_c("viridis::plasma")+
-  scale_x_continuous(labels = scales::dollar)+
-  theme_minimal()+labs(title = "Salary distribution for Languages")+
-  theme(legend.position = "none")
 ```
 
 ### Topic Break Down
