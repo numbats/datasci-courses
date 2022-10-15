@@ -82,7 +82,7 @@ theme_set(theme_minimal())
 
 # Data Collection {background-color="#006DAE"}
 
-
+<!---
 ## Data Collection {.scrollable background-image="images/bg.jpg" background-opacity="0.5"}
 
 :::{.incremental}
@@ -94,6 +94,8 @@ theme_set(theme_minimal())
 - Used robots.txt files as guidelines
 
 :::
+
+--->
 
 <!---
 ## Web Scraping {.scrollable background-image="images/bg.jpg" background-opacity="0.5"}
@@ -184,33 +186,37 @@ data_cs <- rmv_col("data/cs.csv")
 data_comp <- rmv_col("data/comp.csv") 
 ```
 
-The collected data contains **`r nrow(unidata)` units** from 8 universities
+- The collected data contains **`r nrow(unidata)` units** from 8 universities
 
 ```{r}
 unidata %>% 
   mutate(across(c(Outcomes, Overview, description), 
                 ~ str_replace_all(.x, "\\\\", ""))) %>% 
   select(School, Course, Unit, Outcomes, Overview) %>% 
-  DT::datatable(height = "200px") %>%
-  DT::formatStyle(columns = colnames(.), fontSize = '10%')
+  kable() %>% 
+  kable_styling(bootstrap_options = "condensed") %>% 
+  scroll_box(height = "550px",
+             width = "1250px")
 ```
 
 # Text Analysis {background-color="#006DAE"}
 
 ## Unit Code Analysis  {.smaller background-image="images/bg.jpg" background-opacity="0.5"}
 
-* Faculty unit codes e.g. FIT, ETC, MAT, tells us what type of faculty teaches the units for data science 
+- **Faculty unit codes** e.g. FIT, ETC, MAT, tells us what type of faculty teaches the units for data science 
 
 ```{r}
 unidata %>% 
   mutate(across(c(Outcomes, Overview, description), 
                 ~ str_replace_all(.x, "\\\\", ""))) %>% 
   select(School,Unit_code, Outcomes, Overview) %>% 
-  DT::datatable(height = "200px") %>%
-  DT::formatStyle(columns = colnames(.), fontSize = '10%')
+  kable() %>% 
+  kable_styling(bootstrap_options = "condensed") %>% 
+  scroll_box(height = "200px",
+             width = "1250px")
 ```
 
-* Computational, Statistical or Mathematical? 
+- Computational, Statistical or Mathematical? 
 
 ```{.r code-line-numbers="1-3|5-8"}
 math <- c("STAT", "MATH", "MATHS", "STATS", "MAT", "MAST", "ACTL", "QBUS")
@@ -303,6 +309,7 @@ comp %>%
 
 ::: 
 
+:::
 
 ## Bigram of Outcomes and Overview {.scrollable .smaller background-image="images/bg.jpg" background-opacity="0.5"}
 
@@ -358,22 +365,27 @@ unidata_bigram %>%
 
 ## Further Analysis with the Concepts of Text Corpus {.smaller background-image="images/bg.jpg" background-opacity="0.5"}
 ::: {.incremental}
-- Adapted the concepts of Word2Vec model, but due to time we have only fitted a fairly basic Latent Dirichlet Allocation (LDA) model
 
-  - A three-level hierarchical Bayesian model
+- Due to time limit we have only fitted a fairly basic Latent Dirichlet Allocation (LDA) model using `text2vec package`
   
-  - each word is modeled as a finite mixture over an underlying set of topics, texts are converted to numbers
+  - words are converted to numerical vectors
   
-  - words are 'close' to each other are then grouped together
+  - distances between words are then computed, words are 'close' to each other are then grouped together
 
-- The model is trained by scrapping Wikipedia articles in **statistics, sociology and computing**
+- The model has to be trained by large amount of data pre-use
+
+  - **Over 4000 Wikipedia articles** in *statistics (2816), sociology (1005) and computing (627)* are scrapped as training data
 
   - sociology data actually brings in noises to the model
   
-  - the most informative results is provided by model using only the **statistics** or computing data
+  - the most informative result is provided by model using only the **statistics** data
 :::
 
-## Topics Breakdown by University {.scrollable .smaller background-image="images/bg.jpg" background-opacity="0.5"}
+## Text Analysis by Topics  {.scrollable .smaller background-image="images/bg.jpg" background-opacity="0.5"}
+
+::: {.panel-tabset}
+
+### Breakdown by University
 
 :::: {.columns}
 
@@ -396,7 +408,7 @@ data_s %>%
   facet_wrap(~School, scales = "free_y") +
   theme(legend.position = "none") +
   labs(x = "proportion",
-       title = "Topic proportion - LDA_Stats")
+       title = "Topics proportion by university")
 
 ```
 :::
@@ -411,10 +423,50 @@ rmv_col("data/term_s.csv") %>%
 
 ::::
 
-::: {.incremental}
 - Topics 1 and 6 are the dominating topics across Go8, and both associated to computation, data, algorithm
 
-- Topics 2, 3, 5, 9, 10 contains more words like model, regression, sample, probability, Bayesian, hypothesis etc. indicating a more computational based statistical components
+- Topics 2, 5, 9, 10 contains more words like model, regression, sample, probability, Bayesian, hypothesis etc. indicating a more computational based statistical components
+
+### Breakdown by Topic
+
+:::: {.columns}
+
+::: {.column width="80%"}
+```{r echo=FALSE, fig.height=6}
+data_s %>% 
+  mutate(topic = as_factor(topic)) %>% 
+  #distinct(School, Unit, topic) %>% 
+  group_by(School) %>% 
+  count(topic, sort = TRUE) %>%
+  mutate(prop = round(n/sum(n),4)) %>% 
+  ungroup() %>% 
+  mutate(topic = fct_reorder(topic, prop, sum))%>% 
+  ggplot(aes(x = prop,
+             y = School,
+             fill = School))+
+  geom_col() +
+  scale_fill_brewer(palette = "Paired") +
+  #scale_y_reordered() +
+  facet_wrap(~topic, scales = "free_y") +
+  theme(legend.position = "none") +
+  labs(x = "proportion",
+       title = "Breakdown by topic")
+
+```
+:::
+
+::: {.column width="20%"}
+```{r echo=FALSE}
+rmv_col("data/term_s.csv") %>% 
+  kable() %>% 
+  scroll_box(width = "200px")
+```
+:::
+
+::::
+
+- Proportion occupied by Go8 for each topic is roughly even distributed
+
 :::
 
 <!---
