@@ -23,6 +23,18 @@ title-slide-attributes:
   data-background-opacity: "0.6"
 
 ---
+```{r setup, include = FALSE}
+library(tidyverse)
+library(tidytext)
+library(kableExtra)
+
+knitr::opts_chunk$set(echo = FALSE,
+                      warning = FALSE,
+                      message= FALSE)
+theme_set(theme_minimal())
+
+```
+
 
 ## {#title-slide background-image="images/bg.jpg" background-opacity="0.5"}
 
@@ -152,8 +164,6 @@ unit_html <- read_html(remDr$getPageSource()[[1]])
 ## Data We Collected
 
 ```{r read-data, echo=FALSE, message=FALSE, warning=FALSE}
-library(tidyverse)
-library(tidytext)
 rmv_col <- function(x){
   read_csv(x) %>% 
   select(-`...1`)
@@ -212,7 +222,6 @@ unidata_bigram %>%
              y = word))+
   geom_col(fill = "#006DAE")+
   #scale_fill_brewer(palette = "Dark2") +
-  theme_minimal()+
   theme(legend.position = "bottom") +
   labs(y = "",
        fill = "Category",
@@ -273,7 +282,6 @@ comp %>%
   labs(x = "",
        y = "",
        title = "Teaching content by faculty") +
-  theme_minimal() +
   theme(legend.position = "none") 
 ```
 
@@ -296,7 +304,6 @@ comp %>%
        y = "",
        title = "Breakdown by univeristy - proportion") +
   facet_wrap(~School, scales = "free_y") +
-  theme_minimal() +
   theme(legend.position = "none")
 ```
 
@@ -343,7 +350,6 @@ data_s %>%
              fill = topic))+
   geom_col() +
   scale_fill_brewer(palette = "Paired") +
-  theme_minimal() +
   #scale_y_reordered() +
   facet_wrap(~School, scales = "free_y") +
   theme(legend.position = "none") +
@@ -355,7 +361,6 @@ data_s %>%
 
 ::: {.column width="20%"}
 ```{r echo=FALSE}
-library(kableExtra)
 rmv_col("data/term_s.csv") %>% 
   kable() %>% 
   scroll_box(width = "200px")
@@ -410,7 +415,7 @@ emp_bigram %>%
   filter(n>300) %>% 
   ggplot(aes(x = n,y= fct_reorder(bigram, n), fill = n))+
   geom_col()+
-  theme_minimal()+paletteer::scale_fill_paletteer_c("viridis::plasma")+
+  paletteer::scale_fill_paletteer_c("viridis::plasma")+
   theme(legend.position = "none")+
   labs(title= "Job Description Bigrams", 
        y = "Bigrams", 
@@ -432,7 +437,7 @@ jobs %>% select(c(25:49)) %>%
              fill = Program))+
   geom_col()+
   geom_text(aes(label = sum, hjust=0.1), color ="black")+
-  theme_minimal()+theme(legend.position = "none")+
+  theme(legend.position = "none")+
   labs(title = "Programming languages mentioned in Job Ads",
        y = "Language", x = "Count")
 ```
@@ -453,7 +458,6 @@ emp_word_comp %>%
              fill = topic))+
   geom_col() +
   scale_fill_brewer(palette = "Paired") +
-  theme_minimal() +
   #scale_y_reordered() +
   facet_wrap(~jobClassification, scales = "free_y") +
   theme(legend.position = "none") +
