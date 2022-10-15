@@ -382,9 +382,10 @@ words_s %>%
   distinct(School, Unit, topic) %>% 
   group_by(School) %>% 
   count(topic, sort = TRUE) %>% 
+  mutate(prop = round(n/sum(n),4)) %>% 
   ungroup() %>% 
   mutate(topic = fct_reorder(topic, n, sum))%>% #reorder_within(topic, n, School)
-  ggplot(aes(x = n,
+  ggplot(aes(x = prop,
              y = topic,
              fill = topic)) +
   geom_col() +
