@@ -36,7 +36,7 @@ title-slide-attributes:
 
 - Does data science mean the same thing to universities and employers?
 
-## Agenda of the day {background-image="images/bg.jpg" background-opacity="0.5"}
+## Agenda of the Day {background-image="images/bg.jpg" background-opacity="0.5"}
 
 :::{.incremental}
 
@@ -55,11 +55,13 @@ title-slide-attributes:
 ## Data Science Degrees at Universities {background-image="images/bg.jpg" background-opacity="0.5"}
 
 
-- What are the teaching contents? (e.g. statistics, math, IT etc.)
+- What are the teaching contents? (e.g. statistics, maths, IT etc.)
 
 - What could be the common skill sets of a data science graduate?
 
 - Is there a 'standard structure' for data science degree across the Go8?
+
+# Data Collection {background-color="#006DAE"}
 
 
 ## Data Collection {.scrollable background-image="images/bg.jpg" background-opacity="0.5"}
@@ -68,10 +70,16 @@ title-slide-attributes:
 
 - Performed using RSelenium and rvest
 
-- Used robots.text files as guidelines
+- Used robots.txt files as guidelines
+
+## Web Scraping {.scrollable background-image="images/bg.jpg" background-opacity="0.5"}
+
+Extract required information
+
+<iframe src="https://handbook.monash.edu/2023/courses/C6009" width="100%" height="400px"></iframe>
 
 
-## Data Collection - Web Scraping {.scrollable background-image="images/bg.jpg" background-opacity="0.5"}
+## Web Scraping {.scrollable background-image="images/bg.jpg" background-opacity="0.5"}
 
 Initial settings and navigation to the course handbook
 
@@ -102,24 +110,17 @@ course_html <- read_html(remDr$getPageSource()[[1]])
 ```
 
 
-## Data Collection - Web Scraping {.scrollable background-image="images/bg.jpg" background-opacity="0.5"}
-
-Extract required information
-
-<iframe src="https://handbook.monash.edu/2023/courses/C6009" width="100%" height="400px"></iframe>
-
-
-## Data Collection - Web Scraping {.scrollable background-image="images/bg.jpg" background-opacity="0.5"}
+## Web Scraping {.scrollable background-image="images/bg.jpg" background-opacity="0.5"}
 
 ```{.r code-line-numbers="1-2|3-5|6-7|8-12|13"}
 remDr$navigate(glue("https:{unit}"))
 wait_time()
-webElem<- remDr$findElement(
+webElem <- remDr$findElement(
   using = "css",
   "html body div.keyline table tbody tr td div.content p table tbody tr td.odd a")
 webElem$clickElement()
 wait_time()
-webElem2<- remDr$findElement(
+webElem2 <- remDr$findElement(
   using = "xpath",
   "/html/body/div[1]/table[4]/tbody/tr/td/div/a[2]")
 webElem2$clickElement()
@@ -127,16 +128,15 @@ wait_time()
 unit_html <- read_html(remDr$getPageSource()[[1]])
 ```
 
-## Be Mindful of Ethics Issues! {background-image="images/bg.jpg" background-opacity="0.5"}
+## Be Mindful of Ethics! {background-image="images/bg.jpg" background-opacity="0.5"}
 
 - Getting blocked...
 
 - Waiting time, pages that are prohibited for web scrapping
 
-- Robots.text
+- robots.txt
 
-
-## Text Analysis - Bigram {.scrollable .smaller background-image="images/bg.jpg" background-opacity="0.5"}
+## Data We Collected
 
 ```{r read-data, echo=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -150,7 +150,18 @@ data_ssc <- rmv_col("data/ssc.csv")
 data_s <- rmv_col("data/stats.csv") 
 data_cs <- rmv_col("data/cs.csv")
 data_comp <- rmv_col("data/comp.csv") 
+
+unidata %>% 
+  mutate(across(c(Outcomes, Overview, description), 
+                ~ str_replace_all(.x, "\\\\", ""))) %>% 
+  select(School, Course, Unit, Outcomes, Overview) %>% 
+  DT::datatable(height = "400px") %>%
+  DT::formatStyle(columns = colnames(.), fontSize = '30%')
 ```
+
+# Text Analysis {background-color="#006DAE"}
+
+## Bigram of Outcomes and Overview {.scrollable .smaller background-image="images/bg.jpg" background-opacity="0.5"}
 
 ```{r echo=FALSE, warning=FALSE}
 unidata_bigram <- unidata %>% 
@@ -180,64 +191,33 @@ unidata_bigram <- unidata %>%
   mutate(category = if_else(is.na(category), "Other", category))
 ```
 
-::: {.panel-tabset}
 
-### An Overview
 
 ```{r echo=FALSE}
 unidata_bigram %>% 
   filter(n > 4) %>% 
   mutate(word = fct_reorder(word, n, sum))%>% 
   ggplot(aes(x=n,
-             y = word,
-             fill = category))+
-  geom_col()+
-  scale_fill_brewer(palette = "Dark2") +
+             y = word))+
+  geom_col(fill = "#006DAE")+
+  #scale_fill_brewer(palette = "Dark2") +
   theme_minimal()+
   theme(legend.position = "bottom") +
   labs(y = "",
        fill = "Category",
-       title = "An overview (n > 3)")
+       title = "An overview (n > 4)") +
+  scale_x_continuous(expand = c(0, 0.1))
 ```
 
 - count is too small to make meaningful interpretations
 
 - similar words (e.g. research finginds, designs etc.) are not grouped
 
-### University Breakdown
 
-```{r echo=FALSE}
-unidata_bigram %>%
-  group_by(School) %>% 
-  mutate(prop = round(n/sum(n),4)) %>% 
-  ungroup() %>% 
-  filter(prop > 0.005) %>% 
-  mutate(word = fct_reorder(word, prop, sum)) %>% 
-  ggplot(aes(x = prop,
-             y = word,
-             fill = category))+
-  geom_col()+
-  scale_fill_brewer(palette = "Dark2") +
-  theme_minimal()+
-  facet_wrap(~School, scales = "free_y") +
-  theme(legend.position = "bottom") +
-  scale_x_continuous(breaks = c(0.005,0.01))+
-  labs(y = "",
-       x = "proportion",
-       fill = "Category",
-       title = "Bigram - break down by univeristy (prop > 0.005)")
-```
+## Unit Code Analysis  {.scrollable .smaller background-image="images/bg.jpg" background-opacity="0.5"}
 
-- ANU and UQ are filtered out
-
-- too few words left to make meaningful interpretations
-
-:::
-
-
-## Break Down by Faculty {.scrollable .smaller background-image="images/bg.jpg" background-opacity="0.5"}
-
-Computational, Statistical or Mathematical? 
+* Faculty unit codes e.g. FIT, ETC, MAT, tells us what type of faculty teaches the units for data science 
+* Computational, Statistical or Mathematical? 
 
 ```{r echo=FALSE}
 math <- c("STAT", "MATH", "MATHS", "STATS", "MAT", "MAST", "ACTL", "QBUS")
@@ -374,12 +354,15 @@ rmv_col("data/term_s.csv") %>%
 
 - Topics 2, 3, 5, 9, 10 contains more words like model, regression, sample, probability, Bayesian, hypothesis etc. indicating a more computational based statistical components
 
+<!---
 
 ## Still a Work in Porgress... {background-image="images/bg.jpg" background-opacity="0.5"}
 
 - It takes experienced linguists and huge efforts to build a text corpus
 
 - The models are still relatively basic and requires more trimming and training
+
+--->
 
 
 ## Employer Perspectives {background-image="images/bg.jpg" background-opacity="0.5"}
