@@ -447,13 +447,13 @@ jobs %>% select(c(25:49)) %>%
 ::: {.column width="80%"}
 ```{r echo = FALSE}
 emp_word_stat %>% 
-#  distinct(jobTitle, jobClassification, topic) %>% 
   group_by(jobClassification) %>% 
   count(topic, sort = TRUE) %>% 
+  mutate(prop = round(n/sum(n),4)) %>% 
   ungroup() %>% 
 #  filter(n> 600) %>% 
   mutate(topic = fct_reorder(as.factor(topic), n, sum)) %>%
-  ggplot(aes(x = n,
+  ggplot(aes(x = prop,
              y = topic,
              fill = topic))+
   geom_col() +
