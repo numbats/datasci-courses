@@ -209,25 +209,24 @@ unidata %>%
 unidata %>% 
   mutate(across(c(Outcomes, Overview, description), 
                 ~ str_replace_all(.x, "\\\\", ""))) %>% 
-  select(School,Unit_code, Outcomes, Overview) %>% 
+  select(School, Course, Course_code, Unit, Unit_code) %>% 
   kable() %>% 
   kable_styling(bootstrap_options = "condensed") %>% 
-  scroll_box(height = "200px",
+  scroll_box(height = "350px",
              width = "1250px")
 ```
 
 - Computational, Statistical or Mathematical? 
 
-```{.r code-line-numbers="1-3|5-8"}
+```{.r"}
 math <- c("STAT", "MATH", "MATHS", "STATS", "MAT", "MAST", "ACTL", "QBUS")
-it <- c("COMP", "FIT", "CITS", "INFS", "COSC", "CSSE", "CSYS", "EDPC", 
-        "INMT", "PHIL", "PHYS", "BUSN","DATA", "INFO", "INFS")
-
+it <- c("COMP", "FIT", "CITS", "INFS", "COSC", "CSSE", "CSYS", "EDPC", "INMT", "PHIL", "PHYS", "BUSN","DATA", "INFO", "INFS")
 commerce <- c("ECON", "FINS", "MARK", "ACCT", "FINM", "MGMT", "MKTG")
 spatial <- c("GEOM", "ITLS")
 science <- c("EDUC", "SCIE", "SOCR")
 health <- c("BINF", "BMS", "HTIN", "PUBH")
 ```
+
 
 ## Unit Code Analysis  {.smaller background-image="images/bg.jpg" background-opacity="0.5"}
 
