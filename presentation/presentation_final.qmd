@@ -52,7 +52,7 @@ title-slide-attributes:
 
 :::
 
-## Data Science Degrees at Universities {background-image="images/bg.jpg" background-opacity="0.5"}
+## Master of Data Science at Universities {background-image="images/bg.jpg" background-opacity="0.5"}
 
 
 - What are the teaching contents? (e.g. statistics, maths, IT etc.)
@@ -211,7 +211,7 @@ unidata_bigram %>%
 
 - count is too small to make meaningful interpretations
 
-- similar words (e.g. research finginds, designs etc.) are not grouped
+- similar words (e.g. research findings, designs etc.) are not grouped
 
 
 ## Unit Code Analysis  {.scrollable .smaller background-image="images/bg.jpg" background-opacity="0.5"}
@@ -288,7 +288,7 @@ comp %>%
   theme(legend.position = "none")
 ```
 
-- Data science degrees are dominated by IT at Monash, UADE, USYD and UWA
+- Master of data science are dominated by IT at Monash, UADE, USYD and UWA
 
 - More evenly distributed at ANU and UNSW
 
