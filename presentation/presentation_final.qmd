@@ -431,7 +431,7 @@ rmv_col("data/term_s.csv") %>%
 ## Employer Perspectives {background-image="images/bg.jpg" background-opacity="0.5"}
 ```{r employer data, echo = FALSE}
 jobs <- read_csv("../employer/listings2019_2021.csv")
-emp_word_comp <- rmv_col("data/emp_comp.csv")
+emp_word_stat <- rmv_col("data/emp_stat.csv")
 ```
 ::: {.panel-tabset}
 ### Summary
@@ -488,20 +488,20 @@ jobs %>% select(c(25:49)) %>%
 :::: {.columns}
 ::: {.column width="80%"}
 ```{r echo = FALSE}
-emp_word_comp %>% 
+emp_word_stat %>% 
 #  distinct(jobTitle, jobClassification, topic) %>% 
   group_by(jobClassification) %>% 
   count(topic, sort = TRUE) %>% 
   ungroup() %>% 
-  filter(n> 600) %>% 
-  mutate(topic = fct_reorder(topic, n, sum))%>% #reorder_within(topic, n, School)
+#  filter(n> 600) %>% 
+  mutate(topic = fct_reorder(as.factor(topic), n, sum)) %>%
   ggplot(aes(x = n,
              y = topic,
              fill = topic))+
   geom_col() +
   scale_fill_brewer(palette = "Paired") +
   #scale_y_reordered() +
-  facet_wrap(~jobClassification, scales = "free_y") +
+  facet_wrap(~jobClassification) +
   theme(legend.position = "none") +
   labs(title = "Job Classification Topic Count - LDA_COMP")
 ```
