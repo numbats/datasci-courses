@@ -1,7 +1,7 @@
 ---
 title: "Defining Data Science"
 subtitle: "A Case Study in Australia"
-author: "Tina and Rachel"
+author: "Tina TSOU and Rachel WANG"
 date: "17 October 2022"
 format: 
   revealjs:
@@ -42,17 +42,21 @@ theme_set(theme_minimal())
 
 ## Background Story & Motivations {background-image="images/bg.jpg" background-opacity="0.5"}
 
+:::{.incremental}
+
 - Data science has been a buzzword since it came out
 
 - Is there a standard definition of data science in Australia?
 
 - Does data science mean the same thing to universities and employers?
 
+:::
+
 ## Agenda of the Day {background-image="images/bg.jpg" background-opacity="0.5"}
 
 :::{.incremental}
 
-- Data science degree in Australian universities (Go8)
+- Master of Data Science degree at Australian universities (Go8)
 
   - Data collection
 
@@ -64,19 +68,23 @@ theme_set(theme_minimal())
 
 :::
 
-## Master of Data Science at Universities {background-image="images/bg.jpg" background-opacity="0.5"}
+## Master of Data Science at Go8 {background-image="images/bg.jpg" background-opacity="0.5"}
 
+::: {.incremental}
 
-- What are the teaching contents? (e.g. statistics, maths, IT etc.)
+- What are the main teaching contents? (e.g. statistics, maths, IT etc.)
 
 - What could be the common skill sets of a data science graduate?
 
 - Is there a 'standard structure' for data science degree across the Go8?
 
+:::
+
 # Data Collection {background-color="#006DAE"}
 
 
 ## Data Collection {.scrollable background-image="images/bg.jpg" background-opacity="0.5"}
+
 :::{.incremental}
 
 - Web scrapping course information, list of subjects and unit outlines from universities' websites
@@ -87,14 +95,15 @@ theme_set(theme_minimal())
 
 :::
 
+<!---
 ## Web Scraping {.scrollable background-image="images/bg.jpg" background-opacity="0.5"}
 
 Extract required information
 
 <iframe src="https://handbook.monash.edu/2023/courses/C6009" width="100%" height="400px"></iframe>
+--->
 
-
-## Web Scraping {.scrollable background-image="images/bg.jpg" background-opacity="0.5"}
+## Web Scraping 😫 {.scrollable background-image="images/bg.jpg" background-opacity="0.5"}
 
 Initial settings and navigation to the course handbook
 
@@ -124,15 +133,15 @@ remDr$navigate("https://handbook.unimelb.edu.au/2022/courses/mc-datasc")
 course_html <- read_html(remDr$getPageSource()[[1]])
 ```
 
-
-## Web Scraping {.scrollable background-image="images/bg.jpg" background-opacity="0.5"}
+<!---
+## Web Scraping 😫 {.scrollable background-image="images/bg.jpg" background-opacity="0.5"}
 
 Extract required information
 
 <iframe src="https://handbook.monash.edu/2023/courses/C6009" width="100%" height="400px"></iframe>
+--->
 
-
-## Data Collection - Web Scraping {.scrollable background-image="images/bg.jpg" background-opacity="0.5"}
+## Web Scraping 😫 {.scrollable background-image="images/bg.jpg" background-opacity="0.5"}
 :::: {.columns}
 
 ::: {.column width="50%"}
@@ -161,7 +170,7 @@ unit_html <- read_html(remDr$getPageSource()[[1]])
 :::
 ::::
 
-## Data We Collected
+## Data We Collected {.smaller background-image="images/bg.jpg" background-opacity="0.5"}
 
 ```{r read-data, echo=FALSE, message=FALSE, warning=FALSE}
 rmv_col <- function(x){
@@ -173,16 +182,127 @@ data_ssc <- rmv_col("data/ssc.csv")
 data_s <- rmv_col("data/stats.csv") 
 data_cs <- rmv_col("data/cs.csv")
 data_comp <- rmv_col("data/comp.csv") 
+```
 
+The collected data contains **`r nrow(unidata)` units** from 8 universities
+
+```{r}
 unidata %>% 
   mutate(across(c(Outcomes, Overview, description), 
                 ~ str_replace_all(.x, "\\\\", ""))) %>% 
   select(School, Course, Unit, Outcomes, Overview) %>% 
-  DT::datatable(height = "400px") %>%
-  DT::formatStyle(columns = colnames(.), fontSize = '30%')
+  DT::datatable(height = "200px") %>%
+  DT::formatStyle(columns = colnames(.), fontSize = '10%')
 ```
 
 # Text Analysis {background-color="#006DAE"}
+
+## Unit Code Analysis  {.smaller background-image="images/bg.jpg" background-opacity="0.5"}
+
+* Faculty unit codes e.g. FIT, ETC, MAT, tells us what type of faculty teaches the units for data science 
+
+```{r}
+unidata %>% 
+  mutate(across(c(Outcomes, Overview, description), 
+                ~ str_replace_all(.x, "\\\\", ""))) %>% 
+  select(School,Unit_code, Outcomes, Overview) %>% 
+  DT::datatable(height = "200px") %>%
+  DT::formatStyle(columns = colnames(.), fontSize = '10%')
+```
+
+* Computational, Statistical or Mathematical? 
+
+```{.r code-line-numbers="1-3|5-8"}
+math <- c("STAT", "MATH", "MATHS", "STATS", "MAT", "MAST", "ACTL", "QBUS")
+it <- c("COMP", "FIT", "CITS", "INFS", "COSC", "CSSE", "CSYS", "EDPC", 
+        "INMT", "PHIL", "PHYS", "BUSN","DATA", "INFO", "INFS")
+
+commerce <- c("ECON", "FINS", "MARK", "ACCT", "FINM", "MGMT", "MKTG")
+spatial <- c("GEOM", "ITLS")
+science <- c("EDUC", "SCIE", "SOCR")
+health <- c("BINF", "BMS", "HTIN", "PUBH")
+```
+
+## Unit Code Analysis  {.smaller background-image="images/bg.jpg" background-opacity="0.5"}
+
+::: {.panel-tabset}
+
+### An Overview
+
+```{r echo=FALSE}
+math <- c("STAT", "MATH", "MATHS", "STATS", "MAT", "MAST", "ACTL", "QBUS")
+it <- c("COMP", "FIT", "CITS", "INFS", "COSC", "CSSE", "CSYS", "EDPC", 
+        "INMT", "PHIL", "PHYS", "BUSN","DATA", "INFO", "INFS")
+
+commerce <- c("ECON", "FINS", "MARK", "ACCT", "FINM", "MGMT", "MKTG")
+spatial <- c("GEOM", "ITLS")
+science <- c("EDUC", "SCIE", "SOCR")
+health <- c("BINF", "BMS", "HTIN", "PUBH")
+
+comp <- unidata %>% 
+  mutate(group = str_extract(Unit_code, "[A-Za-z]+")) %>% 
+  group_by(School) %>% 
+  count(group, sort = T) %>% 
+  ungroup() %>% 
+  mutate(category = case_when(group %in% it ~ "IT",
+                              group %in% math ~ "Stat/Math",
+                              group %in% commerce ~ "Commerce",
+                              group %in% spatial ~ "Spatial",
+                              group %in% science ~ "Science/Social Science",
+                              group %in% health ~ "Health/Bioinfo/Biostat")) %>% 
+  #Bioinformatics/Biostatistics
+  mutate(category = if_else(is.na(category), "Other", category))
+
+comp %>% 
+  mutate(category = fct_reorder(category, n, sum)) %>% 
+  ggplot(aes(x = n,
+             y = category,
+             fill = category)) +
+  geom_col() +
+  scale_fill_brewer(palette = "Dark2") +
+  labs(x = "",
+       y = "",
+       title = "Teaching content by faculty") +
+  theme(legend.position = "none") 
+```
+::: {.incremental}
+
+- **165 out of 298** units belongs to IT faculty
+
+- 79 units falls under math/stats
+
+:::
+
+### University Breakdown
+
+```{r echo=FALSE}
+comp %>% 
+  mutate(category = fct_reorder(category, n, sum)) %>% 
+  group_by(School) %>% 
+  mutate(prop = round(n/sum(n),4)) %>% 
+  ungroup() %>% 
+  ggplot(aes(x = prop,
+             y = category,
+             fill = category)) +
+  geom_col() +
+  scale_fill_brewer(palette = "Dark2") +
+  labs(x = "",
+       y = "",
+       title = "Breakdown by univeristy - proportion") +
+  facet_wrap(~School, scales = "free_y") +
+  theme(legend.position = "none")
+```
+
+::: {.incremental}
+
+- Master of data science are dominated by IT at Monash, UADE, USYD and UWA
+
+- More evenly distributed at ANU and UNSW
+
+- UniMelb and UQ offers relatively higher proportion of stat/math contents
+
+::: 
+
 
 ## Bigram of Outcomes and Overview {.scrollable .smaller background-image="images/bg.jpg" background-opacity="0.5"}
 
@@ -235,84 +355,6 @@ unidata_bigram %>%
 - similar words (e.g. research findings, designs etc.) are not grouped
 ::: 
 
-## Unit Code Analysis  {.scrollable .smaller background-image="images/bg.jpg" background-opacity="0.5"}
-::: {.incremental}
-* Faculty unit codes e.g. FIT, ETC, MAT, tells us what type of faculty teaches the units for data science 
-* Computational, Statistical or Mathematical? 
-
-```{r echo=FALSE}
-math <- c("STAT", "MATH", "MATHS", "STATS", "MAT", "MAST", "ACTL", "QBUS")
-
-it <- c("COMP", "FIT", "CITS", "INFS", "COSC", "CSSE", "CSYS", "EDPC", "INMT", "PHIL", "PHYS", #it
-        "BUSN","DATA", #data
-        "INFO", "INFS") #analytics
-
-commerce <- c("ECON", "FINS", "MARK", "ACCT", "FINM", "MGMT", "MKTG")
-
-spatial <- c("GEOM", "ITLS")
-
-science <- c("EDUC", "SCIE", 
-             "SOCR") #social science
-
-health <- c("BINF", "BMS", "HTIN", "PUBH")
-
-comp <- unidata %>% 
-  mutate(group = str_extract(Unit_code, "[A-Za-z]+")) %>% 
-  group_by(School) %>% 
-  count(group, sort = T) %>% 
-  ungroup() %>% 
-  mutate(category = case_when(group %in% it ~ "IT",
-                              group %in% math ~ "Stat/Math",
-                              group %in% commerce ~ "Commerce",
-                              group %in% spatial ~ "Spatial",
-                              group %in% science ~ "Science/Social Science",
-                              group %in% health ~ "Health/Bioinfo/Biostat")) %>% 
-  #Bioinformatics/Biostatistics
-  mutate(category = if_else(is.na(category), "Other", category))
-```
-
-```{r echo=FALSE}
-comp %>% 
-  mutate(category = fct_reorder(category, n, sum)) %>% 
-  ggplot(aes(x = n,
-             y = category,
-             fill = category)) +
-  geom_col() +
-  scale_fill_brewer(palette = "Dark2") +
-  labs(x = "",
-       y = "",
-       title = "Teaching content by faculty") +
-  theme(legend.position = "none") 
-```
-
-- Conducted based on the first few characters from unit code
-
-- Using only the unit code could be misleading
-
-```{r echo=FALSE}
-comp %>% 
-  mutate(category = fct_reorder(category, n, sum)) %>% 
-  group_by(School) %>% 
-  mutate(prop = round(n/sum(n),4)) %>% 
-  ungroup() %>% 
-  ggplot(aes(x = prop,
-             y = category,
-             fill = category)) +
-  geom_col() +
-  scale_fill_brewer(palette = "Dark2") +
-  labs(x = "",
-       y = "",
-       title = "Breakdown by univeristy - proportion") +
-  facet_wrap(~School, scales = "free_y") +
-  theme(legend.position = "none")
-```
-
-- Master of data science are dominated by IT at Monash, UADE, USYD and UWA
-
-- More evenly distributed at ANU and UNSW
-
-- UniMelb and UQ offers realtively higher proportion of stat/math contents
-::: 
 
 ## Further Analysis with the Concepts of Text Corpus {.smaller background-image="images/bg.jpg" background-opacity="0.5"}
 ::: {.incremental}
