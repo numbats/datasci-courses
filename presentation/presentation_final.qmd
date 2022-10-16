@@ -697,4 +697,4 @@ rmv_col("data/term_s.csv") %>%
 
 
 ## {background-image="images/bg.jpg" background-opacity="0.5"}
-
+![](images/qa.png){width="750" height="600" fig-align="center"}
