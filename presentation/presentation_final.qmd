@@ -216,7 +216,7 @@ unidata %>%
              width = "1250px")
 ```
 
-- Computational, Statistical or Mathematical? 
+- Computational, statistical or mathematical? 
 
 ```{.r"}
 math <- c("STAT", "MATH", "MATHS", "STATS", "MAT", "MAST", "ACTL", "QBUS")
@@ -365,19 +365,19 @@ unidata_bigram %>%
 ## Further Analysis with the Concepts of Text Corpus {.smaller background-image="images/bg.jpg" background-opacity="0.5"}
 ::: {.incremental}
 
-- Due to time limit we have only fitted a fairly basic Latent Dirichlet Allocation (LDA) model using `text2vec package`
+- Due to time limit we have only fitted a fairly basic Latent Dirichlet Allocation (LDA) model using `text2vec` package
   
-  - words are converted to numerical vectors
+  - Words are converted to numerical vectors
   
-  - distances between words are then computed, words are 'close' to each other are then grouped together
+  - Distances between words are then computed, with the assumption that words are 'close' to each other are similar and shall be grouped together
 
 - The model has to be trained by large amount of data pre-use
 
-  - **Over 4000 Wikipedia articles** in *statistics (2816), sociology (1005) and computing (627)* are scrapped as training data
+  - **4,448 Wikipedia articles** in *statistics (2,816), sociology (1,005) and computing (627)* are scrapped as training data
 
-  - sociology data actually brings in noises to the model
+  - Sociology data actually brings in noises to the model
   
-  - the most informative result is provided by model using only the **statistics** data
+  - The most informative result is provided by the model using only the **statistics** data
 :::
 
 ## Text Analysis by Topics  {.scrollable .smaller background-image="images/bg.jpg" background-opacity="0.5"}
@@ -422,9 +422,11 @@ rmv_col("data/term_s.csv") %>%
 
 ::::
 
+- Words are stemmed using the `SnowballC` package 
+
 - Topics 1 and 6 are the dominating topics across Go8, and both associated to computation, data, algorithm
 
-- Topics 2, 5, 9, 10 contains more words like model, regression, sample, probability, Bayesian, hypothesis etc. indicating a more computational based statistical components
+- Topics 2, 5, 9, 10 contains more words like model, regression, sample, probability, bayesian, hypothesis etc. indicating a more computational based statistical components
 
 ### Breakdown by Topic
 
