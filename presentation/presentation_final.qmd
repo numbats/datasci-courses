@@ -349,7 +349,7 @@ unidata_bigram %>%
   theme(legend.position = "bottom") +
   labs(y = "",
        fill = "Category",
-       title = "An overview (n > 4)") +
+       title = "Unit Bigram Overview (n > 4)") +
   scale_x_continuous(expand = c(0, 0.1))
 ```
 
@@ -410,7 +410,7 @@ data_s %>%
   facet_wrap(~School, scales = "free_y") +
   theme(legend.position = "none") +
   labs(x = "proportion",
-       title = "Topics proportion by university")
+       title = "Topics Proportion by University")
 
 ```
 :::
@@ -474,7 +474,7 @@ data_s %>%
   facet_wrap(~topic, scales = "free_y") +
   theme(legend.position = "none") +
   labs(x = "proportion",
-       title = "Breakdown by topic")
+       title = "Breakdown by Topic")
 
 ```
 :::
@@ -534,7 +534,7 @@ jobs %>%
 ## Job Analysis {background-image="images/bg.jpg" background-opacity="0.5"}
 
 ::::: {.panel-tabset}
-### Bigram
+### Employer Bigram
 
 ```{r employer bigram, echo = FALSE}
 emp_bigram <- jobs%>%
@@ -554,9 +554,8 @@ emp_bigram %>%
   geom_col()+
   paletteer::scale_fill_paletteer_c("viridis::plasma")+
   theme(legend.position = "none")+
-  labs(title= "Job Description Bigrams", 
-       y = "Bigrams", 
-       x= "Total Count")
+  labs(title= "Jobs Bigram Overview (n > 300)", 
+       y = "Bigrams")
 ```
 
 ### Languages
@@ -575,7 +574,7 @@ jobs %>% select(c(25:49)) %>%
   geom_col()+
   geom_text(aes(label = sum, hjust=0.1), color ="black")+
   theme(legend.position = "none")+
-  labs(title = "Programming languages mentioned in Job Ads",
+  labs(title = "Programming Languages Mentioned",
        y = "Language", x = "Count")
 ```
 
