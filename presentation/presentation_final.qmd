@@ -26,6 +26,7 @@ title-slide-attributes:
 ```{r setup, include = FALSE}
 library(tidyverse)
 library(tidytext)
+library(SnowballC)
 library(kableExtra)
 
 knitr::opts_chunk$set(echo = FALSE,
@@ -54,7 +55,6 @@ theme_set(theme_minimal())
 
 ## Agenda of the Day {background-image="images/bg.jpg" background-opacity="0.5"}
 
-:::{.incremental}
 
 - Master of Data Science degree at Australian universities (Go8)
 
@@ -66,7 +66,6 @@ theme_set(theme_minimal())
 
 - Key findings, limitations and future directions
 
-:::
 
 ## Master of Data Science at Go8 {background-image="images/bg.jpg" background-opacity="0.5"}
 
@@ -513,7 +512,6 @@ emp_word_stat <- rmv_col("data/emp_stat.csv")
 ```
 :::{.fragment}
 ::: {.incremental}
-- Data from
 - 2,857 Data Science job postings on Seek.com from 2019-2021
 - 535 Senior/ Managerial positions and 25 graduate program
 :::
@@ -532,9 +530,10 @@ jobs %>%
 ```
 :::
 
-## Job Analysis {background-image="images/bg.jpg" background-opacity="0.5"}
+## Job Analysis {.scrollable .smaller background-image="images/bg.jpg" background-opacity="0.5"}
 
 ::::: {.panel-tabset}
+
 ### Employer Bigram
 
 ```{r employer bigram, echo = FALSE}
@@ -542,8 +541,12 @@ emp_bigram <- jobs%>%
   select(c('jobId', 'jobTitle', 'jobClassification', 'advertiserName', 'workType', 'mobileAdTemplate')) %>% 
   unnest_tokens(bigram, mobileAdTemplate, token = "ngrams",n=2) %>% 
   separate(bigram, c("word1", "word2") , sep = " ") %>% 
-  filter(!word1 %in% stop_words$word & !word2 %in% stop_words$word ) %>% 
-  mutate(bigram = paste(word1, word2)) %>% 
+  filter(!word1 %in% stop_words$word & !word2 %in% stop_words$word) %>% 
+  subset(!grepl("[0-9]", word1)) %>% 
+  subset(!grepl("[0-9]", word2)) %>%  
+  mutate(stem1 = wordStem(word1, language = "english"),
+         stem2 = wordStem(word2, language = "english"),
+         bigram = paste(stem1, stem2)) %>% 
   group_by(jobId, jobTitle, jobClassification, advertiserName, workType) %>% 
   distinct(bigram) %>% 
   ungroup() 
@@ -552,12 +555,16 @@ emp_bigram %>%
   count(bigram, sort = TRUE) %>% 
   filter(n>300) %>% 
   ggplot(aes(x = n,y= fct_reorder(bigram, n), fill = n))+
-  geom_col()+
-  paletteer::scale_fill_paletteer_c("viridis::plasma")+
+  geom_col(fill = "#006DAE")+
   theme(legend.position = "none")+
   labs(title= "Jobs Bigram Overview (n > 300)", 
        y = "Bigrams")
 ```
+:::{.incremental}
+- Significantly more data than the previous dataset
+- Similar words not grouped
+- Many terms related to data
+:::
 
 ### Languages
 
@@ -572,12 +579,15 @@ jobs %>% select(c(25:49)) %>%
   ggplot(aes(y = fct_reorder(Program, sum), 
              x= sum,
              fill = Program))+
-  geom_col()+
+  geom_col(fill = "#006DAE")+
   geom_text(aes(label = sum, hjust=0.1), color ="black")+
   theme(legend.position = "none")+
   labs(title = "Programming Languages Mentioned",
        y = "Language", x = "Count")
 ```
+
+- Python is most popular followed by R and SQL
+- Surprisingly not too much difference between Python and R
 
 ### Topic Breakdown
 :::: {.columns}
@@ -633,6 +643,7 @@ rmv_col("data/term_s.csv") %>%
 
 :::::
 
+# Wrapping Up {background-color="#006DAE"}
 
 ## Limitations and Future Directions {background-image="images/bg.jpg" background-opacity="0.5"}
 ::: {.incremental}
@@ -666,11 +677,15 @@ rmv_col("data/term_s.csv") %>%
   
   2. There is NO obvious 'standard structure or skill set' for data science degrees across Go8
   
-  3. Gaps between employer and uni???
-
-- How data science would evolve, where should it head in Australia remains a question mark????
-
+  3. Most popular programming languages mentioned on job postings are Python, R and SQL
+  
+  4. Very subtle difference between the breakdown of topics for employer and university data
+  
 :::
+
+# How will the definition evolve for the industry and academia? {background-image="images/bg.jpg" background-opacity="0.5"}
+![](images/academiaindustry.jpeg){fig-align="center"}
+
 
 ## References and Resources {background-image="images/bg.jpg" background-opacity="0.5"}
 
@@ -683,4 +698,3 @@ rmv_col("data/term_s.csv") %>%
 
 ## {background-image="images/bg.jpg" background-opacity="0.5"}
 
-![](images/qa.png){width="750" height="600" fig-align="center"}

@@ -410,17 +410,15 @@
 </section>
 <section id="agenda-of-the-day" class="slide level2" data-background-image="images/bg.jpg" data-background-opacity="0.5">
 <h2>Agenda of the Day</h2>
-<div>
 <ul>
-<li class="fragment"><p>Master of Data Science degree at Australian universities (Go8)</p>
+<li><p>Master of Data Science degree at Australian universities (Go8)</p>
 <ul>
-<li class="fragment"><p>Data collection</p></li>
-<li class="fragment"><p>Text analysis</p></li>
+<li><p>Data collection</p></li>
+<li><p>Text analysis</p></li>
 </ul></li>
-<li class="fragment"><p>How employers define a ‘data scientist’</p></li>
-<li class="fragment"><p>Key findings, limitations and future directions</p></li>
+<li><p>How employers define a ‘data scientist’</p></li>
+<li><p>Key findings, limitations and future directions</p></li>
 </ul>
-</div>
 </section>
 <section id="master-of-data-science-at-go8" class="slide level2" data-background-image="images/bg.jpg" data-background-opacity="0.5">
 <h2>Master of Data Science at Go8</h2>
@@ -460,7 +458,7 @@ Extract required information
 <section id="web-scraping" class="slide level2 scrollable" data-background-image="images/bg.jpg" data-background-opacity="0.5">
 <h2>Web Scraping 😫</h2>
 <p>Initial settings and navigation to the course handbook</p>
-<div class="sourceCode" id="cb1" data-code-line-numbers="1-2|4-13|15|17-18|20-21|23-26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(RSelenium)</span>
+<div class="sourceCode" id="cb1" data-code-line-numbers="1-2|4-13|15|17-18|20-21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(RSelenium)</span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(rvest)</span>
 <span id="cb1-3"><a href="#cb1-3"></a></span>
 <span id="cb1-4"><a href="#cb1-4"></a>data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">Course =</span> <span class="fu">character</span>(),</span>
@@ -480,12 +478,7 @@ Extract required information
 <span id="cb1-18"><a href="#cb1-18"></a>remDr <span class="ot">&lt;-</span> rD[[<span class="st">"client"</span>]]</span>
 <span id="cb1-19"><a href="#cb1-19"></a></span>
 <span id="cb1-20"><a href="#cb1-20"></a>remDr<span class="sc">$</span><span class="fu">navigate</span>(<span class="st">"https://handbook.unimelb.edu.au/2022/courses/mc-datasc"</span>)</span>
-<span id="cb1-21"><a href="#cb1-21"></a>course_html <span class="ot">&lt;-</span> <span class="fu">read_html</span>(remDr<span class="sc">$</span><span class="fu">getPageSource</span>()[[<span class="dv">1</span>]])</span>
-<span id="cb1-22"><a href="#cb1-22"></a></span>
-<span id="cb1-23"><a href="#cb1-23"></a><span class="co"># course name</span></span>
-<span id="cb1-24"><a href="#cb1-24"></a>    title <span class="ot">&lt;-</span> course_html <span class="sc">%&gt;%</span> </span>
-<span id="cb1-25"><a href="#cb1-25"></a>      <span class="fu">html_element</span>(<span class="st">"h1"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb1-26"><a href="#cb1-26"></a>      <span class="fu">html_text</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-21"><a href="#cb1-21"></a>course_html <span class="ot">&lt;-</span> <span class="fu">read_html</span>(remDr<span class="sc">$</span><span class="fu">getPageSource</span>()[[<span class="dv">1</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="web-scraping-problems" class="slide level2 scrollable" data-background-image="images/bg.jpg" data-background-opacity="0.5">
 <h2>Web Scraping Problems 🆘</h2>
@@ -6824,8 +6817,8 @@ communicate results of the interpretation and analysis of predictive modelling. 
 --->
 </section></section>
 <section>
-<section id="employer-perspectives" class="title-slide slide level1 center" data-background-color="#006DAE">
-<h1>Employer Perspectives</h1>
+<section id="employers-perspective" class="title-slide slide level1 center" data-background-color="#006DAE">
+<h1>Employer’s Perspective</h1>
 
 </section>
 <section id="data-science-jobs-data-overview" class="slide level2" data-background-image="images/bg.jpg" data-background-opacity="0.5">
@@ -6836,7 +6829,6 @@ communicate results of the interpretation and analysis of predictive modelling. 
 <div class="fragment">
 <div>
 <ul>
-<li class="fragment">Data from</li>
 <li class="fragment">2,857 Data Science job postings on Seek.com from 2019-2021</li>
 <li class="fragment">535 Senior/ Managerial positions and 25 graduate program</li>
 </ul>
@@ -7219,7 +7211,7 @@ We facilitate a range of flexible working arrangements within our teams. Talk to
 </div>
 </div>
 </section>
-<section id="job-analysis" class="slide level2" data-background-image="images/bg.jpg" data-background-opacity="0.5">
+<section id="job-analysis" class="slide level2 scrollable smaller" data-background-image="images/bg.jpg" data-background-opacity="0.5">
 <h2>Job Analysis</h2>
 <div class="panel-tabset">
 <ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">Employer Bigram</a></li><li><a href="#tabset-3-2">Languages</a></li><li><a href="#tabset-3-3">Topic Breakdown</a></li></ul>
@@ -7230,6 +7222,13 @@ We facilitate a range of flexible working arrangements within our teams. Talk to
 <p><img data-src="presentation_final_files/figure-revealjs/employer%20bigram-1.png" width="960"></p>
 </div>
 </div>
+<div>
+<ul>
+<li class="fragment">Significantly more data than the previous dataset</li>
+<li class="fragment">Similar words not grouped</li>
+<li class="fragment">Many terms related to data</li>
+</ul>
+</div>
 </div>
 <div id="tabset-3-2">
 <div class="cell">
@@ -7237,6 +7236,10 @@ We facilitate a range of flexible working arrangements within our teams. Talk to
 <p><img data-src="presentation_final_files/figure-revealjs/unnamed-chunk-11-1.png" width="960"></p>
 </div>
 </div>
+<ul>
+<li>Python is most popular followed by R and SQL</li>
+<li>Surprisingly not too much difference between Python and R</li>
+</ul>
 </div>
 <div id="tabset-3-3">
 <div class="columns">
@@ -7396,6 +7399,11 @@ We facilitate a range of flexible working arrangements within our teams. Talk to
 </div>
 </div>
 </div>
+</section></section>
+<section>
+<section id="wrapping-up" class="title-slide slide level1 center" data-background-color="#006DAE">
+<h1>Wrapping Up</h1>
+
 </section>
 <section id="limitations-and-future-directions" class="slide level2" data-background-image="images/bg.jpg" data-background-opacity="0.5">
 <h2>Limitations and Future Directions</h2>
@@ -7422,12 +7430,17 @@ We facilitate a range of flexible working arrangements within our teams. Talk to
 <ol type="1">
 <li class="fragment"><p>The Master of Data Science degrees offered at Go8 are mostly dominated by <strong>computational component</strong>, even the statistical aspects of it are more computational</p></li>
 <li class="fragment"><p>There is NO obvious ‘standard structure or skill set’ for data science degrees across Go8</p></li>
-<li class="fragment"><p>Gaps between employer and uni???</p></li>
+<li class="fragment"><p>Most popular programming languages mentioned on job postings are Python, R and SQL</p></li>
+<li class="fragment"><p>Very subtle difference between the breakdown of topics for employer and university data</p></li>
 </ol></li>
-<li class="fragment"><p>How data science would evolve, where should it head in Australia remains a question mark????</p></li>
 </ul>
 </div>
-</section>
+</section></section>
+<section>
+<section id="how-will-the-definition-evolve-for-the-industry-and-academia" class="title-slide slide level1 center" data-background-image="images/bg.jpg" data-background-opacity="0.5">
+<h1>How will the definition evolve for the industry and academia?</h1>
+
+<img data-src="images/academiaindustry.jpeg" class="r-stretch quarto-figure-center"></section>
 <section id="references-and-resources" class="slide level2" data-background-image="images/bg.jpg" data-background-opacity="0.5">
 <h2>References and Resources</h2>
 <ul>
@@ -7438,13 +7451,8 @@ We facilitate a range of flexible working arrangements within our teams. Talk to
 </section>
 <section id="section" class="slide level2" data-background-image="images/bg.jpg" data-background-opacity="0.5">
 <h2></h2>
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="images/qa.png" width="750" height="600"></p>
-</figure>
-</div>
-<p><img src="images/monash-one-line-black-rgb.png" class="slide-logo"></p>
-<div class="footer footer-default">
+
+<img src="images/monash-one-line-black-rgb.png" class="slide-logo r-stretch"><div class="footer footer-default">
 
 </div>
 </section></section>
