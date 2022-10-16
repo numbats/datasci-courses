@@ -86,7 +86,7 @@ theme_set(theme_minimal())
 
 :::{.incremental}
 
-- Web scrapping course information, list of subjects and unit outlines from universities' websites
+- Web scraping course information, list of subjects and unit outlines from universities' websites
 
 - Performed using `RSelenium` and `rvest`
 
@@ -371,7 +371,7 @@ unidata_bigram %>%
 
 - The model has to be trained by large amount of data pre-use
 
-  - **4,448 Wikipedia articles** in *statistics (2,816), sociology (1,005) and computing (627)* are scrapped as training data
+  - **4,448 Wikipedia articles** in *statistics (2,816), sociology (1,005) and computing (627)* are scraped as training data
 
   - Sociology data actually brings in noises to the model
   
@@ -449,7 +449,7 @@ rmv_col("data/term_s.csv") %>%
 
 - Topics 1 and 6 are the dominating topics across Go8, and both associated to computation, data, algorithm
 
-- Topics 2, 5, 9, 10 contains more words like model, regression, sample, probability, bayesian, hypothesis etc. indicating a more computational based statistical components
+- Topics 2, 5, 9, 10 contains more words like model, regression, sample, probability, Bayesian, hypothesis etc. indicating a more computational based statistical components
 
 ### Breakdown by Topic
 
@@ -561,7 +561,7 @@ emp_bigram %>%
        y = "Bigrams")
 ```
 :::{.incremental}
-- Significantly more data than the previous dataset
+- Significantly more data than the previous data set
 - Similar words not grouped
 - Many terms related to data
 :::
@@ -664,11 +664,11 @@ rmv_col("data/term_s.csv") %>%
 
 - **What we have done**:
 
-  1. Collected data for **298 units** across Go8 through web scrapping
+  1. Collected data for **298 units** across Go8 through web scraping
 
   2. Conducted exploratory analysis from various aspects on both university and employer data
   
-  3. Built LDA models through web scrapping **over 4000 Wikipedia articles** to establish our own 'text corpus'
+  3. Built LDA models through web scraping **over 4000 Wikipedia articles** to establish our own 'text corpus'
 
 
 - **Key findings from EDA**: 
