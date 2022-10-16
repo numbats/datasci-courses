@@ -460,39 +460,54 @@ Extract required information
 <section id="web-scraping" class="slide level2 scrollable" data-background-image="images/bg.jpg" data-background-opacity="0.5">
 <h2>Web Scraping 😫</h2>
 <p>Initial settings and navigation to the course handbook</p>
-<div class="sourceCode" id="cb1" data-code-line-numbers="1-2|4-5|7-9|11-20|22-23|25-28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(RSelenium)</span>
+<div class="sourceCode" id="cb1" data-code-line-numbers="1-2|4-13|15|17-18|20-21|23-26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(RSelenium)</span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(rvest)</span>
 <span id="cb1-3"><a href="#cb1-3"></a></span>
-<span id="cb1-4"><a href="#cb1-4"></a>rD <span class="ot">&lt;-</span> <span class="fu">rsDriver</span>(<span class="at">browser=</span><span class="st">"firefox"</span>, <span class="at">port=</span>4778L, <span class="at">verbose=</span>F)</span>
-<span id="cb1-5"><a href="#cb1-5"></a>remDr <span class="ot">&lt;-</span> rD[[<span class="st">"client"</span>]]</span>
-<span id="cb1-6"><a href="#cb1-6"></a></span>
-<span id="cb1-7"><a href="#cb1-7"></a>baseurl <span class="ot">&lt;-</span> <span class="st">"https://handbook.unimelb.edu.au"</span></span>
-<span id="cb1-8"><a href="#cb1-8"></a>year <span class="ot">&lt;-</span> <span class="dv">2022</span></span>
-<span id="cb1-9"><a href="#cb1-9"></a>wait_time <span class="ot">&lt;-</span> <span class="cf">function</span>() <span class="fu">Sys.sleep</span>(<span class="fu">sample</span>(<span class="dv">3</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span>))</span>
-<span id="cb1-10"><a href="#cb1-10"></a></span>
-<span id="cb1-11"><a href="#cb1-11"></a>data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">Course =</span> <span class="fu">character</span>(),</span>
-<span id="cb1-12"><a href="#cb1-12"></a>               <span class="at">Course_code =</span> <span class="fu">character</span>(),</span>
-<span id="cb1-13"><a href="#cb1-13"></a>               <span class="at">Course_overview =</span> <span class="fu">character</span>(),</span>
-<span id="cb1-14"><a href="#cb1-14"></a>               <span class="at">Unit =</span> <span class="fu">character</span>(),</span>
-<span id="cb1-15"><a href="#cb1-15"></a>               <span class="at">Unit_code =</span> <span class="fu">character</span>(),</span>
-<span id="cb1-16"><a href="#cb1-16"></a>               <span class="at">Overview =</span> <span class="fu">character</span>(),</span>
-<span id="cb1-17"><a href="#cb1-17"></a>               <span class="at">Prerequisite =</span> <span class="fu">character</span>(),</span>
-<span id="cb1-18"><a href="#cb1-18"></a>               <span class="at">Corequisite =</span> <span class="fu">character</span>(),</span>
-<span id="cb1-19"><a href="#cb1-19"></a>               <span class="at">Prohibition =</span> <span class="fu">character</span>(),</span>
-<span id="cb1-20"><a href="#cb1-20"></a>               <span class="at">Outcomes =</span> <span class="fu">character</span>())</span>
-<span id="cb1-21"><a href="#cb1-21"></a></span>
-<span id="cb1-22"><a href="#cb1-22"></a>remDr<span class="sc">$</span><span class="fu">navigate</span>(<span class="st">"https://handbook.unimelb.edu.au/2022/courses/mc-datasc"</span>)</span>
-<span id="cb1-23"><a href="#cb1-23"></a>course_html <span class="ot">&lt;-</span> <span class="fu">read_html</span>(remDr<span class="sc">$</span><span class="fu">getPageSource</span>()[[<span class="dv">1</span>]])</span>
-<span id="cb1-24"><a href="#cb1-24"></a></span>
-<span id="cb1-25"><a href="#cb1-25"></a><span class="co"># course name</span></span>
-<span id="cb1-26"><a href="#cb1-26"></a>    title <span class="ot">&lt;-</span> course_html <span class="sc">%&gt;%</span> </span>
-<span id="cb1-27"><a href="#cb1-27"></a>      <span class="fu">html_element</span>(<span class="st">"h1"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb1-28"><a href="#cb1-28"></a>      <span class="fu">html_text</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-4"><a href="#cb1-4"></a>data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">Course =</span> <span class="fu">character</span>(),</span>
+<span id="cb1-5"><a href="#cb1-5"></a>               <span class="at">Course_code =</span> <span class="fu">character</span>(),</span>
+<span id="cb1-6"><a href="#cb1-6"></a>               <span class="at">Course_overview =</span> <span class="fu">character</span>(),</span>
+<span id="cb1-7"><a href="#cb1-7"></a>               <span class="at">Unit =</span> <span class="fu">character</span>(),</span>
+<span id="cb1-8"><a href="#cb1-8"></a>               <span class="at">Unit_code =</span> <span class="fu">character</span>(),</span>
+<span id="cb1-9"><a href="#cb1-9"></a>               <span class="at">Overview =</span> <span class="fu">character</span>(),</span>
+<span id="cb1-10"><a href="#cb1-10"></a>               <span class="at">Prerequisite =</span> <span class="fu">character</span>(),</span>
+<span id="cb1-11"><a href="#cb1-11"></a>               <span class="at">Corequisite =</span> <span class="fu">character</span>(),</span>
+<span id="cb1-12"><a href="#cb1-12"></a>               <span class="at">Prohibition =</span> <span class="fu">character</span>(),</span>
+<span id="cb1-13"><a href="#cb1-13"></a>               <span class="at">Outcomes =</span> <span class="fu">character</span>())</span>
+<span id="cb1-14"><a href="#cb1-14"></a>               </span>
+<span id="cb1-15"><a href="#cb1-15"></a>wait_time <span class="ot">&lt;-</span> <span class="cf">function</span>() <span class="fu">Sys.sleep</span>(<span class="fu">sample</span>(<span class="dv">3</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span>))</span>
+<span id="cb1-16"><a href="#cb1-16"></a></span>
+<span id="cb1-17"><a href="#cb1-17"></a>rD <span class="ot">&lt;-</span> <span class="fu">rsDriver</span>(<span class="at">browser=</span><span class="st">"firefox"</span>, <span class="at">port=</span>4778L, <span class="at">verbose=</span>F)</span>
+<span id="cb1-18"><a href="#cb1-18"></a>remDr <span class="ot">&lt;-</span> rD[[<span class="st">"client"</span>]]</span>
+<span id="cb1-19"><a href="#cb1-19"></a></span>
+<span id="cb1-20"><a href="#cb1-20"></a>remDr<span class="sc">$</span><span class="fu">navigate</span>(<span class="st">"https://handbook.unimelb.edu.au/2022/courses/mc-datasc"</span>)</span>
+<span id="cb1-21"><a href="#cb1-21"></a>course_html <span class="ot">&lt;-</span> <span class="fu">read_html</span>(remDr<span class="sc">$</span><span class="fu">getPageSource</span>()[[<span class="dv">1</span>]])</span>
+<span id="cb1-22"><a href="#cb1-22"></a></span>
+<span id="cb1-23"><a href="#cb1-23"></a><span class="co"># course name</span></span>
+<span id="cb1-24"><a href="#cb1-24"></a>    title <span class="ot">&lt;-</span> course_html <span class="sc">%&gt;%</span> </span>
+<span id="cb1-25"><a href="#cb1-25"></a>      <span class="fu">html_element</span>(<span class="st">"h1"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb1-26"><a href="#cb1-26"></a>      <span class="fu">html_text</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="web-scraping-problems" class="slide level2 scrollable" data-background-image="images/bg.jpg" data-background-opacity="0.5">
 <h2>Web Scraping Problems 🆘</h2>
-<div class="columns">
-<div class="column" style="width:60%;">
+<div class="fragment">
+<div>
+<ul>
+<li class="fragment">Website elements not named</li>
+<li class="fragment">Missing information</li>
+<li class="fragment">Information not directly accessible</li>
+</ul>
+</div>
+</div>
+<div class="fragment">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/scrapuade.gif"></p>
+</figure>
+</div>
+</div>
+</section>
+<section id="web-scraping-example-university-of-adelaide" class="slide level2 scrollable" data-background-image="images/bg.jpg" data-background-opacity="0.5">
+<h2>Web Scraping Example: University of Adelaide</h2>
 <div class="sourceCode" id="cb2" data-code-line-numbers="1-2|3-5|6-7|8-12|13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>remDr<span class="sc">$</span><span class="fu">navigate</span>(<span class="fu">glue</span>(<span class="st">"https:{unit}"</span>))</span>
 <span id="cb2-2"><a href="#cb2-2"></a><span class="fu">wait_time</span>()</span>
 <span id="cb2-3"><a href="#cb2-3"></a>webElem <span class="ot">&lt;-</span> remDr<span class="sc">$</span><span class="fu">findElement</span>(</span>
@@ -506,15 +521,6 @@ Extract required information
 <span id="cb2-11"><a href="#cb2-11"></a>webElem2<span class="sc">$</span><span class="fu">clickElement</span>()</span>
 <span id="cb2-12"><a href="#cb2-12"></a><span class="fu">wait_time</span>()</span>
 <span id="cb2-13"><a href="#cb2-13"></a>unit_html <span class="ot">&lt;-</span> <span class="fu">read_html</span>(remDr<span class="sc">$</span><span class="fu">getPageSource</span>()[[<span class="dv">1</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div><div class="column" style="width:40%;">
-<div>
-<ul>
-<li class="fragment"></li>
-<li class="fragment"></li>
-</ul>
-</div>
-</div>
-</div>
 </section>
 <section id="data-we-collected" class="slide level2 smaller" data-background-image="images/bg.jpg" data-background-opacity="0.5">
 <h2>Data We Collected</h2>

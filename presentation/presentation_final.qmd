@@ -109,16 +109,9 @@ Extract required information
 
 Initial settings and navigation to the course handbook
 
-```{.r code-line-numbers="1-2|4-5|7-9|11-20|22-23|25-28"}
+```{.r code-line-numbers="1-2|4-13|15|17-18|20-21"}
 library(RSelenium)
 library(rvest)
-
-rD <- rsDriver(browser="firefox", port=4778L, verbose=F)
-remDr <- rD[["client"]]
-
-baseurl <- "https://handbook.unimelb.edu.au"
-year <- 2022
-wait_time <- function() Sys.sleep(sample(3:5, 1))
 
 data <- tibble(Course = character(),
                Course_code = character(),
@@ -130,21 +123,37 @@ data <- tibble(Course = character(),
                Corequisite = character(),
                Prohibition = character(),
                Outcomes = character())
+               
+wait_time <- function() Sys.sleep(sample(3:5, 1))
+
+rD <- rsDriver(browser="firefox", port=4778L, verbose=F)
+remDr <- rD[["client"]]
 
 remDr$navigate("https://handbook.unimelb.edu.au/2022/courses/mc-datasc")
 course_html <- read_html(remDr$getPageSource()[[1]])
-
-# course name
-    title <- course_html %>% 
-      html_element("h1") %>% 
-      html_text()
 ```
 
 
 ## Web Scraping Problems 🆘 {.scrollable background-image="images/bg.jpg" background-opacity="0.5"}
-:::: {.columns}
 
-::: {.column width="60%"}
+::: {.fragment}
+::: {.incremental}
+- Website elements not named
+- Missing information
+- Information not directly accessible
+:::
+::: 
+
+
+
+::: {.fragment}
+![](images/scrapuade.gif){fig-align="center"}
+
+::: 
+
+
+## Web Scraping Example: University of Adelaide {.scrollable background-image="images/bg.jpg" background-opacity="0.5"}
+
 ```{.r code-line-numbers="1-2|3-5|6-7|8-12|13"}
 remDr$navigate(glue("https:{unit}"))
 wait_time()
@@ -160,15 +169,7 @@ webElem2$clickElement()
 wait_time()
 unit_html <- read_html(remDr$getPageSource()[[1]])
 ```
-:::
 
-::: {.column width="40%"}
-::: {.incremental}
-- 
-- 
-:::
-:::
-::::
 
 ## Data We Collected {.smaller background-image="images/bg.jpg" background-opacity="0.5"}
 
@@ -503,7 +504,7 @@ rmv_col("data/term_s.csv") %>%
 
 --->
 
-# Employer Perspectives {background-color="#006DAE"}
+# Employer's Perspective {background-color="#006DAE"}
 
 ## Data Science Jobs Data Overview{background-image="images/bg.jpg" background-opacity="0.5"}
 ```{r employer data, echo = FALSE}
