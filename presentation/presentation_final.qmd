@@ -269,7 +269,7 @@ comp %>%
   theme(legend.position = "none") 
 ```
 
-- **165 out of 298** units belongs to IT faculty, 79 units falls under math/stats
+- **165 out of 298** units belongs to IT faculty, **79** units falls under math/stats
 
 ### University Breakdown
 
@@ -291,7 +291,7 @@ comp %>%
   theme(legend.position = "none")
 ```
 
-- Overall computational and IT based, but proportion varies by university
+- Overall *computational and IT based*, but proportion varies by university
 
 :::
 
@@ -341,9 +341,9 @@ unidata_bigram %>%
 ```
 
 ::: {.incremental}
-- count is too small to make meaningful interpretations
+- Count is too small to make meaningful interpretations
 
-- similar words (e.g. research findings, designs etc.) are not grouped
+- Similar words (e.g. research findings, designs etc.) are not grouped
 ::: 
 
 
