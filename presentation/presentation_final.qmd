@@ -268,13 +268,8 @@ comp %>%
        title = "Teaching Content by Faculty") +
   theme(legend.position = "none") 
 ```
-::: {.incremental}
 
-- **165 out of 298** units belongs to IT faculty
-
-- 79 units falls under math/stats
-
-:::
+- **165 out of 298** units belongs to IT faculty, 79 units falls under math/stats
 
 ### University Breakdown
 
@@ -296,15 +291,7 @@ comp %>%
   theme(legend.position = "none")
 ```
 
-::: {.incremental}
-
-- Master of data science are dominated by IT at Monash, UADE, USYD and UWA
-
-- More evenly distributed at ANU and UNSW
-
-- UniMelb and UQ offers relatively higher proportion of stat/math contents
-
-::: 
+- Overall computational and IT based, but proportion varies by university
 
 :::
 
@@ -365,10 +352,10 @@ unidata_bigram %>%
 
 - Due to time limit we have only fitted a fairly basic Latent Dirichlet Allocation (LDA) model using `text2vec` package
   
-  - Words are converted to numerical vectors
+  - Words are converted to *document-term matrix (DTM)*
   
-  - Distances between words are then computed, with the assumption that words are 'close' to each other are similar and shall be grouped together
-
+  - A probabilistic model is fitted assumes a mixture of latent topics, each topic has a multinomial distribution for all words
+  
 - The model has to be trained by large amount of data pre-use
 
   - **4,448 Wikipedia articles** in *statistics (2,816), sociology (1,005) and computing (627)* are scraped as training data
