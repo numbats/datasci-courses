@@ -52,8 +52,23 @@ emp_word %>%
   theme_minimal()
 
 ```
+```{r wordcloud}
+library(wordcloud)
 
-```{r}
+cloud <- emp_word %>%
+  count(word, sort = TRUE) 
+
+  wordcloud(words = cloud$word, 
+            freq = cloud$n, 
+            min.freq = 200,
+            max.words=100,
+            random.order=FALSE, 
+            rot.per=0.15,  
+            scale=c(2.5,0.15),
+            colors=brewer.pal(8, "Dark2"))
+```
+
+```{r bigram}
 bigram <- df %>%
   select(c('jobId', 'jobTitle', 'jobClassification', 'advertiserName', 'workType', 'mobileAdTemplate')) %>% 
   unnest_tokens(bigram, mobileAdTemplate, token = "ngrams",n=2) %>% 
@@ -72,6 +87,20 @@ bigram %>%
   geom_col()
 
 ```
+```{r bigramcloud}
+cloud2 <- bigram %>%
+  count(bigram, sort = TRUE) 
+
+  wordcloud(words = cloud2$bigram, 
+            freq = cloud2$n, 
+            min.freq = 200,
+            max.words=100,
+            random.order=FALSE, 
+            rot.per=0.05,  
+            scale=c(2.5,0.3),
+            colors=brewer.pal(8, "Dark2"))
+```
+
 
 ```{r}
 trigram <- df %>%
@@ -92,8 +121,23 @@ trigram %>%
 
 ```
 
-```{r}
+```{r trigramcloud}
+cloud3 <- trigram %>%
+  count(trigram, sort = TRUE) 
+
+  wordcloud(words = cloud3$trigram, 
+            freq = cloud3$n, 
+            min.freq = 50,
+            max.words=100,
+            random.order=FALSE, 
+            rot.per=0.15,  
+            scale=c(1.5,0.15),
+            colors=brewer.pal(8, "Dark2"))
+```
+
 # breakdown of job titles
+
+```{r}
 scientist <- df %>% 
   select(jobTitle) %>% 
   mutate(jobTitle = tolower(jobTitle)) %>% 
