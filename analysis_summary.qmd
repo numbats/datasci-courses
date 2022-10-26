@@ -532,7 +532,7 @@ term_comp <- topicmodels::get_terms(targets::tar_read(lda_model10_comp), k = 10)
   as_tibble()
 
 
-#write.csv(term_s, file = "presentation/data/term_s.csv")
+#write.csv(term_comp, file = "presentation/data/term_comp.csv")
 ```
 
 
