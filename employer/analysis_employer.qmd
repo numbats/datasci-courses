@@ -230,7 +230,7 @@ unijob %>%
   geom_col()+
   facet_wrap(~advertiserName, scales = "free_y")+theme_minimal()
 ```
-
+*not enough data for breakdown.
 
 # Salary Analysis
 ```{r}

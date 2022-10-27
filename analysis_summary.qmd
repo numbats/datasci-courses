@@ -533,7 +533,7 @@ term_s30 <- topicmodels::get_terms(targets::tar_read(lda_model10_s), k = 30) %>%
 term_ssc <- topicmodels::get_terms(targets::tar_read(lda_model10_ssc), k = 10) %>% 
   as_tibble()
   
-term_comp <- topicmodels::get_terms(targets::tar_read(lda_model10_comp), k = 10) %>% 
+term_comp <- topicmodels::get_terms(targets::tar_read(lda_model10_comp), k = 30) %>% 
   as_tibble()
 
 
