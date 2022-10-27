@@ -304,6 +304,7 @@ topics_ssc <- tidy(lda_model12_ssc, matrix = "beta")
 topics_ssc2 <- tidy(lda_model10_ssc, matrix = "beta")
 topics_s <- tidy(lda_model10_s, matrix = "beta")
 
+#write.csv(topics_ssc, file = "presentation/data/modelsum_ssc.csv")
 ```
 
 
@@ -525,6 +526,10 @@ term_cs <- topicmodels::get_terms(targets::tar_read(lda_model10_cs), k = 10) %>%
 term_s <- topicmodels::get_terms(targets::tar_read(lda_model10_s), k = 10) %>% 
   as_tibble()
 
+term_s30 <- topicmodels::get_terms(targets::tar_read(lda_model10_s), k = 30) %>% 
+  as_tibble()
+
+
 term_ssc <- topicmodels::get_terms(targets::tar_read(lda_model10_ssc), k = 10) %>% 
   as_tibble()
   
@@ -533,6 +538,7 @@ term_comp <- topicmodels::get_terms(targets::tar_read(lda_model10_comp), k = 10)
 
 
 #write.csv(term_comp, file = "presentation/data/term_comp.csv")
+#write.csv(term_s30, file = "presentation/data/term_s30.csv")
 ```
 
 
