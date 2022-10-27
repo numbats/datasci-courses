@@ -1,5 +1,5 @@
 ---
-title: "Monash Master of Health Data Analytics"
+title: " Monash Master of Business Analytics"
 author: "Emi Tanaka"
 date: "`r Sys.Date()`"
 format: 
@@ -23,16 +23,16 @@ knitr::opts_chunk$set(echo = FALSE,
 ```
 
 
-```{r monash-hda}
-rD <- rsDriver(browser="firefox", port=4700L, verbose=F)
+```{r monash-ba}
+rD <- rsDriver(browser="firefox", port=4790L, verbose=F)
 remDr <- rD[["client"]]
 
-code <- "M6036"
+code <- "B6022"
 baseurl <- "https://handbook.monash.edu"
 year <- 2022
 wait_time <- function() Sys.sleep(sample(3:5, 1))
 
-remDr$navigate(glue("{baseurl}/{year}/courses/{code}?year={year}"))
+remDr$navigate(glue("{baseurl}/2022/courses/{code}?year=2022"))
 course_html <- read_html(remDr$getPageSource()[[1]])
 
 title <- course_html %>% 
@@ -45,10 +45,6 @@ curriculum <- course_html %>%
   html_element(".css-to4w00-Box") %>% 
   html_elements("a") %>% 
   html_attr("href")
-
-curriculum <- setdiff(curriculum, "/2022/units/New")
-curriculum <- case_when(curriculum=="/2022/units/MPH5040" ~ "/2021/units/MPH5040",
-                        TRUE ~ curriculum)
 
 data <- map_dfr(curriculum, function(unit) {
       cunit <- str_replace(unit, paste0("/", year, "/units/"), "")
@@ -106,11 +102,11 @@ data %>%
   mutate(Outcomes = paste(Outcomes, collapse = "| "),
          Prohibition = paste(Prohibition, collapse = ", "),
          Prerequisite = paste(Prerequisite, collapse = ", "),
-         Corequisite = paste(Corequisite, collapse = ", ")) %>% 
+         Corequisite = NA) %>% 
   mutate(across(c(Prohibition, Prerequisite, Corequisite), 
                ~ifelse(is.na(.x), 
                        "", 
-                       str_replace_all(.x, glue::glue("/({year}|2021)/units/"), "")))) %>% 
-  write_csv(file = "data/monash-master-healthanalytics.csv")
+                       str_replace_all(.x, glue::glue("/{year}/units/"), "")))) %>% 
+  write_csv(file = "../data/monash-master-businessanalytics.csv")
 ```
 

@@ -162,5 +162,5 @@ data_cleaned$Unit <- gsub("\\s*\\([^\\)]+\\)", "", data_cleaned$Unit)
 ```
 
 ```{r}
-write.csv(data_cleaned, file = "data/uwa-master-datasci.csv")
+write.csv(data_cleaned, file = "../data/uwa-master-datasci.csv")
 ```

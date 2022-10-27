@@ -137,5 +137,5 @@ tryCatch({
 ```
 
 ```{r}
-write.csv(data, file = "data/swb-master-datasci.csv")
+write.csv(data, file = "../data/swb-master-datasci.csv")
 ```

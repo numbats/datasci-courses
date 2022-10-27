@@ -201,7 +201,7 @@ tryCatch({
     },error = function(x) x)
   
 
-#write.csv(data, file = "data/uade-master-datasci.csv")
+#write.csv(data, file = "../data/uade-master-datasci.csv")
 # stop the rselenium server
 #rD[["server"]]$stop()
 ```

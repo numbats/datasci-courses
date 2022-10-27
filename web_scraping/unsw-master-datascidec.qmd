@@ -271,6 +271,6 @@ data_cleaned <- data %>%
 ```
 
 ```{r}
-write.csv(data_cleaned, file = "data/unsw-master-datascidec.csv")
+write.csv(data_cleaned, file = "../data/unsw-master-datascidec.csv")
 ```
 

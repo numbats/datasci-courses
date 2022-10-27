@@ -1,6 +1,6 @@
 ---
-title: " RMIT Master of Data Science"
-author: "Tina"
+title: "Monash Bachelor of Applied Data Science"
+author: "Emi Tanaka"
 date: "`r Sys.Date()`"
 format: 
   html: 
@@ -23,58 +23,57 @@ knitr::opts_chunk$set(echo = FALSE,
 ```
 
 
-```{r RMIT}
-rD <- rsDriver(browser="firefox", port=4790L, verbose=F)
+```{r monash-hda}
+rD <- rsDriver(browser="firefox", port=4712L, verbose=F)
 remDr <- rD[["client"]]
 
-wait_time <- function() Sys.sleep(sample(3:5, 1))
+code <- "S2010"
+baseurl <- "https://handbook.monash.edu"
+year <- 2022
+wait_time <- function() Sys.sleep(sample(5:8, 1))
 
-remDr$navigate("https://www.rmit.edu.au/study-with-us/levels-of-study/postgraduate-study/masters-by-coursework/master-of-data-science-mc267/mc267auscy")
+remDr$navigate(glue("{baseurl}/{year}/courses/{code}?year={year}"))
 course_html <- read_html(remDr$getPageSource()[[1]])
 
 title <- course_html %>% 
-  html_element("h1") %>% 
-  html_text()
+  html_element("h2") %>% 
+  html_text() %>% 
+  str_replace(paste0(code, " - "), "")
 
-curric <- course_html %>% 
-  html_elements(xpath = "//div[@class='requirementRequirementHTML table-responsive']") %>%
-  html_elements(xpath = "//table[@class = 'courseTable scrollable-table']") %>% 
-  html_elements(xpath = "//tr[@class = 'courseLine']") %>% 
+curriculum <- course_html %>% 
+  html_element("#curriculumStructure") %>% 
+  html_element(".css-to4w00-Box") %>% 
   html_elements("a") %>% 
   html_attr("href")
 
-curric2 <- course_html %>% 
-  html_elements(xpath = "//div[@class='requirementRequirementHTML table-responsive']") %>%
-  html_elements(xpath = "//table[@class = 'courseTable scrollable-table']") %>% 
-  html_elements(xpath = "//tr[@class = 'lastCourseLine']") %>% 
-  html_elements("a") %>% 
-  html_attr("href")
-
-curriculum<- append(curric, curric2)
-
-data <- map_dfr(curriculum, function(unit) {
-      remDr$navigate(unit)
+get_unit_info <- function(unit) {
+      cunit <- str_replace(unit, paste0("/", year, "/units/"), "")
+      remDr$navigate(glue("{baseurl}{unit}"))
       wait_time()
       unit_html <- read_html(remDr$getPageSource()[[1]])
-      cunit <- unit_html %>% 
-        html_element("#contentpadding") %>% 
-        html_element("table") %>% 
-        html_element("tr:nth-child(2)") %>% 
-        html_element("p") %>% 
-        html_text()
-      
       subject_text <- unit_html %>% 
-        html_element(".contentArea ") %>% 
-        html_element("p:nth-child(2)") %>% 
-        html_text() %>% 
-        str_remove(".*\\: ")
+        html_element("h2") %>% 
+        html_text() 
     
-      # reqs <- unit_html %>% 
-      #   html_element("#contentpadding") %>% 
-      #   html_element("div.contentArea") %>% 
-      #   html_element("p") %>% 
-      #   html_text()
-      #requisite hard to extract
+      reqs <- unit_html %>% 
+        html_element("#requisites") 
+      
+      if(length(reqs)) {
+        reqs <- reqs %>% 
+          html_element(".css-to4w00-Box") %>% 
+          html_children()
+      }
+      
+      reqs_list <- list()
+      for(areq in reqs) {
+        area <- areq %>% 
+          html_element("strong") %>% 
+          html_text()
+        reqs_list[[area]] <- areq %>% 
+          html_elements("a") %>% 
+          html_attr("href") %>% 
+          list()
+      }
       
       overviews <- unit_html %>% 
         html_element("#Overview") %>% 
@@ -96,9 +95,14 @@ data <- map_dfr(curriculum, function(unit) {
                        Overview = overviews,
                        Outcomes = list(outcomes)), 
                        reqs_list))
-})
+}
 
-data %>% 
+data1 <- map_dfr(curriculum[1:50], get_unit_info)
+data2 <- map_dfr(curriculum[51:100], get_unit_info)
+data3 <- map_dfr(curriculum[101:150], get_unit_info)
+data4 <- map_dfr(curriculum[151:length(curriculum)], get_unit_info)
+
+bind_rows(data1, data2, data3, data4) %>% 
   rowwise() %>% 
   mutate(Outcomes = paste(Outcomes, collapse = "| "),
          Prohibition = paste(Prohibition, collapse = ", "),
@@ -108,5 +112,6 @@ data %>%
                ~ifelse(is.na(.x), 
                        "", 
                        str_replace_all(.x, glue::glue("/{year}/units/"), "")))) %>% 
-  write_csv(file = "data/monash-master-datasci.csv")
+  write_csv(file = "../data/monash-bachelor-applieddatascience.csv")
 ```
+

@@ -1,5 +1,5 @@
 ---
-title: " Monash Master of Data Science"
+title: "Monash Master of Health Data Analytics"
 author: "Emi Tanaka"
 date: "`r Sys.Date()`"
 format: 
@@ -23,23 +23,16 @@ knitr::opts_chunk$set(echo = FALSE,
 ```
 
 
-## Monash
-
-### Units
-
-The directed graph below shows the units in the Master of Data Science as nodes with edges showing the subject that is a prerequisite for the unit. The node that the arrow is pointing to requires the unit that is linked.
-
-```{r monash}
-rD <- rsDriver(browser="firefox", port=4790L, verbose=F)
+```{r monash-hda}
+rD <- rsDriver(browser="firefox", port=4700L, verbose=F)
 remDr <- rD[["client"]]
 
-# "C6009" is the Indonesian campus version
-code <- "C6004"
+code <- "M6036"
 baseurl <- "https://handbook.monash.edu"
 year <- 2022
 wait_time <- function() Sys.sleep(sample(3:5, 1))
 
-remDr$navigate(glue("{baseurl}/2022/courses/{code}"))
+remDr$navigate(glue("{baseurl}/{year}/courses/{code}?year={year}"))
 course_html <- read_html(remDr$getPageSource()[[1]])
 
 title <- course_html %>% 
@@ -52,6 +45,10 @@ curriculum <- course_html %>%
   html_element(".css-to4w00-Box") %>% 
   html_elements("a") %>% 
   html_attr("href")
+
+curriculum <- setdiff(curriculum, "/2022/units/New")
+curriculum <- case_when(curriculum=="/2022/units/MPH5040" ~ "/2021/units/MPH5040",
+                        TRUE ~ curriculum)
 
 data <- map_dfr(curriculum, function(unit) {
       cunit <- str_replace(unit, paste0("/", year, "/units/"), "")
@@ -113,62 +110,7 @@ data %>%
   mutate(across(c(Prohibition, Prerequisite, Corequisite), 
                ~ifelse(is.na(.x), 
                        "", 
-                       str_replace_all(.x, glue::glue("/{year}/units/"), "")))) %>% 
-  write_csv(file = "data/monash-master-datasci.csv")
+                       str_replace_all(.x, glue::glue("/({year}|2021)/units/"), "")))) %>% 
+  write_csv(file = "../data/monash-master-healthanalytics.csv")
 ```
-
-
-Note: zoom in to see the labels of the nodes and hover over the node to see the full name (available only for core units for now).
-
-
-
-```{r}
-nodes_incomplete <- data %>% 
-  filter(Course_code == "C6004") %>% 
-  mutate(Unit = str_replace(Unit, paste0(Unit_code, " - "), "")) %>% 
-  select(label = Unit_code, title = Unit) %>% 
-  select(label, title)
-
-
-cat(data$Course[1])
-
-edges_name <- data %>% 
-  unnest_longer(Prerequisite) %>% 
-  mutate(Prerequisite = str_replace(Prerequisite, "/2022/units/", "")) %>% 
-  select(to = Unit_code, from = Prerequisite) %>% 
-  filter(!is.na(from)) 
-
-missing_nodes <- setdiff(c(edges_name$from, edges_name$to), nodes_incomplete$label)
-
-nodes <- nodes_incomplete %>% 
-  add_row(label = missing_nodes) %>% 
-  mutate(id = 1:n())
-
-edges <- edges_name %>% 
-  mutate(from = match(from, nodes$label),
-         to = match(to, nodes$label))
-
-visNetwork(nodes, edges, width = "100%") %>% 
-  visEdges(arrows = "to")
-```
-### Text analysis
-
-Below is a bigram and trigram of the overview description for units in the Monash Master of Data Science. (It's not that insightful.)
-
-```{r, message = FALSE, warning = FALSE}
-ngram <- 3
-data %>% 
-  filter(Course_code == "C6004") %>%
-  unnest_tokens(word, Overview, token = "ngrams", n = ngram, n_min = 2) %>% 
-  separate(word, c("word1", "word2", "word3"), sep = " ") %>% 
-  filter(if_all(num_range("word", c(1,ngram)), 
-              ~!str_detect(., paste0(paste0("^", stop_words$word, "$"), collapse = "|")))) %>% 
-  select(starts_with("word")) %>% 
-  mutate(word = str_c(word1, word2, word3, sep = " ")) %>% 
-  count(word, sort = TRUE) %>% 
-  filter(n > 2) %>% 
-  knitr::kable() %>% 
-  kableExtra::kable_classic()
-```
-
 

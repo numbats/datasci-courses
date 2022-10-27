@@ -103,7 +103,7 @@ data %>%
          Prerequisite = paste(Prerequisite, collapse = ", "),
          Course = "Master of Data Science",
          Course_code = "MDataSc") %>% 
-  write_csv(file = "data/uq-master-datasci.csv")
+  write_csv(file = "../data/uq-master-datasci.csv")
 
 ```
 
