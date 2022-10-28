@@ -19,3 +19,5 @@ Web scraping scripts for university data collection could be found from the `web
 `_targets folder`, `_targets.R` and `R folder` contains all codes and functions to build the LDA models through text2vec package. Note that the models take few hours to fit, and the output files for fitted models are too large to be pushed to the repo. Although the actual models and associated files are not available, they could be reproduced by running the codes in `_targets.R`.
 
 Codes and required data to reproduce the presentation slides are available in the `presentation folder`.
+
+**Full report describing this project and the analysis can be found at** https://github.com/numbats/ds-report
